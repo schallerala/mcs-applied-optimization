@@ -39,6 +39,25 @@ namespace AOPT {
             // algorithm to find minimum value of _func between _x_l and _x_u
             //------------------------------------------------------//
             
+             //in case the grid is not squared, we might have rectangular grid 
+            double step0 = (_x_u(0) - _x_l(0)) / n_grid_ ;
+            double step1 = (_x_u(1) - _x_l(1)) / n_grid_ ;
+
+            Vec x(2);
+
+            for(int i = 0; i < n_grid_ ; i++){
+                for(int j = 0; j < n_grid_ ; j++){
+                    
+                    x(0) = _x_l(0) + i * step0;
+                    x(1) = _x_l(1) + j * step1;
+                    f = _func->eval_f(x);
+
+                    if(f <= fmin){
+                        fmin = f;
+                        x_min = x;
+                    }
+                }
+            }
             //------------------------------------------------------//
             _f_min = fmin;
             std::cout<<"Minimum value of the function is: "<<fmin<<" at x:\n"<<x_min<<std::endl;
@@ -71,12 +90,46 @@ namespace AOPT {
             // algorithm to find minimum value of a nd quadratic function
             // set f_min with the minimum, which is then stored in the referenced argument _f_min
 
+            //assume the cuboids have vertices of equal length and dim >= 1 
+            if(n < 1){
+                std::cout << "Error: dimension is not >= 1!" << std::endl;
+                return -1;
+            }
+
+            double start = _x_l(0);
+            double step = (_x_u(0) - _x_l(0)) / n_grid_ ;
+            int dim = n - 1;
+
+            Vec x(n);
             
+            grid_search_recu(_func,start,step,x,f_min,x_min,dim);
+
             //------------------------------------------------------//
             _f_min = f_min;
             std::cout << "Minimum value of the function is: " << f_min << " at x:\n" << x_min << std::endl;
 
             return 0;
+        }
+
+        void grid_search_recu(FunctionBase* _func, const double start, const double step, Vec& x,double& fmin,Vec& xmin, int dim) const {
+            
+            for(int i = 0; i < n_grid_; i++){
+                
+                x(dim) = start + i * step;
+
+                if(dim <= 0){
+                    double f = _func->eval_f(x);
+                    if(f <= fmin){
+                        fmin = f;
+                        xmin = x;
+
+                    }
+                } else{
+                 
+                    grid_search_recu(_func,start,step,x,fmin,xmin,dim-1);
+                
+                }
+            }
         }
 
 

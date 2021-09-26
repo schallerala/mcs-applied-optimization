@@ -43,7 +43,8 @@ namespace AOPT {
             //-------------------------------------------------------------------------------//
             //Todo: implement the function 0.5 * (x^T A x) + b^T + c
             
-            
+            return ((double)(( _x.transpose()*(A_)*(_x))))/2 + (double)((b_).transpose()*(_x)) + (c_);
+            //typing error somewhere? Did something wrong but can't figure it out...
             //-------------------------------------------------------------------------------//
         }
 
