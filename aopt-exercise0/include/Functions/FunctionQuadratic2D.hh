@@ -12,6 +12,9 @@ namespace AOPT {
 /* Implements a quadratic 2D function of the form f(x,y) = 0.5(x^2 + gamma *y^2)
  * gamma is given as a constructor parameter (see right below) */
     class FunctionQuadratic2D final : public FunctionBase {
+    private:
+        double gamma_;
+
     public:
         // f(x,y) = 0.5(x^2 + gamma *y^2)
 
@@ -30,6 +33,7 @@ namespace AOPT {
             //Todo: implement the function f(x,y) = 0.5(x^2 + gamma *y^2)
 
             //------------------------------------------------------//
+            return 0.5 * (_x[0] * _x[0] + gamma_ * _x[1] * _x[1]);
         }
 
         /** evaluates the quadratic function's gradient
@@ -45,9 +49,6 @@ namespace AOPT {
         inline virtual void eval_hessian(const Vec &_x, Mat &_H) {}
 
         double get_gamma() const { return gamma_; }
-
-    private:
-        double gamma_;
     };
 
 //=============================================================================

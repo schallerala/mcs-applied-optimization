@@ -25,9 +25,19 @@ namespace AOPT {
          *           It should be a 2D vector*/
         inline virtual double eval_f(const Vec &_x) {
             //------------------------------------------------------//
-            //Todo: implement the function f(x,y) = (y-x^2)^2+cos^2(4*y)*(1-x)^2+x^2+y^2
-            
+            //Todo: implement the function f(x,y) = (y-x^2)^2+cos^2(4*y)*(1-x)^2+x^2+y^2,
+            //                                      b * b    + c * c    *d * d  +a  + y * y
+
             //------------------------------------------------------//
+
+            double x = _x[0],
+                   y = _x[1],
+                   a = x * x,
+                   b = y - a,
+                   c = cos(4 * y),
+                   d = 1 - x;
+
+            return b * b + c * c * d * d + a + y * y;
         }
 
         // gradient evaluation. Not necessary for this function

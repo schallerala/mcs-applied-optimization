@@ -20,7 +20,6 @@ namespace AOPT {
     public:
 
 
-
         /* If you are not familiar with Eigen's Matrix types, please refer to
          *  https://eigen.tuxfamily.org/dox/group__TutorialMatrixClass.html
          * or
@@ -48,7 +47,7 @@ namespace AOPT {
         virtual void eval_gradient(const Vec &_x, Vec &_g) = 0;
 
         // hessian matrix evaluation
-        virtual void eval_hessian(const Vec &_x, SMat& _h) = 0;
+        virtual void eval_hessian(const Vec &_x, SMat &_h) = 0;
     };
 
 

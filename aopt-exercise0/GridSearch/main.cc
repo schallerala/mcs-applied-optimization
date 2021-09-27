@@ -2,7 +2,7 @@
 #include <Utils/StopWatch.hh>
 #include <Algorithms/GridSearch.hh>
 
-int main(int _argc, const char* _argv[]) {
+int main(int _argc, const char *_argv[]) {
     if (_argc < 5) {
         std::cout
                 << "Usage: input should be 'function index(0: non-convex, 1: 2d quadratic, 2: nd quadratic), lower bound X, upper bound X, number of grid, dimension n (only needed for function 2)', e.g. "
@@ -32,8 +32,7 @@ int main(int _argc, const char* _argv[]) {
         if (func_index == 0) {
             AOPT::FunctionNonConvex2D fnc2d;
             gs.grid_search_2d(&fnc2d, vec_xl, vec_xu, f_min);
-        }
-        else if (func_index == 1) {
+        } else if (func_index == 1) {
             AOPT::FunctionQuadratic2D fq2d(-1.);
             gs.grid_search_2d(&fq2d, vec_xl, vec_xu, f_min);
         }
@@ -69,7 +68,7 @@ int main(int _argc, const char* _argv[]) {
         AOPT::StopWatch<> sw;
         sw.start();
         gs.grid_search_nd(&fqnd, vec_xl, vec_xu, f_min);
-        std::cout<<"Grid search took: "<<sw.stop()/1000.<<"s"<< std::endl;
+        std::cout << "Grid search took: " << sw.stop() / 1000. << "s" << std::endl;
 
 
     } else {

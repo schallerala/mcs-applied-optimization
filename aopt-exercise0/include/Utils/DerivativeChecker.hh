@@ -20,7 +20,8 @@ namespace AOPT {
         using SMat = Eigen::SparseMatrix<double>;
 
         DerivativeChecker() : rng_(-1., 1.) {}
-        ~DerivativeChecker(){}
+
+        ~DerivativeChecker() {}
 
         struct Config {
             Config() : x_min(-1.0), x_max(1.0), n_iters(1), dx(1e-5), eps(1e-3),
@@ -35,14 +36,14 @@ namespace AOPT {
         };
 
         template<class ProblemInterface>
-        bool check_all(ProblemInterface& _np, double _dx, double _eps) {
+        bool check_all(ProblemInterface &_np, double _dx, double _eps) {
             conf_.dx = _dx;
             conf_.eps = _eps;
             return check_all(_np);
         }
 
         template<class ProblemInterface>
-        bool check_all(ProblemInterface& _np) {
+        bool check_all(ProblemInterface &_np) {
             bool d1_ok = check_d1(_np);
             bool d2_ok = check_d2(_np);
 
@@ -50,7 +51,7 @@ namespace AOPT {
         }
 
         template<class ProblemInterface>
-        bool check_d1(ProblemInterface& _np) {
+        bool check_d1(ProblemInterface &_np) {
             int n_ok = 0;
             int n_errors = 0;
 
@@ -98,16 +99,15 @@ namespace AOPT {
         }
 
         template<class ProblemInterface>
-        bool check_d2(ProblemInterface& _np)
-        {
-            int n_ok     = 0;
+        bool check_d2(ProblemInterface &_np) {
+            int n_ok = 0;
             int n_errors = 0;
 
             const int n = _np.n_unknowns();
             Vec x(n);
-            SMat H(n,n);
+            SMat H(n, n);
 
-            for(int i=0; i<conf_.n_iters; ++i) {
+            for (int i = 0; i < conf_.n_iters; ++i) {
                 // get random x
                 get_random_x(x, conf_.x_min, conf_.x_max);
                 // gradient
@@ -151,10 +151,10 @@ namespace AOPT {
             return (n_errors == 0);
         }
 
-        Config& config() { return conf_; }
+        Config &config() { return conf_; }
 
     protected:
-        void get_random_x(Vec& _x, double _xmin, double _xmax) {
+        void get_random_x(Vec &_x, double _xmin, double _xmax) {
             // get random values in [min, max]
             _x = rng_.get_random_nd_vector(_x.size());
 

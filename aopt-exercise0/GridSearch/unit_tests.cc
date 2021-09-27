@@ -32,47 +32,46 @@ using namespace AOPT;
 
 
 
-TEST(FunctionsTest, QuadraticFucntion2d){
+TEST(FunctionsTest, QuadraticFucntion2d) {
     FunctionQuadratic2D func(1.5);
     FunctionQuadratic2D::Vec x(2);
-    x<<-1, 2;
+    x << -1, 2;
 
     ASSERT_EQ(func.eval_f(x), 3.5);
 }
 
 
-TEST(FunctionsTest, QuadraticFucntionNd){
+TEST(FunctionsTest, QuadraticFucntionNd) {
 
     const int n(3);
 
-    FunctionQuadraticND::Mat A(n,n);
-    A<<     -1, 2, 3,
-            0,-3,4.5,
-            4,2, -5;
+    FunctionQuadraticND::Mat A(n, n);
+    A << -1, 2, 3,
+            0, -3, 4.5,
+            4, 2, -5;
 
     FunctionQuadraticND::Vec b(n);
-    b<<-1,0,-1;
+    b << -1, 0, -1;
 
     const double c(-1);
 
 
-    FunctionQuadraticND func(A,b,c);
+    FunctionQuadraticND func(A, b, c);
     FunctionQuadratic2D::Vec x(n);
-    x<<-1,1,-1;
+    x << -1, 1, -1;
 
     ASSERT_EQ(func.eval_f(x), -4.25);
 }
 
 
-TEST(FunctionsTest, NonConvexFunction2d){
+TEST(FunctionsTest, NonConvexFunction2d) {
 
     FunctionNonConvex2D func;
     FunctionQuadratic2D::Vec x(2);
-    x<<0.5, -0.5;
+    x << 0.5, -0.5;
 
     ASSERT_FLOAT_EQ(func.eval_f(x), 1.1057945);
 }
-
 
 
 TEST(GridSearchTests, Grid2dFunction2dGridSearch) {
@@ -83,9 +82,9 @@ TEST(GridSearchTests, Grid2dFunction2dGridSearch) {
     FunctionQuadratic2D func(-0.8);
 
     FunctionQuadratic2D::Vec x_l(2);
-    x_l<<-1, -1;
+    x_l << -1, -1;
     FunctionQuadratic2D::Vec x_u(2);
-    x_u<<1, 1;
+    x_u << 1, 1;
 
     double f_min;
     grid.grid_search_2d(&func, x_l, x_u, f_min);
@@ -101,15 +100,15 @@ TEST(GridSearchTests, GridNdFunctionNdGridSearch) {
     const int func_n(5);
 
     FunctionQuadraticND::Mat A(func_n, func_n);
-    A<<     -1, 2, 3,     0, -3,   2,
-             0,-3, 4.5, 1.5, -0.5, 0,
-             4, 2,-5,     0, -2,   1,
-            -4,-2, 4,  -3.5,  3,  -1,
-             2,-4, 2,   6.5,  1,   0;
+    A <<   -1,  2,  3,    0,   -3,    2,
+            0, -3,  4.5,  1.5, -0.5,  0,
+            4,  2, -5,    0,   -2,    1,
+           -4, -2,  4,   -3.5,  3,   -1,
+            2, -4,  2,    6.5,  1,    0;
 
 
     FunctionQuadraticND::Vec b(func_n);
-    b<< 2, -1, 2, 3, -5;
+    b << 2, -1, 2, 3, -5;
 
     const double c(-1);
     FunctionQuadraticND func(A, b, c);
@@ -123,7 +122,7 @@ TEST(GridSearchTests, GridNdFunctionNdGridSearch) {
     ASSERT_FLOAT_EQ(f_min, -49.48);
 }
 
-int main(int _argc, char** _argv){
+int main(int _argc, char **_argv) {
 
     testing::InitGoogleTest(&_argc, _argv);
     return RUN_ALL_TESTS();
