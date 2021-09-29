@@ -38,19 +38,20 @@ namespace AOPT {
 
             Vec x_min(2);
 
-            Vec delta(2), xy(2);
+            Vec xy(2);
 
             //------------------------------------------------------//
             //Todo: implement the 2d version of the grid search
             // algorithm to find minimum value of _func between _x_l and _x_u
             //------------------------------------------------------//
             Vec incr = (_x_u - _x_l) / n_grid_;
+            Vec grid_xy(2);
             for (int x_i = 0; x_i <= n_grid_; x_i++) {
                 for (int y_i = 0; y_i <= n_grid_; y_i++) {
-                    delta(0) = incr[0] * x_i;
-                    delta(1) = incr[1] * y_i;
+                    grid_xy << x_i, y_i;
 
-                    xy = _x_l + delta;
+                    // coefficient wise multiplication
+                    xy = _x_l + (incr.cwiseProduct(grid_xy));
 
                     f = _func->eval_f(xy);
                     if (f < fmin) {
@@ -93,6 +94,61 @@ namespace AOPT {
 
 
             //------------------------------------------------------//
+            // only 1 point to compute, which will be the only solution
+            if (_x_l == _x_u) {
+                f_min = _func->eval_f(_x_l);
+                x_min = _x_l;
+            }
+            else {
+                long iteration_limit = 1;
+                for (size_t i = 0; i < n; i++) {
+                    iteration_limit *= n_grid_;
+                }
+
+                // represent the size of an n dimension increment to move on the grid on all dimensions
+                Vec incr = (_x_u - _x_l) / n_grid_;
+
+                // represent the points on the grid
+                Vec grid_x(n);
+                grid_x.fill(0);
+
+                // the corresponding x to feed into the function
+                Vec x(n);
+                x << _x_l;
+
+                // value of 1 evaluation
+                double f;
+
+                const int grid_n_index = n_grid_ - 1;
+
+                for (long i = 0; i < iteration_limit; i++) {
+
+                    // coefficient wise multiplication
+                    x = _x_l + (incr.cwiseProduct(grid_x));
+
+                    f = _func->eval_f(x);
+                    if (f < f_min) {
+                        f_min = f;
+                        x_min = x;
+                    }
+
+                    // -- progress on the grid position
+                    // increment first and following if "reset" to 0
+                    // for example with grid_n_index = 4
+                    // 000 -> 001
+                    // 004 -> 010
+                    for (Eigen::Index j = 0; j < n; ++j) {
+                        if (grid_x[j] == grid_n_index) {
+                            // restart and increment next
+                            grid_x[j] = 0;
+                        } else {
+                            grid_x[j]++;
+                            break;
+                        }
+                    }
+                }
+            }
+
             _f_min = f_min;
             std::cout << "Minimum value of the function is: " << f_min << " at x:\n" << x_min << std::endl;
 
