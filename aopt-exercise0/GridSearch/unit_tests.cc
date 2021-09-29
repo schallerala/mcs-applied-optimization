@@ -92,6 +92,25 @@ TEST(GridSearchTests, Grid2dFunction2dGridSearch) {
     ASSERT_EQ(f_min, -0.38);
 }
 
+
+TEST(GridSearchTests, Grid2dFunctionNdGridSearchWith2dTest) {
+
+    const int n(5);
+    GridSearch grid(n);
+
+    FunctionQuadratic2D func(-0.8);
+
+    FunctionQuadratic2D::Vec x_l(2);
+    x_l << -1, -1;
+    FunctionQuadratic2D::Vec x_u(2);
+    x_u << 1, 1;
+
+    double f_min;
+    grid.grid_search_nd(&func, x_l, x_u, f_min);
+
+    ASSERT_EQ(f_min, -0.38);
+}
+
 TEST(GridSearchTests, GridNdFunctionNdGridSearch) {
 
     const int grid_n(10);
