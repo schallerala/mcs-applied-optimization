@@ -105,7 +105,7 @@ TEST(GridSearchTests, GridNdFunctionNdGridSearch) {
              0,-3, 4.5, 1.5, -0.5, 0,
              4, 2,-5,     0, -2,   1,
             -4,-2, 4,  -3.5,  3,  -1,
-             2,-4, 2,   6.5,  1,   0;
+             2;
 
 
     FunctionQuadraticND::Vec b(func_n);

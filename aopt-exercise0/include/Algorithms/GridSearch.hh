@@ -39,14 +39,14 @@ namespace AOPT {
             // algorithm to find minimum value of _func between _x_l and _x_u
             //------------------------------------------------------//
             
-             //in case the grid is not squared, we might have rectangular grid 
+             //in case the grid is not squared, we might have rectangular grid, not usefull as seen later 
             double step0 = (_x_u(0) - _x_l(0)) / n_grid_ ;
             double step1 = (_x_u(1) - _x_l(1)) / n_grid_ ;
 
             Vec x(2);
 
-            for(int i = 0; i < n_grid_ ; i++){
-                for(int j = 0; j < n_grid_ ; j++){
+            for(int i = 0; i <= n_grid_ ; i++){
+                for(int j = 0; j <= n_grid_ ; j++){
                     
                     x(0) = _x_l(0) + i * step0;
                     x(1) = _x_l(1) + j * step1;
@@ -111,9 +111,16 @@ namespace AOPT {
             return 0;
         }
 
+        
+
+
+
+    private:
+        int n_grid_;
+
         void grid_search_recu(FunctionBase* _func, const double start, const double step, Vec& x,double& fmin,Vec& xmin, int dim) const {
             
-            for(int i = 0; i < n_grid_; i++){
+            for(int i = 0; i <= n_grid_; i++){
                 
                 x(dim) = start + i * step;
 
@@ -131,11 +138,6 @@ namespace AOPT {
                 }
             }
         }
-
-
-
-    private:
-        int n_grid_;
     };
 
     //=============================================================================
