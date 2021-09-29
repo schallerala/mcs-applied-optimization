@@ -42,9 +42,10 @@ namespace AOPT {
         inline virtual double eval_f(const Vec &_x) {
             //-------------------------------------------------------------------------------//
             //Todo: implement the function 0.5 * (x^T A x) + b^T + c
+            double xax = (*&_x).transpose() * A_* (*&_x);
             
-            return ((double)(( _x.transpose()*(A_)*(_x))))/2 + (double)((b_).transpose()*(_x)) + (c_);
-            //typing error somewhere? Did something wrong but can't figure it out...
+            return (0.5 * xax) + (b_ * (*&_x)).sum() + c_;
+            
             //-------------------------------------------------------------------------------//
         }
 

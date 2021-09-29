@@ -26,10 +26,16 @@ namespace AOPT {
          * \param _x the value at which to evaluate the function.
          *           It should be a 2D vector*/
         inline virtual double eval_f(const Vec &_x) {
+        	
+        	// Square x1 and x2
+        	double x1_sq = *&_x(0) * *&_x(0);
+        	double x2_sq = *&_x(1) * *&_x(1);
+        	
+        	// Return the result
+        	return 0.5 * (x1_sq + this-> gamma_ * x2_sq);
+        
             //------------------------------------------------------//
             //Todo: implement the function f(x,y) = 0.5(x^2 + gamma *y^2)
-
-            return 0.5*(pow(_x(0),2) + gamma_ * pow(_x(1),2));
 
             //------------------------------------------------------//
         }

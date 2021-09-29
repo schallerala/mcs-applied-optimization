@@ -15,7 +15,7 @@ namespace AOPT {
         using Vec = FunctionBase::Vec;
         using Mat = FunctionBase::Mat;
 
-        GridSearch(const int _n_grid = 10) : n_grid_(_n_grid){}
+        GridSearch(const int _n_cells = 10) : n_cells_(_n_cells){}
         ~GridSearch() {}
 
     public:
@@ -30,34 +30,41 @@ namespace AOPT {
          * \return 0 if all went well, -1 if not.*/
         int grid_search_2d(FunctionBase* _func, const Vec& _x_l, const Vec& _x_u, double& _f_min) const {
             std::cout<<"Grid searching the minimum of a 2-D function..."<<std::endl;
+            // std::cout<<"Vector size:"<<_x_l.rows()<<std::endl;
             double f = 0., fmin = std::numeric_limits<double>::max();
-
+            
             Vec x_min(2);
-
+            
             //------------------------------------------------------//
             //Todo: implement the 2d version of the grid search
+            
+            // Get grid steps
+            double step_x0 = (_x_u(0) - _x_l(0)) / n_cells_;
+            double step_x1 = (_x_u(1) - _x_l(1)) / n_cells_;
+            
+            // Loop over the two dimensions
+            for (double i = _x_l(0); i <= _x_u(0); i += step_x0) {
+            	for (double j = _x_l(1); j <= _x_u(1); j += step_x1) {
+            	
+            		// Construct the vector
+            		FunctionQuadratic2D::Vec pt(2);
+            		pt << i, j;
+            		
+            		// Check function
+            		double new_min = (*_func).eval_f(pt);
+            		
+            		// Keep the minimum
+            		if (new_min < fmin) {
+            			fmin = new_min;
+            			x_min = pt;
+            		}
+            		//fmin = std::min(fmin, new_min);
+            	}
+            }
             // algorithm to find minimum value of _func between _x_l and _x_u
             //------------------------------------------------------//
+           
             
-             //in case the grid is not squared, we might have rectangular grid 
-            double step0 = (_x_u(0) - _x_l(0)) / n_grid_ ;
-            double step1 = (_x_u(1) - _x_l(1)) / n_grid_ ;
-
-            Vec x(2);
-
-            for(int i = 0; i < n_grid_ ; i++){
-                for(int j = 0; j < n_grid_ ; j++){
-                    
-                    x(0) = _x_l(0) + i * step0;
-                    x(1) = _x_l(1) + j * step1;
-                    f = _func->eval_f(x);
-
-                    if(f <= fmin){
-                        fmin = f;
-                        x_min = x;
-                    }
-                }
-            }
             //------------------------------------------------------//
             _f_min = fmin;
             std::cout<<"Minimum value of the function is: "<<fmin<<" at x:\n"<<x_min<<std::endl;
@@ -90,52 +97,66 @@ namespace AOPT {
             // algorithm to find minimum value of a nd quadratic function
             // set f_min with the minimum, which is then stored in the referenced argument _f_min
 
-            //assume the cuboids have vertices of equal length and dim >= 1 
-            if(n < 1){
-                std::cout << "Error: dimension is not >= 1!" << std::endl;
-                return -1;
-            }
-
-            double start = _x_l(0);
-            double step = (_x_u(0) - _x_l(0)) / n_grid_ ;
-            int dim = n - 1;
-
-            Vec x(n);
+			Vec v;
+			f_min = recursive_grid_search_nd(_func, _x_l, _x_u, f_min, &x_min, 0, v);
             
-            grid_search_recu(_func,start,step,x,f_min,x_min,dim);
-
             //------------------------------------------------------//
             _f_min = f_min;
             std::cout << "Minimum value of the function is: " << f_min << " at x:\n" << x_min << std::endl;
+            std::cout << "Number of tests: "<<n_tests_<<std::endl;
 
             return 0;
-        }
-
-        void grid_search_recu(FunctionBase* _func, const double start, const double step, Vec& x,double& fmin,Vec& xmin, int dim) const {
-            
-            for(int i = 0; i < n_grid_; i++){
-                
-                x(dim) = start + i * step;
-
-                if(dim <= 0){
-                    double f = _func->eval_f(x);
-                    if(f <= fmin){
-                        fmin = f;
-                        xmin = x;
-
-                    }
-                } else{
-                 
-                    grid_search_recu(_func,start,step,x,fmin,xmin,dim-1);
-                
-                }
-            }
         }
 
 
 
     private:
-        int n_grid_;
+        int n_cells_;
+        mutable int n_tests_ = 0;
+        
+        // Recursive function
+		double recursive_grid_search_nd(FunctionBase* _func, const Vec& _x_l, const Vec& _x_u, double current_min, Vec* x_min, int index, Vec vals) const {
+			
+			// Eval function
+			if (index == _x_l.rows()) {
+				n_tests_++;
+				return (*_func).eval_f(vals);
+			}
+			
+			// Should not be necessary, but prevent index errors
+			if (index > _x_l.rows()) { return current_min; }
+			
+			
+			double new_min = current_min;
+			double step = (_x_u(index) - _x_l(index)) / n_cells_;
+			Vec v;
+			
+			for (double i = _x_l(index); i <= _x_u(index); i += step) {
+					
+					
+				// Add a new point to the vector
+				v = vals;
+				v.resize(v.rows() + 1);
+				v(v.rows() - 1) = i;
+				
+        		// Recursive call to inspect lower dimensions
+        		double m = recursive_grid_search_nd(_func, _x_l, _x_u, new_min, x_min, index + 1, v);
+        		
+        		// Check if a better result has been found
+        		if (m < new_min) {
+        		
+        			// Save the new min
+        			new_min = m;
+        			
+        			// Save the coordinates
+        			// Bad, but... for some reason, *x_min = v only copies the first value
+        			for (int j = 0; j < v.rows(); j++) {
+        				(*x_min)(j) = v(j);
+        			}
+        		}
+			}
+		return new_min;
+		}
     };
 
     //=============================================================================
