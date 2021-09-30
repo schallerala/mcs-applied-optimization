@@ -100,9 +100,11 @@ namespace AOPT {
                 x_min = _x_l;
             }
             else {
+                const int grid_n_steps = n_grid_ + 1;
+
                 long iteration_limit = 1;
                 for (size_t i = 0; i < n; i++) {
-                    iteration_limit *= n_grid_;
+                    iteration_limit *= grid_n_steps;
                 }
 
                 // represent the size of an n dimension increment to move on the grid on all dimensions
@@ -118,8 +120,6 @@ namespace AOPT {
 
                 // value of 1 evaluation
                 double f;
-
-                const int grid_n_index = n_grid_ - 1;
 
                 for (long i = 0; i < iteration_limit; i++) {
 
@@ -138,7 +138,7 @@ namespace AOPT {
                     // 000 -> 001
                     // 004 -> 010
                     for (Eigen::Index j = 0; j < n; ++j) {
-                        if (grid_x[j] == grid_n_index) {
+                        if (grid_x[j] == n_grid_) {
                             // restart and increment next
                             grid_x[j] = 0;
                         } else {
