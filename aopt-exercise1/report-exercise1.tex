@@ -38,16 +38,124 @@
 
 \newquestion{Example sets}
 
-\question{Sketch the following sets in R2}
+\question{Sketch the following sets in $R^2$}
 \begin{enumerate}
     \questioncolor
     \item $\displaystyle \text{span}\left\{\binom{1}{1}, \binom{-0.5}{-0.5} \right\} $ \normalcolor
+
+    \begin{figure}[H]
+        \center
+    \begin{tikzpicture}
+    \begin{axis}[
+        %width=0.4\textwidth,
+        axis lines=middle,
+        xmax=2,
+        ymax=2,
+        xmin=-2,
+        ymin=-2,
+        % xlabel={$p_1$},
+        % ylabel={$p_2$}
+    ]
+        \addplot[NavyBlue,samples=2,domain=-2:2,fill opacity=0.05,line width=1.5pt] {x};
+        \draw[->, line width=3pt, color=OrangeRed] (0,0) -- (1,1);
+        \draw[->, line width=3pt, color=OrangeRed] (0,0) -- (-0.5,-0.5);
+    \end{axis}
+    \end{tikzpicture}
+
+    \end{figure}
+
+
+    \pagebreak
     \questioncolor
     \item $\displaystyle \text{span}\left\{\binom{1}{1}, \binom{0.5}{-0.5} \right\} $ \normalcolor
+
+
+    \begin{figure}[H]
+        \center
+    \begin{tikzpicture}
+    \begin{axis}[
+        %width=0.4\textwidth,
+        axis lines=middle,
+        xmax=2,
+        ymax=2,
+        xmin=-2,
+        ymin=-2,
+        % xlabel={$p_1$},
+        % ylabel={$p_2$}
+    ]
+        \draw[pattern=north west lines, pattern color=NavyBlue,fill opacity=0.7] (-2.1,-2.1) rectangle (4.1,4.1);
+        \draw[->, line width=3pt, color=OrangeRed] (0,0) -- (1,1);
+        \draw[->, line width=3pt, color=OrangeRed] (0,0) -- (0.5,-0.5);
+    \end{axis}
+    \end{tikzpicture}
+
+    \end{figure}
+
+
     \questioncolor
     \item $\displaystyle \text{aff}\left\{\binom{1}{0}, \binom{1}{-1} \right\} $ \normalcolor
+
+
+
+    \begin{figure}[H]
+        \center
+    \begin{tikzpicture}
+    \begin{axis}[
+        %width=0.4\textwidth,
+        axis lines=middle,
+        xmax=2,
+        ymax=2,
+        xmin=-2,
+        ymin=-2,
+        % xlabel={$p_1$},
+        % ylabel={$p_2$}
+    ]
+        \draw[color=NavyBlue,fill opacity=0.7,line width=1.5pt] (1,-2) -- (1,2);
+        \draw[->, line width=3pt, color=OrangeRed] (0,0) -- (1,0);
+        \draw[->, line width=3pt, color=OrangeRed] (0,0) -- (1,-1);
+    \end{axis}
+    \end{tikzpicture}
+
+    \end{figure}
+
+
+    \pagebreak
     \questioncolor
     \item $\displaystyle \text{conv}\left\{\binom{1}{0}, \binom{2}{1}, \binom{3}{-2}, \binom{-1}{0}, \binom{-2}{1}, \binom{-2}{-2} \right\} $ \normalcolor
+
+
+    \begin{figure}[H]
+        \center
+    \begin{tikzpicture}
+    \begin{axis}[
+        %width=0.4\textwidth,
+        axis lines=middle,
+        xmax=4,
+        ymax=2,
+        xmin=-3,
+        ymin=-3,
+        % xlabel={$p_1$},
+        % ylabel={$p_2$}
+    ]
+        \draw[pattern=north west lines, pattern color=NavyBlue,color=NavyBlue,fill opacity=0.7,line width=1.5pt]
+        (2,1) --
+        (3,-2) --
+        (-2,-2) --
+        (-2,1) --
+        cycle;
+        \draw[OrangeRed,fill]
+            (1,0) circle [radius=3pt]
+            (2,1) circle [radius=3pt]
+            (3,-2) circle [radius=3pt]
+            (-1,0) circle [radius=3pt]
+            (-2,1) circle [radius=3pt]
+            (-2,-2) circle [radius=3pt];
+    \end{axis}
+    \end{tikzpicture}
+
+    \end{figure}
+
+
 \end{enumerate}
 
 
