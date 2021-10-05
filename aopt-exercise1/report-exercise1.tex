@@ -181,7 +181,7 @@
 
 
 
-
+\todo{Add space between sections/questions after completing all todos}
 \newquestion{Linear Equations}
 
 \question{Show that the solution set of linear equations $\{x | Ax = b\}$ with $x \in R^n$, $A \in R^{m×n}$ and $b \in R^m$ is an affine set.}
@@ -264,7 +264,7 @@ then we have the halfspace $$\left\{x \bigg| (b-a)^T x \le \frac{(b-a)^T(b-a)}{2
 
 \question{Show that the solution $p^∗ =(p_1^∗,p_2^∗,...,p_∗^n)^T \in R^n$ of the non-convex illumination problem from the lecture
 \begin{align*}
-    \text{minimize}&\quad \max\limits_{k=1...m} | \log I_k - \log I_{des} |\\
+    \text{minimize}&\quad \max\limits_{k=1...m} \big| \log I_k - \log I_{des} \big|\\
     \text{subject to}&\quad 0 \le p_j \le p_{max}, \quad j=1...n
 \end{align*}
 with $I_k =\sum\limits_{j = 1}^{n} a_{kj} p_j$ for geometric constants $a_{jk} \in R$, a constant desired illumination $I_{des} \in R$ and an upper bound $p_{max} \in R$ on the lamp power, is identical to the solution of the following equivalent (convex) problem
@@ -273,6 +273,30 @@ with $I_k =\sum\limits_{j = 1}^{n} a_{kj} p_j$ for geometric constants $a_{jk} \
     \text{subject to}&\quad 0 \le p_j \le p_{max}, \quad j=1...n
 \end{align*}
 with $h(u) = max\{u, \frac{1}{u}\}$.}
+
+
+\begin{proof}
+    \begin{alignat*}{2}
+        \max_{k=1,...,m}& \big| \log(I_k) - \log(I_{des}) \big|
+        \quad&& \Big|\ \text{log rules}\\%
+%
+        &= \max_{k=1,...,m} \Bigg| \log \bigg( \frac{I_k}{I_{des}} \bigg) \Bigg|
+        \quad&& \Big|\ \text{remove | . |}\\%
+%
+        &= \max_{k=1,...,m} \max \Bigg\{ \log \bigg( \frac{I_k}{I_{des}} \bigg), \log \bigg( \frac{I_{des}}{I_k} \bigg) \Bigg\}
+        \quad&& \Big|\ \text{max log = log max}\\%
+%
+        &= \log \max_{k=1,...,m} \max \Bigg\{  \frac{I_k}{I_{des}} , \frac{I_{des}}{I_k} \Bigg\}
+        \quad&& \Big|\ \text{with}\ h=(u) = max \bigg\{u, \frac{1}{u}\bigg\}\\%
+%
+        &= \log \max_{k=1,...,m} h \bigg( \frac{I_k}{I_{des}} \bigg)
+    \end{alignat*}
+
+The $\log$ is a monotonically increasing function, i.e. $\forall x, y$ with $x \le y$ we have $\log(x) \le \log(y)$.\\
+So when minimizing, we can remove it without affecting the solution.
+
+$\Rightarrow = \max_{k=1,...,m} h \bigg( \frac{I_k}{I_{des}} \bigg)$ with $h(u) = \max \bigg\{ u, \frac{1}{u} \bigg\}$.
+\end{proof}
 
 
 \end{document}
