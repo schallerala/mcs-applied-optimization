@@ -1,0 +1,99 @@
+\input{model}
+
+
+\title{
+    % \vspace{-2cm}
+    \mcslogo[0.3\textwidth]\\[0.9cm]
+    Applied Optimization\\
+    Exercise 1 - Convex Sets
+}
+\student{
+    V. Carrel \& J. Fontana \& A. Schaller%\\
+    % \texttt{20-209-151} \& \texttt{07-406-341} \& \texttt{16-896-375}
+}
+\prof{Prof. David Bommes}
+
+\seriesnumber{1}
+\author{\thestudent\theprof}
+
+\lhead{\unilogo}
+\rhead{\thestudent\\\theseriesnumber}
+
+
+% \usepgfplotslibrary{fillbetween}
+\pgfplotsset{compat=newest}
+% \usepackage{fontawesome}
+
+\raggedbottom % To avoid stretching the items to fill a page
+% ---------------------- DOCUMENT ----------------------------
+\begin{document}
+
+
+\maketitle
+
+%
+% Convex Sets
+% ---------------------------------
+\section{Convex Sets}
+
+\newquestion{Example sets}
+
+\question{Sketch the following sets in R2}
+\begin{enumerate}
+    \questioncolor
+    \item SPAN \normalcolor
+    \questioncolor
+    \item SPAN \normalcolor
+    \questioncolor
+    \item AFF \normalcolor
+    \questioncolor
+    \item CONV \normalcolor
+\end{enumerate}
+
+
+
+\newquestion{Convexity}
+
+\question{Let $C \in R^n$ be a convex set, with $x_1,...,x_k \in C$, and let $\theta_1,...,\theta_k \in R$ satisfy $\theta_i \ge 0,\theta_1 + ... + \theta_k = 1$. Show that $\theta_1 x_1 + ... + \theta_k x_k \in C$. (The definition of convexity is that this holds for $k = 2$; you must show it for arbitrary $k$.) Hint. Use induction on $k$.}
+
+
+\newquestion{Linear Equations}
+
+\question{Show that the solution set of linear equations $\{x | Ax = b\}$ with $x \in R^n$, $A \in R^{m×n}$ and $b \in R^m$ is an affine set.}
+
+\newquestion{Linear Inequations}
+
+\begin{enumerate}
+    \questioncolor
+    \item Show that the solution set of linear inequations $\{x | Ax \preceq b, Cx = d\}$ with $x \in R^n$, $A \in R^{m×n}$ and $b \in R^m$, $C \in R^{k×n}$ and $d \in R^k$ is a convex set. Here $\preceq$ means componentwise less or equal. \normalcolor
+
+    \questioncolor
+    \item Is it an affine set? \normalcolor
+\end{enumerate}
+
+
+
+\newquestion{Voronoi description of halfspace}
+
+\question{Let $a$ and $b$ be distinct points in $R^n$. Show that the set of all points that are closer (in Euclidean norm) to $a$ than $b$, i.e., $\{x | \left\lVert x − a\right\rVert ^2 \le \left\lVert x − b\right\rVert ^2\}$, is a halfspace. Describe it explicitly as an inequality of the form $c^T x \le d$. Draw a picture.}
+
+
+%
+% Convex Illumination Problem
+% ---------------------------------
+\section{Convex Illumination Problem}
+
+\question{Show that the solution $p^∗ =(p_1^∗,p_2^∗,...,p_∗^n)^T \in R^n$ of the non-convex illumination problem from the lecture
+\begin{align*}
+    \text{minimize}&\quad \max\limits_{k=1...m} | \log I_k - \log I_{des} |\\
+    \text{subject to}&\quad 0 \le p_j \le p_{max}, \quad j=1...n
+\end{align*}
+with $I_k =\sum\limits_{j = 1}^{n} a_{kj} p_j$ for geometric constants $a_{jk} \in R$, a constant desired illumination $I_{des} \in R$ and an upper bound $p_{max} \in R$ on the lamp power, is identical to the solution of the following equivalent (convex) problem
+\begin{align*}
+    \text{minimize}&\quad \max\limits_{k=1...m} h(I_k / I_{des})\\
+    \text{subject to}&\quad 0 \le p_j \le p_{max}, \quad j=1...n
+\end{align*}
+with $h(u) = max\{u, \frac{1}{u}\}$.}
+
+
+\end{document}
