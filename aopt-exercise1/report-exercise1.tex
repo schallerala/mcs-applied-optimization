@@ -226,6 +226,36 @@
 
 \question{Let $a$ and $b$ be distinct points in $R^n$. Show that the set of all points that are closer (in Euclidean norm) to $a$ than $b$, i.e., $\{x | \left\lVert x − a\right\rVert ^2 \le \left\lVert x − b\right\rVert ^2\}$, is a halfspace. Describe it explicitly as an inequality of the form $c^T x \le d$. Draw a picture.}
 
+\begin{proof}
+Be $c \in R^n$ a vector, $c = b - a$ be $d \in R$, $d=c^T x_0 = c^T \frac{a+b}{2}$
+
+then we have the halfspace $$\left\{x \bigg| (b-a)^T x \le \frac{(b-a)^T(b-a)}{2}\right\} $$
+\end{proof}
+
+\emph{Check.} $$\left\lVert x-a \right\rVert^2 \le \left\lVert x-b \right\rVert^2$$$$\Leftrightarrow (x-a)^T(x-a) \le (x-b)^T(x-b)$$$$\Leftrightarrow \cancel{x^Tx} -2a^Tx+a^Ta \le \cancel{x^Tx}-2b^Tx + b^Tb$$$$\Leftrightarrow (b-a)^T x \le (b^Tb-a^Ta)\ \frac{1}{2}$$
+
+\begin{figure}[H]
+    \center
+    \begin{tikzpicture}
+        \draw (-2,-2) -- (2,2);
+        \draw[->] (0,0) -- (-2,2);
+        \draw[fill]
+        (-0.4,1.3) circle [radius=2pt]
+        (0.4,0.4) circle [radius=2pt]
+        (1,-0.4) circle [radius=2pt];
+        \node at (-1.5,1){c};
+        \node at (-0.1,1.6){a};
+        \node at (0.8,0.3){b};
+        \node at (1.3,-0.2){d};
+    \end{tikzpicture}
+    \todo{ok placement of points?}
+\end{figure}
+
+
+
+
+
+
 
 %
 % Convex Illumination Problem
