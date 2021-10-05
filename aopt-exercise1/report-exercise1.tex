@@ -159,7 +159,8 @@
 \end{enumerate}
 
 
-
+\bigskip
+\bigskip
 \newquestion{Convexity}
 
 \question{Let $C \in R^n$ be a convex set, with $x_1,...,x_k \in C$, and let $\theta_1,...,\theta_k \in R$ satisfy $\theta_i \ge 0$,$\theta_1 + ... + \theta_k = 1$. Show that $\theta_1 x_1 + ... + \theta_k x_k \in C$. (The definition of convexity is that this holds for $k = 2$; you must show it for arbitrary $k$.) Hint. Use induction on $k$.}
@@ -181,7 +182,6 @@
 
 
 
-\todo{Add space between sections/questions after completing all todos}
 \newquestion{Linear Equations}
 
 \question{Show that the solution set of linear equations $\{x | Ax = b\}$ with $x \in R^n$, $A \in R^{m×n}$ and $b \in R^m$ is an affine set.}
@@ -196,6 +196,8 @@
 
 
 
+\bigskip
+\bigskip
 \newquestion{Linear Inequations}
 
 \begin{enumerate}
@@ -203,9 +205,12 @@
     \item Show that the solution set of linear inequations $\{x | Ax \preceq b, Cx = d\}$ with $x \in R^n$, $A \in R^{m×n}$ and $b \in R^m$, $C \in R^{k×n}$ and $d \in R^k$ is a convex set. Here $\preceq$ means componentwise less or equal. \normalcolor
 
     \begin{proof}
-        Let $x_0, x_1$ be solutions of linear inequations, i.e. $A x_0 \preceq b, C x_0 = d$ \\\todo{what is written on sheet? "an"} $A x_1 \preceq b, C x_1 = d$, for $\beta \in [0, 1]$ \\\todo{Beta? Not mentioned until here}
+        Let $x_0, x_1$ be solutions of linear inequations, i.e. $A x_0 \preceq b, C x_0 = d$ and $A x_1 \preceq b, C x_1 = d$, for $\beta \in [0, 1]$
 
-        Then $$A((1-\beta)x_0 + \beta x_1) = \underbrace{(1-\beta)}_\text{$\ge 0$} \underbrace{A x_0}_\text{$\preceq b$} + \underbrace{\beta}_\text{$\ge 0$} \underbrace{A x_1}_\text{$\preceq b$} \preceq (1-\beta) b + \beta b = b$$
+        Then
+        \begin{equation}\label{eq:eq1}
+            A((1-\beta)x_0 + \beta x_1) = \underbrace{(1-\beta)}_\text{$\ge 0$} \underbrace{A x_0}_\text{$\preceq b$} + \underbrace{\beta}_\text{$\ge 0$} \underbrace{A x_1}_\text{$\preceq b$} \preceq (1-\beta) b + \beta b = b
+        \end{equation}
 
         and $$C((1-\beta) x_0 + \beta x_1) = (1-\beta) C x_0 + \beta C x_1 = (1-\beta) d + \beta d = d$$
 
@@ -217,11 +222,13 @@
     \questioncolor
     \item Is it an affine set? \normalcolor
 
-    No, $C \in $\todo{...in what?}, if we don't have the $a_i \ge 0$ for $\forall i$ constraint, we could have $(1-\beta) < 0$, and therefore $(1-\beta) A x_0 \npreceq b \hfill \blacksquare$
+    No, cf \simpleref{eq:eq1}, if we don't have the $a_i \ge 0$ for $\forall i$ constraint, it removes the constraint on the $\beta \in [0,1]$, which then means we could have $(1-\beta) < 0$. Therefore the step $(1-\beta)Ax_0 \le b$ is not doable, we might have $(1-\beta)Ax_0 \ge b$\hfill $\blacksquare$
 \end{enumerate}
 
 
 
+
+\pagebreak
 \newquestion{Voronoi description of halfspace}
 
 \question{Let $a$ and $b$ be distinct points in $R^n$. Show that the set of all points that are closer (in Euclidean norm) to $a$ than $b$, i.e., $\{x | \left\lVert x − a\right\rVert ^2 \le \left\lVert x − b\right\rVert ^2\}$, is a halfspace. Describe it explicitly as an inequality of the form $c^T x \le d$. Draw a picture.}
@@ -237,18 +244,22 @@ then we have the halfspace $$\left\{x \bigg| (b-a)^T x \le \frac{(b-a)^T(b-a)}{2
 \begin{figure}[H]
     \center
     \begin{tikzpicture}
-        \draw (-2,-2) -- (2,2);
-        \draw[->] (0,0) -- (-2,2);
+        \draw[->,color=gray] (0,0) -- (-1,1);
+        \node[color=gray] at (-0.8,0.3){c};
+
+        \draw[color=Aquamarine,line width=1.5pt] (-2,-2) -- (2,2);
+
         \draw[fill]
-        (-0.4,1.3) circle [radius=2pt]
-        (0.4,0.4) circle [radius=2pt]
-        (1,-0.4) circle [radius=2pt];
-        \node at (-1.5,1){c};
-        \node at (-0.1,1.6){a};
-        \node at (0.8,0.3){b};
-        \node at (1.3,-0.2){d};
+        (-1,2) circle [radius=2pt]
+        (0.5,0.5) circle [radius=2pt]
+        (2,-1) circle [radius=2pt];
+
+        \begin{scope}[shift={(0.5,0.1)}]
+            \node at (-1,2){a};
+            \node at (0.5,0.5){d};
+            \node at (2,-1){b};
+        \end{scope}
     \end{tikzpicture}
-    \todo{ok placement of points?}
 \end{figure}
 
 
@@ -260,6 +271,7 @@ then we have the halfspace $$\left\{x \bigg| (b-a)^T x \le \frac{(b-a)^T(b-a)}{2
 %
 % Convex Illumination Problem
 % ---------------------------------
+\pagebreak
 \section{Convex Illumination Problem}
 
 \question{Show that the solution $p^∗ =(p_1^∗,p_2^∗,...,p_∗^n)^T \in R^n$ of the non-convex illumination problem from the lecture
