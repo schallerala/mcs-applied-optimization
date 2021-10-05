@@ -162,12 +162,39 @@
 
 \newquestion{Convexity}
 
-\question{Let $C \in R^n$ be a convex set, with $x_1,...,x_k \in C$, and let $\theta_1,...,\theta_k \in R$ satisfy $\theta_i \ge 0,\theta_1 + ... + \theta_k = 1$. Show that $\theta_1 x_1 + ... + \theta_k x_k \in C$. (The definition of convexity is that this holds for $k = 2$; you must show it for arbitrary $k$.) Hint. Use induction on $k$.}
+\question{Let $C \in R^n$ be a convex set, with $x_1,...,x_k \in C$, and let $\theta_1,...,\theta_k \in R$ satisfy $\theta_i \ge 0$,$\theta_1 + ... + \theta_k = 1$. Show that $\theta_1 x_1 + ... + \theta_k x_k \in C$. (The definition of convexity is that this holds for $k = 2$; you must show it for arbitrary $k$.) Hint. Use induction on $k$.}
+
+\emph{Show.} that $\theta_1 + ... + \theta_k \in C$
+
+\begin{proof}
+
+    \underline{Base Case $k = 2$} By definition, it holds for $k = 2$.
+
+    \underline{Inductive Step} Assume it is correct for $k = n$, then for $k = n + 1$, we have:
+    $$x_1,...,x_{n+1} \in C$$
+    $$\theta_1,...,\theta_{n+1} \in C$$
+    with $\theta_i \ge 0$ and $\sum\limits_{i=0}^{n+1} \theta_i = 1 \Rightarrow \theta_{n+1} = 1 - \sum\limits_{i=1}^{n} \theta_i$
+    $$\Rightarrow \sum_{i=1}^{n+1} \theta_i x_i = \sum_{i=1}^{n} \theta_i x_i + \theta_{n+1} x_{n+1} = \sum_{i=1}^{n} \theta_i x_i + x_{n+1} = \sum_{i=1}^{n} \theta_i x_{n+1}$$%
+    $$= \underbrace{x_{n+1}}_\text{$\in C$} \underbrace{\sum_{i=1}^{n} \theta_i (x_i - x_{n+1})}_{\substack{\text{$\in C$ by hypothesis on $k=n$} \\ \text{because $\sum\limits_{i=1}^{n}\theta_i \in [0,1]$}}} \Biggr\} \Rightarrow \in C $$
+
+\end{proof}
+
+
 
 
 \newquestion{Linear Equations}
 
 \question{Show that the solution set of linear equations $\{x | Ax = b\}$ with $x \in R^n$, $A \in R^{m×n}$ and $b \in R^m$ is an affine set.}
+
+\begin{proof}
+    Let $x_0, x_1$ be solutions of linear equations, i.e. $A x_0 = b$ and $A x_1 = b$
+
+    Then $$A((1-\beta)x_0 + \beta x_1) = (1-\beta) A x_0 + \beta A x_1$$$$ = (1-\beta)b + \beta b = b$$
+
+    $\Rightarrow$ The set is affine.
+\end{proof}
+
+
 
 \newquestion{Linear Inequations}
 
@@ -175,8 +202,22 @@
     \questioncolor
     \item Show that the solution set of linear inequations $\{x | Ax \preceq b, Cx = d\}$ with $x \in R^n$, $A \in R^{m×n}$ and $b \in R^m$, $C \in R^{k×n}$ and $d \in R^k$ is a convex set. Here $\preceq$ means componentwise less or equal. \normalcolor
 
+    \begin{proof}
+        Let $x_0, x_1$ be solutions of linear inequations, i.e. $A x_0 \preceq b, C x_0 = d$ \\\todo{what is written on sheet? "an"} $A x_1 \preceq b, C x_1 = d$, for $\beta \in [0, 1]$ \\\todo{Beta? Not mentioned until here}
+
+        Then $$A((1-\beta)x_0 + \beta x_1) = \underbrace{(1-\beta)}_\text{$\ge 0$} \underbrace{A x_0}_\text{$\preceq b$} + \underbrace{\beta}_\text{$\ge 0$} \underbrace{A x_1}_\text{$\preceq b$} \preceq (1-\beta) b + \beta b = b$$
+
+        and $$C((1-\beta) x_0 + \beta x_1) = (1-\beta) C x_0 + \beta C x_1 = (1-\beta) d + \beta d = d$$
+
+        $\Rightarrow$ convex set.
+    \end{proof}
+
+
+
     \questioncolor
     \item Is it an affine set? \normalcolor
+
+    No, $C \in $\todo{...in what?}, if we don't have the $a_i \ge 0$ for $\forall i$ constraint, we could have $(1-\beta) < 0$, and therefore $(1-\beta) A x_0 \npreceq b \hfill \blacksquare$
 \end{enumerate}
 
 
