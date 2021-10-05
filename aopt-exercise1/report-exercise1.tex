@@ -222,7 +222,7 @@
     \questioncolor
     \item Is it an affine set? \normalcolor
 
-    No, cf \simpleref{eq:eq1}, if we don't have the $a_i \ge 0$ for $\forall i$ constraint, it removes the constraint on the $\beta \in [0,1]$, which then means we could have $(1-\beta) < 0$. Therefore the step $(1-\beta)Ax_0 \le b$ is not doable, we might have $(1-\beta)Ax_0 \ge b$\hfill $\blacksquare$
+    No, cf \simpleref{eq:eq1}, if we don't have the $a_i \ge 0$ for $\forall i$ constraint, it removes the constraint on the $\beta \in [0,1]$, which then means we could have $(1-\beta) < 0$. Therefore the step $(1-\beta)Ax_0 \preceq b$ is not doable, we might have $(1-\beta)Ax_0 \succeq b$. \hfill $\blacksquare$
 \end{enumerate}
 
 
@@ -244,8 +244,8 @@ then we have the halfspace $$\left\{x \bigg| (b-a)^T x \le \frac{(b-a)^T(b-a)}{2
 \begin{figure}[H]
     \center
     \begin{tikzpicture}
-        \draw[->,color=gray] (0,0) -- (-1,1);
-        \node[color=gray] at (-0.8,0.3){c};
+        \draw[->,color=gray] (0,0) -- (-3,3);
+        \node[color=gray] at (-2.5,2){c};
 
         \draw[color=Aquamarine,line width=1.5pt] (-2,-2) -- (2,2);
 
