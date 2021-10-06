@@ -21,6 +21,7 @@
 \usepackage{mathtools}
 \usepackage{amsthm} % adds proof env
 \usepackage{amssymb} % add math symbols
+\usepackage{pxfonts} % add math symbols
 \usepackage{cancel} % https://tex.stackexchange.com/a/75530/164820
 \usepackage{ifthen} % provides \ifthenelse test
 \usepackage{xifthen} % provides \isempty test
@@ -53,7 +54,7 @@
 \newcommand{\student}[1]{\def\@student{#1}}
 \newcommand{\thestudent}{\@ifundefined{@student}{}{\@student}}
 \newcommand{\seriesnumber}[1]{\def\@seriesnumber{#1}}
-\newcommand{\theseriesnumber}{\@ifundefined{@seriesnumber}{}{Series \@seriesnumber}}
+\newcommand{\theseriesnumber}{\@ifundefined{@seriesnumber}{}{Exercise \@seriesnumber}}
 \makeatother
 
 
