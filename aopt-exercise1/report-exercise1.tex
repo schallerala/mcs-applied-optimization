@@ -53,14 +53,16 @@
     \begin{axis}[
         %width=0.4\textwidth,
         axis lines=middle,
-        xmax=2,
-        ymax=2,
-        xmin=-2,
-        ymin=-2,
+        xmax=2.1,
+        ymax=2.1,
+        xmin=-2.1,
+        ymin=-2.1,
         % xlabel={$p_1$},
         % ylabel={$p_2$}
+        grid=both,
+        grid style={line width=.1pt, draw=gray!20},
     ]
-        \addplot[NavyBlue,samples=2,domain=-2:2,fill opacity=0.05,line width=1.5pt] {x};
+        \addplot[NavyBlue,samples=2,fill opacity=0.05,line width=1.5pt] {x};
         \draw[->, line width=3pt, color=OrangeRed] (0,0) -- (1,1);
         \draw[->, line width=3pt, color=OrangeRed] (0,0) -- (-0.5,-0.5);
     \end{axis}
@@ -80,12 +82,14 @@
     \begin{axis}[
         %width=0.4\textwidth,
         axis lines=middle,
-        xmax=2,
-        ymax=2,
-        xmin=-2,
-        ymin=-2,
+        xmax=2.1,
+        ymax=2.1,
+        xmin=-2.1,
+        ymin=-2.1,
         % xlabel={$p_1$},
         % ylabel={$p_2$}
+        grid=both,
+        grid style={line width=.1pt, draw=gray!20},
     ]
         \draw[pattern=north west lines, pattern color=NavyBlue,fill opacity=0.7] (-2.1,-2.1) rectangle (4.1,4.1);
         \draw[->, line width=3pt, color=OrangeRed] (0,0) -- (1,1);
@@ -107,14 +111,16 @@
     \begin{axis}[
         %width=0.4\textwidth,
         axis lines=middle,
-        xmax=2,
-        ymax=2,
-        xmin=-2,
-        ymin=-2,
+        xmax=2.1,
+        ymax=2.1,
+        xmin=-2.1,
+        ymin=-2.1,
         % xlabel={$p_1$},
         % ylabel={$p_2$}
+        grid=both,
+        grid style={line width=.1pt, draw=gray!20},
     ]
-        \draw[color=NavyBlue,fill opacity=0.7,line width=1.5pt] (1,-2) -- (1,2);
+        \draw[color=NavyBlue,fill opacity=0.7,line width=1.5pt] (1,-2.1) -- (1,2.1);
         \draw[->, line width=3pt, color=OrangeRed] (0,0) -- (1,0);
         \draw[->, line width=3pt, color=OrangeRed] (0,0) -- (1,-1);
     \end{axis}
@@ -134,12 +140,14 @@
     \begin{axis}[
         %width=0.4\textwidth,
         axis lines=middle,
-        xmax=4,
-        ymax=2,
-        xmin=-3,
-        ymin=-3,
+        xmax=4.1,
+        ymax=2.1,
+        xmin=-3.1,
+        ymin=-3.1,
         % xlabel={$p_1$},
         % ylabel={$p_2$}
+        grid=both,
+        grid style={line width=.1pt, draw=gray!20},
     ]
         \draw[pattern=north west lines, pattern color=NavyBlue,color=NavyBlue,fill opacity=0.7,line width=1.5pt]
         (2,1) --
@@ -248,10 +256,13 @@ then we have the halfspace $$\left\{x \bigg| (b-a)^T x \le \frac{(b-a)^T(b-a)}{2
 \begin{figure}[H]
     \center
     \begin{tikzpicture}
-        \draw[->,color=gray] (0,0) -- (-3,3);
+        \draw[step=.5,line width=.1pt, draw=gray!20]
+            (-3.1,-3.1) grid (3.1,3.1);
+
+        \draw[->,color=gray,thick] (0,0) -- (-3,3);
         \node[color=gray] at (-2.5,2){c};
 
-        \draw[color=Aquamarine,line width=1.5pt] (-2.5,-2.5) -- (3,3);
+        \draw[color=Aquamarine,line width=1.5pt] (-3.1,-3.1) -- (3.1,3.1);
 
         \draw[fill]
         (-1,2) circle [radius=2pt]
