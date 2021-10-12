@@ -1,6 +1,9 @@
 #include <iostream>
 #include <Utils/StopWatch.hh>
 #include <Algorithms/ConvexityTest.hh>
+#include <Functions/Exercise1Function1D.hh>
+#include <Functions/Exercise2Function1D.hh>
+#include <Functions/Exercise3Function2D.hh>
 #include <Functions/FunctionQuadratic2D.hh>
 #include <Functions/FunctionQuadraticND.hh>
 #include <Functions/FunctionNonConvex2D.hh>
@@ -101,6 +104,39 @@ TEST(ConvexityTest, NonConvex2DIsNonConvexOnYetAnotherInterval){
     
     const double min(10), max(20);
     const int n_evals(10);
+    ASSERT_FALSE(AOPT::ConvexityTest::isConvex(&function, min, max, n_evals));
+}
+
+
+
+TEST(ConvexityTest, ConvexExercise1){
+
+    AOPT::Exercise1Function1D function;
+
+    const double min(-100), max(100);
+    const int n_evals(100);
+    ASSERT_TRUE(AOPT::ConvexityTest::isConvex(&function, min, max, n_evals));
+}
+
+
+
+TEST(ConvexityTest, ConvexExercise2){
+
+    AOPT::Exercise2Function1D function;
+
+    const double min(-100), max(100);
+    const int n_evals(100);
+    ASSERT_TRUE(AOPT::ConvexityTest::isConvex(&function, min, max, n_evals));
+}
+
+
+
+TEST(ConvexityTest, NonConvexExercise3){
+
+    AOPT::Exercise3Function2D function;
+
+    const double min(-100), max(100);
+    const int n_evals(100);
     ASSERT_FALSE(AOPT::ConvexityTest::isConvex(&function, min, max, n_evals));
 }
 
