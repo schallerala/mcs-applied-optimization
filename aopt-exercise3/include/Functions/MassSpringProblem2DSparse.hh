@@ -145,17 +145,17 @@ namespace AOPT {
             }
         }
 
-        void add_constrained_spring_element(const int _v_idx, const double _w = 1., const double _px = 0.,
-                                            const double _py = 0.) {
-            if (2 * _v_idx > (int) n_ || _v_idx < 0)
-                std::cout << "Warning: invalid node constraint element was added... " << _v_idx << std::endl;
-            else {
-                attached_node_indices_.push_back(_v_idx);
-                weights_.push_back(_w);
-                desired_points_.push_back(_px);
-                desired_points_.push_back(_py);
-            }
-        }
+//        void add_constrained_spring_element(const int _v_idx, const double _w = 1., const double _px = 0.,
+//                                            const double _py = 0.) {
+//            if (2 * _v_idx > (int) n_ || _v_idx < 0)
+//                std::cout << "Warning: invalid node constraint element was added... " << _v_idx << std::endl;
+//            else {
+//                attached_node_indices_.push_back(_v_idx);
+//                weights_.push_back(_w);
+//                desired_points_.push_back(_px);
+//                desired_points_.push_back(_py);
+//            }
+//        }
 
 
     private:
@@ -176,19 +176,18 @@ namespace AOPT {
         Mat he_;
 
 
-        std::vector<int> attached_node_indices_;
+//        std::vector<int> attached_node_indices_;
 
-
-        //vector of constants
-        std::vector<double> weights_;
-        std::vector<double> desired_points_;
+//        //vector of constants
+//        std::vector<double> weights_;
+//        std::vector<double> desired_points_;
 
         // coordinates of each attached node (local)
-        Vec cs_xe_;
-        // gradient of each attached node
-        Vec cs_ge_;
-        // hessian of each node constraint element
-        Mat cs_he_;
+//        Vec cs_xe_;
+//        // gradient of each attached node
+//        Vec cs_ge_;
+//        // hessian of each node constraint element
+//        Mat cs_he_;
     };
 
 //=============================================================================
