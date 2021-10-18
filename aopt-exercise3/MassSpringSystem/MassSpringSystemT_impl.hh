@@ -84,13 +84,13 @@ namespace AOPT {
                     // connect vertically to edge on top
                     sg_.add_edge(last_edge_index - x_limit, last_edge_index);
 
-                    if (/* not first row && */ last_edge_index % x_limit > 0) {
-                        // add top-left 2 bottom-right arrow (anchor tl)
-                        sg_.add_edge(last_edge_index - x_limit - 1, last_edge_index, 1, diag_l);
+                    if (x > 0) {
+                        // add top-left 2 bottom-right arrow (anchor tl, last_edge_index: br)
+                        sg_.add_edge(get_grid_index(x - 1, y - 1), last_edge_index, 1, diag_l);
                     }
-                    if (/* not first row && */ (last_edge_index + 1) % x_limit > 0) {
-                        // add bottom-left 2 top-right arrow (anchor bl)
-                        sg_.add_edge(last_edge_index, last_edge_index - x_limit + 1, 1, diag_l);
+                    if (x + 1 < x_limit) {
+                        // add bottom-left 2 top-right arrow (anchor bl, last_edge_index: bl)
+                        sg_.add_edge(last_edge_index, get_grid_index(x + 1, y - 1), 1, diag_l);
                     }
                 }
             }
