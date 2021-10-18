@@ -64,8 +64,34 @@ namespace AOPT {
     template<class MassSpringProblem>
     void MassSpringSystemT<MassSpringProblem>::setup_spring_graph() {
         //------------------------------------------------------//
-        //TODO: set up the spring graph of n_grid_x by n_grid_y ()
+        // set up the spring graph of n_grid_x by n_grid_y ()
 
+        const double diag_l = std::sqrt(2);
+
+        for (size_t y = 0; y < n_grid_y_; ++y) {
+            for (size_t x = 0; x < n_grid_x_; ++x) {
+                auto *pt = new Point(x, y);
+                int last_edge_index = sg_.add_vertex(*pt);
+
+                // connect horizontally to previous
+                if (x > 0)
+                    sg_.add_edge(last_edge_index - 1, last_edge_index);
+
+                if (y > 0) {
+                    // connect vertically to edge on top
+                    sg_.add_edge(last_edge_index - n_grid_y_, last_edge_index);
+
+                    if (/* not first row && */ last_edge_index % n_grid_y_ > 0) {
+                        // add top-left 2 bottom-right arrow (anchor tl)
+                        sg_.add_edge(last_edge_index - n_grid_y_ - 1, last_edge_index, 1, diag_l);
+                    }
+                    if (/* not first row && */ (last_edge_index + 1) % n_grid_y_ > 0) {
+                        // add bottom-left 2 top-right arrow (anchor bl)
+                        sg_.add_edge(last_edge_index, last_edge_index - n_grid_y_ + 1, 1, diag_l);
+                    }
+                }
+            }
+        }
 
         //------------------------------------------------------//
     }

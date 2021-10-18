@@ -37,3 +37,5 @@ set_target_properties(${PROJECT_NAME}-test PROPERTIES
         CXX_STANDARD 14
         CXX_STANDARD_REQUIRED YES
         )
+
+add_custom_target(msp-gen-output ${PROJECT_NAME} 1 1 10 10 ${CMAKE_BINARY_DIR}/out)
