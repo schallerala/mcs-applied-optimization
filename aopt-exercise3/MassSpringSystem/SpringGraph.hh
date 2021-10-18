@@ -23,15 +23,16 @@ namespace AOPT {
         using Point = Eigen::Vector2d;
         using Edge = std::pair<int, int>;
 
-        SpringGraph(){}
-        ~SpringGraph(){}
+        SpringGraph() {}
 
-        int add_vertex(const Point& _pt) {
+        ~SpringGraph() {}
+
+        int add_vertex(const Point &_pt) {
             points_.push_back(_pt);
             return static_cast<int>(points_.size() - 1);
         }
 
-        void set_vertex(const int _v_idx, const Point& _pt) {
+        void set_vertex(const int _v_idx, const Point &_pt) {
             points_[_v_idx] = _pt;
         }
 
@@ -79,11 +80,11 @@ namespace AOPT {
             return edges_.size();
         }
 
-        const std::vector<Point>& points() const {
+        const std::vector<Point> &points() const {
             return points_;
         }
 
-        const std::vector<Edge>& edges() const {
+        const std::vector<Edge> &edges() const {
             return edges_;
         }
 
@@ -98,7 +99,6 @@ namespace AOPT {
                 f_edges << e.first << "," << e.second << "," << lengths_[idx++] << "\n";
             }
         }
-
 
 
     private:

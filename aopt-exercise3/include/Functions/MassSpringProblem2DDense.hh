@@ -33,11 +33,10 @@ namespace AOPT {
 
         /** Base constructor defining the Parametric Function that will be used to
          * evaluate the springs' energy*/
-        MassSpringProblem2DDense(ParametricFunctionBase& _spring, const int _n_unknowns) :
+        MassSpringProblem2DDense(ParametricFunctionBase &_spring, const int _n_unknowns) :
                 FunctionBase(),
-            n_(_n_unknowns),
-            func_(_spring)
-        {
+                n_(_n_unknowns),
+                func_(_spring) {
             xe_.resize(func_.n_unknowns());
             ge_.resize(func_.n_unknowns());
             he_.resize(func_.n_unknowns(), func_.n_unknowns());
@@ -67,8 +66,8 @@ namespace AOPT {
             //TODO: assemble function values of all spring elements
             //use vector xe_ to store the local coordinates of two nodes of every spring
             //then pass it to func_.eval_f(...)
-            
-            
+
+
             //------------------------------------------------------//
 
             return energy;
@@ -95,11 +94,10 @@ namespace AOPT {
             //------------------------------------------------------//
             //TODO: assemble local gradient vector to the global one
             //use ge_ to store the result of the local gradient
-            
-            
+
+
             //------------------------------------------------------//
         }
-
 
 
         /** The problem's energy Hessian is a composition of the individual Hessian
@@ -107,7 +105,7 @@ namespace AOPT {
          * \param _x the problem's springs positions.
          *           It should contain the positions of all nodes of the system.
          *           i.e. (_x[2*i], _x[2*i+1]) is the position of the i-th node **/
-        virtual void eval_hessian(const Vec &_x, Mat& _h) override {
+        virtual void eval_hessian(const Vec &_x, Mat &_h) override {
             _h.resize(n_unknowns(), n_unknowns());
             _h.setZero();
 
@@ -117,7 +115,7 @@ namespace AOPT {
             //------------------------------------------------------//
             //TODO: assemble local hessian matrix to the global one
             //use he_ to store the local hessian matrix
-            
+
             //------------------------------------------------------//
         }
 
@@ -137,7 +135,7 @@ namespace AOPT {
         int n_;
         std::vector<Edge> springs_;
 
-        ParametricFunctionBase& func_;
+        ParametricFunctionBase &func_;
 
         //vector of constants
         std::vector<double> ks_;

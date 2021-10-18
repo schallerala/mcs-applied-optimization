@@ -1,10 +1,10 @@
 
-add_library (MassSpringSystem INTERFACE
-#        MassSpringSystemT_impl.hh
-#        MassSpringSystemT.hh
+add_library(MassSpringSystem INTERFACE
+        #        MassSpringSystemT_impl.hh
+        #        MassSpringSystemT.hh
         )
 
-add_library (AOPT::MassSpringSystem ALIAS MassSpringSystem)
+add_library(AOPT::MassSpringSystem ALIAS MassSpringSystem)
 
 target_link_libraries(MassSpringSystem INTERFACE AOPT::AOPT)
 

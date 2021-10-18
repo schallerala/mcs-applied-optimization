@@ -29,15 +29,15 @@ namespace AOPT {
          * \param max the maximum value of all tested points' coordinate
          * \param n_evals the number of evaluations/samples tested on the
          *        line between the two points on the function */
-        static bool isConvex(FunctionBase* _function, const double min = -1000., const double max = 1000., const int n_evals = 10) {
+        static bool
+        isConvex(FunctionBase *_function, const double min = -1000., const double max = 1000., const int n_evals = 10) {
             const int n = _function->n_unknowns();
             //randomly generate number from min to max
             RandomNumberGenerator rng(min, max);
-            
+
             const int max_sampling_points(1000000);
 
             //------------------------------------------------------//
-            //Todo: Add your code here
             int count = 0;
             double delta = 1.0 / n_evals;
             while (count < max_sampling_points) {
@@ -60,7 +60,7 @@ namespace AOPT {
                     // check that the function f(p) <= (1 - t)*f(p1) + t*f(p2)
                     if (fp > sp) {
                         std::cout << "Function non convexity detected: f(p) = " << fp
-                                  << " > (1 - t)*f(p1) + t*f(p2) = " << sp << ". Difference is: "<<fp-sp<<"\n";
+                                  << " > (1 - t)*f(p1) + t*f(p2) = " << sp << ". Difference is: " << fp - sp << "\n";
                         printPathInfo(p1, p2, p, t);
                         return false;
                     }
@@ -68,8 +68,8 @@ namespace AOPT {
 
                 count++;
 
-                if(count % 100000 == 0) {
-                    std::cout<<"Processed "<<count<<" pairs of points ..."<<std::endl;
+                if (count % 100000 == 0) {
+                    std::cout << "Processed " << count << " pairs of points ..." << std::endl;
                 }
             }
             //------------------------------------------------------//
@@ -86,8 +86,6 @@ namespace AOPT {
         }
 
     };
-
-
 
 
 }

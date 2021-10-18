@@ -6,8 +6,8 @@ namespace AOPT {
 
 
     template<class MassSpringProblem>
-    double MassSpringSystemT<MassSpringProblem>::initial_system_energy() const{
-        if(msp_ != nullptr) {
+    double MassSpringSystemT<MassSpringProblem>::initial_system_energy() const {
+        if (msp_ != nullptr) {
             Vec points = get_spring_graph_points();
             return msp_.get()->eval_f(points);
         }
@@ -16,11 +16,11 @@ namespace AOPT {
     }
 
     template<class MassSpringProblem>
-    void MassSpringSystemT<MassSpringProblem>::set_spring_graph_points(const Vec& _points) {
+    void MassSpringSystemT<MassSpringProblem>::set_spring_graph_points(const Vec &_points) {
         int n_vertices = sg_.n_vertices();
 
-        for(size_t i=0; i<n_vertices; ++i)
-            sg_.set_vertex(i, Point(_points[2*i], _points[2*i+1]));
+        for (size_t i = 0; i < n_vertices; ++i)
+            sg_.set_vertex(i, Point(_points[2 * i], _points[2 * i + 1]));
     }
 
     template<class MassSpringProblem>
@@ -40,8 +40,8 @@ namespace AOPT {
 
         //initialize the problem pointer
         //for least square problem (Gauss-Newton)
-        if(_least_square) {
-           
+        if (_least_square) {
+
         } else { //for normal problem
             if (_spring_element_type == WITH_LENGTH) {
                 msp_ = std::make_shared<MassSpringProblem>(sewl_, n_unknowns_);
@@ -61,16 +61,12 @@ namespace AOPT {
     }
 
 
-
-    
-
-
     template<class MassSpringProblem>
     void MassSpringSystemT<MassSpringProblem>::setup_spring_graph() {
         //------------------------------------------------------//
         //TODO: set up the spring graph of n_grid_x by n_grid_y ()
-        
-        
+
+
         //------------------------------------------------------//
     }
 
@@ -80,9 +76,9 @@ namespace AOPT {
         Vec points(n_unknowns_);
         int n_vertices = sg_.n_vertices();
 
-        for(size_t i=0; i<n_vertices; ++i) {
-            points[2*i] = sg_.point(i)[0];
-            points[2*i+1] = sg_.point(i)[1];
+        for (size_t i = 0; i < n_vertices; ++i) {
+            points[2 * i] = sg_.point(i)[0];
+            points[2 * i + 1] = sg_.point(i)[1];
         }
 
         return points;
@@ -90,17 +86,17 @@ namespace AOPT {
 
     template<class MassSpringProblem>
     int MassSpringSystemT<MassSpringProblem>::get_grid_index(const int _i, const int _j) const {
-        assert(_i<=n_grid_x_ && _j<=n_grid_y_);
-        return (n_grid_x_+1)*_j + _i;
+        assert(_i <= n_grid_x_ && _j <= n_grid_y_);
+        return (n_grid_x_ + 1) * _j + _i;
     }
 
     template<class MassSpringProblem>
-    size_t MassSpringSystemT<MassSpringProblem>::n_grid_points() const{
-        return (n_grid_x_+1) * (n_grid_y_+1);
+    size_t MassSpringSystemT<MassSpringProblem>::n_grid_points() const {
+        return (n_grid_x_ + 1) * (n_grid_y_ + 1);
     }
 
     template<class MassSpringProblem>
-    size_t MassSpringSystemT<MassSpringProblem>::n_edges() const{
+    size_t MassSpringSystemT<MassSpringProblem>::n_edges() const {
         return sg_.n_edges();
     }
 }

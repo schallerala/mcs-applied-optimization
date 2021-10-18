@@ -12,12 +12,12 @@ namespace AOPT {
 
     //== CLASS DEFINITION =========================================================
 
-    class OptimizationStatistic : public FunctionBaseSparse  {
+    class OptimizationStatistic : public FunctionBaseSparse {
     public:
         using Vec = FunctionBaseSparse::Vec;
         using SMat = FunctionBaseSparse::SMat;
 
-        OptimizationStatistic(FunctionBaseSparse *_base) : base_(_base) {start_recording();}
+        OptimizationStatistic(FunctionBaseSparse *_base) : base_(_base) { start_recording(); }
 
         virtual int n_unknowns() override {
             return base_->n_unknowns();
@@ -66,7 +66,8 @@ namespace AOPT {
 
             std::cerr << "######## Timing statistics ########" << std::endl;
             std::cerr << "total time    : " << time_total / 1000000.0 << "s\n";
-            std::cerr << "total time evaluation : " << time_np / 1000000.0 << "s  (" << time_np / time_total * 100.0 << " %)\n";
+            std::cerr << "total time evaluation : " << time_np / 1000000.0 << "s  (" << time_np / time_total * 100.0
+                      << " %)\n";
 
             double timing_eval_f_avg = timing_eval_f_ / double(n_eval_f_);
             double timing_eval_gradient_avg = timing_eval_gradient_ / double(n_eval_gradient_);

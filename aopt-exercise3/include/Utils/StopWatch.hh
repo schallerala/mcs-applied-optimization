@@ -42,59 +42,55 @@
 //== NAMESPACES ===============================================================
 
 namespace AOPT {
-    
+
 //== CLASS DEFINITION =========================================================
-    
-    
-    
-    
+
+
+
+
 /** \class StopWatch StopWatch.hh
      
      Brief Description.
      
      A more elaborate description follows.
 */
-    
-template <typename UnitT = std::chrono::milliseconds>
-class StopWatch
-{
-public:
-    // Constructor
-    StopWatch() {}
-    // Destructor
-    ~StopWatch() {}
 
-    // Start time measurement
-    void start()
-    {
-        starttime_ = std::chrono::steady_clock::now();
-    }
+    template<typename UnitT = std::chrono::milliseconds>
+    class StopWatch {
+    public:
+        // Constructor
+        StopWatch() {}
 
-    // Restart, return time elapsed until now.
-    double restart()
-    {
-        double t = elapsed();
-        start();
-        return t;
-    }
+        // Destructor
+        ~StopWatch() {}
 
-    // Stop time measurement, return time.
-    double stop()
-    {
-        endtime_ = std::chrono::steady_clock::now();
-        return elapsed();
-    }
+        // Start time measurement
+        void start() {
+            starttime_ = std::chrono::steady_clock::now();
+        }
 
-    // Get the total time in UnitT (watch has to be stopped).
-    double elapsed() const
-    {
-        auto duration = std::chrono::duration_cast<UnitT>(endtime_ - starttime_);
-        return (double) duration.count();
-    }
+        // Restart, return time elapsed until now.
+        double restart() {
+            double t = elapsed();
+            start();
+            return t;
+        }
 
-private:
-    std::chrono::steady_clock::time_point starttime_, endtime_;
-};
+        // Stop time measurement, return time.
+        double stop() {
+            endtime_ = std::chrono::steady_clock::now();
+            return elapsed();
+        }
+
+        // Get the total time in UnitT (watch has to be stopped).
+        double elapsed() const {
+            auto duration = std::chrono::duration_cast<UnitT>(endtime_ - starttime_);
+            return (double) duration.count();
+        }
+
+    private:
+        std::chrono::steady_clock::time_point starttime_, endtime_;
+    };
 
 //=============================================================================
 } // namespace AOPT

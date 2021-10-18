@@ -25,9 +25,9 @@ namespace AOPT {
         }
 
         /* Note: the given matrix A should be square, as suggested by the check below. */
-        FunctionQuadraticND(const Mat& _A, const Vec& _b, const double _c)
-                : FunctionBase(), A_(0.5*(_A + _A.transpose())), b_(_b), c_(_c) {
-            if(_A.rows() != _A.cols())
+        FunctionQuadraticND(const Mat &_A, const Vec &_b, const double _c)
+                : FunctionBase(), A_(0.5 * (_A + _A.transpose())), b_(_b), c_(_c) {
+            if (_A.rows() != _A.cols())
                 std::cerr << "Warning: matrix not square in FunctionQuadraticND" << std::endl;
             n_ = A_.rows();
 
@@ -41,7 +41,6 @@ namespace AOPT {
          *           It should be a ND vector*/
         inline virtual double eval_f(const Vec &_x) {
             //-------------------------------------------------------------------------------//
-            //Todo: implement the function 0.5 * (x^T A x) + b^T x + c
             double v = 0.5 * _x.transpose() * A_ * _x;
             v += b_.transpose() * _x + c_;
             return v;
@@ -54,7 +53,7 @@ namespace AOPT {
         inline virtual void eval_gradient(const Vec &_x, Vec &_g) {
             //------------------------------------------------------//
             //Todo: implement the gradient
-            _g = A_*_x + b_;
+            _g = A_ * _x + b_;
             //------------------------------------------------------//
         }
 
@@ -71,8 +70,7 @@ namespace AOPT {
         }
 
     private:
-        void initialize_random_problem(double _max_val = 10.0, bool _convex = true, const int _random_index = 0)
-        {
+        void initialize_random_problem(double _max_val = 10.0, bool _convex = true, const int _random_index = 0) {
             std::cerr << "initialize random QP problem with " << n_ << " unknowns... " << std::endl;
             // create random matrix
             std::srand(_random_index);
@@ -81,13 +79,10 @@ namespace AOPT {
                     A_(i, j) = _max_val * (2.0 * double(std::rand()) / double(RAND_MAX) - 1.0);
 
             // symmetrize
-            if(_convex)
-            {
+            if (_convex) {
                 Mat B = A_.transpose() * A_;
                 A_ = B;
-            }
-            else
-            {
+            } else {
                 Mat B = 0.5 * (A_.transpose() + A_);
                 A_ = B;
             }

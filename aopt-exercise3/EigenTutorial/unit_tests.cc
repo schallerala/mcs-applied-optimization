@@ -40,43 +40,43 @@
 TEST(EigenTutorial, MatrixInitialization_4x4_integers){
 
   // Complete such that A4i is a 4-by-4 matrix of integers
-  Eigen::Matrix<int,4,4/*TODO*/> A4i;
+  Eigen::Matrix<int,4,4> A4i;
   ASSERT_EQ(A4i.rows(), 4);
   ASSERT_EQ(A4i.cols(), 4);
 }
 
 TEST(EigenTutorial, VectorInitialization_column_3_doubles){
   // Complete such that b3d is a column vector of 3 doubles?
-  Eigen::Matrix<double, 3, 1/*TODO*/> b3d;
+  Eigen::Matrix<double, 3, 1> b3d;
   ASSERT_EQ(b3d.rows(), 3);
   ASSERT_EQ(b3d.cols(), 1);
 }
 
 TEST(EigenTutorial, VectorInitialization_row_5_floats){
   //  a row vector of 5 floats?
-  Eigen::Matrix<float, 1, 5/*TODO*/> bT5f;
+  Eigen::Matrix<float, 1, 5> bT5f;
   ASSERT_EQ(bT5f.rows(), 1);
   ASSERT_EQ(bT5f.cols(), 5);
 }
 
 TEST(EigenTutorial, MatrixInitialization_dynamic_3x3_doubles){
   // Complete to declare a 3x3 matrix of doubles
-  Eigen::MatrixXd matrix3x3(3,3/*TODO*/);
+  Eigen::MatrixXd matrix3x3(3,3);
   ASSERT_EQ(matrix3x3.rows(), 3);
   ASSERT_EQ(matrix3x3.cols(), 3);
 
 }
 
-TEST(EigenTutorial, VectorInitialization_OnTheFly_column_float){
-
-  int N;
-  std::cout << "Could you please set the number of rows for 'vectorNf' variable?" << std::endl;
-  std::cin >> N;
-  /*TODO*/Eigen::VectorXf vectorNf(N/*TODO*/);
-  ASSERT_EQ(vectorNf.rows(), N);
-  ASSERT_EQ(vectorNf.cols(), 1);
-  
-}
+//TEST(EigenTutorial, VectorInitialization_OnTheFly_column_float){
+//
+//  int N;
+//  std::cout << "Could you please set the number of rows for 'vectorNf' variable?" << std::endl;
+//  std::cin >> N;
+//  Eigen::VectorXf vectorNf(N);
+//  ASSERT_EQ(vectorNf.rows(), N);
+//  ASSERT_EQ(vectorNf.cols(), 1);
+//
+//}
 /*============================================================*/
 
 TEST(EigenTutorial, MatrixAssignment_dense){
@@ -90,7 +90,6 @@ TEST(EigenTutorial, MatrixAssignment_dense){
   // using two different methods:
   // 1. with the stream operator <<
   // 2. using per-element assignment operator (_,_)
-  /* TODO */
   A3x3 << 1,2,3,
     4,5,6,
     7,8,9;
@@ -102,7 +101,6 @@ TEST(EigenTutorial, MatrixAssignment_dense){
           k++;
       }
   }
-    /* end todo */
 
   ASSERT_EQ(A3x3.sum(), 45);
   ASSERT_EQ(A3x3.prod(), 362880);
@@ -128,7 +126,6 @@ TEST(EigenTutorial, MatrixAssignment_sparse){
   // | 0	0	0	0	0  |
   // | 0	0	14	0	8  |
   
-  /* TODO */
   sparseA.resize(5,5);
   triplets.push_back(T(0,1,3));
   triplets.push_back(T(1,0,22));
@@ -138,7 +135,6 @@ TEST(EigenTutorial, MatrixAssignment_sparse){
   triplets.push_back(T(2,3,1));
   triplets.push_back(T(4,2,14));
   triplets.push_back(T(4,4,8));  
-  /* end todo */
 
   sparseA.setFromTriplets(triplets.begin(), triplets.end());
 

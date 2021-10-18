@@ -43,21 +43,24 @@ namespace AOPT {
         using Mat = Eigen::MatrixXd;
         using SMat = Eigen::SparseMatrix<double>;
 
-        MassSpringSystemT(const int _n_grid_x, const int _n_grid_y, const int _spring_element_type = 0, const bool _least_square = false) :
+        MassSpringSystemT(const int _n_grid_x, const int _n_grid_y, const int _spring_element_type = 0,
+                          const bool _least_square = false) :
                 n_grid_x_(_n_grid_x), n_grid_y_(_n_grid_y), n_unknowns_(0), rng_(-1., 1.) {
             setup_spring_graph();
             setup_problem(_spring_element_type, _least_square);
         }
 
-        ~MassSpringSystemT(){}
+        ~MassSpringSystemT() {}
 
-        enum SpringElementType {WITHOUT_LENGTH, WITH_LENGTH, WITH_LENGTH_PSD_HESS};
+        enum SpringElementType {
+            WITHOUT_LENGTH, WITH_LENGTH, WITH_LENGTH_PSD_HESS
+        };
 
         double initial_system_energy() const;
 
         std::shared_ptr<MassSpringProblem> get_problem() const;
 
-        void set_spring_graph_points(const Vec& _points);
+        void set_spring_graph_points(const Vec &_points);
 
         Vec get_spring_graph_points() const;
 
@@ -69,10 +72,11 @@ namespace AOPT {
 
         //functions of adding constraints
         void add_constrained_spring_elements(const int _scenario = 1);
+
         void add_constrained_spring_element_for_center_spring_node();
 
         //setup the matrix A and vector b which defines the linear equality constraints
-        void setup_linear_equality_constraints(SMat& _A, Vec& _b) const;
+        void setup_linear_equality_constraints(SMat &_A, Vec &_b) const;
 
         //add constraints to boundary nodes
         void add_boundary_constraints_a();
@@ -81,9 +85,9 @@ namespace AOPT {
 
         void add_area_constraints();
 
-        const std::vector<FunctionBaseSparse*>& get_constraints() const;
+        const std::vector<FunctionBaseSparse *> &get_constraints() const;
 
-        const std::vector<FunctionBaseSparse*>& get_constraints_squared() const;
+        const std::vector<FunctionBaseSparse *> &get_constraints_squared() const;
 
 
     private:
@@ -104,7 +108,7 @@ namespace AOPT {
 
         SpringElement2D se_;
         SpringElement2DWithLength sewl_;
-        
+
 
         std::shared_ptr<MassSpringProblem> msp_;
     };
@@ -114,7 +118,9 @@ namespace AOPT {
 //=============================================================================
 #if defined(INCLUDE_TEMPLATES) && !defined(MASSSPRINGSYSTEM_C)
 #define MASSSPRINGSYSTEM_TEMPLATES
+
 #include "MassSpringSystemT_impl.hh"
+
 #endif
 //=============================================================================
 
