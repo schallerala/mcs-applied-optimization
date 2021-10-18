@@ -44,6 +44,7 @@ namespace AOPT {
             //------------------------------------------------------//
             //Todo: implement the gradient and store in _g
 
+            const double &k = _coeffs[0];
 
             //------------------------------------------------------//
         }

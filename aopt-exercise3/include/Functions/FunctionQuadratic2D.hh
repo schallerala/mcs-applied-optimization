@@ -48,9 +48,11 @@ namespace AOPT {
          * \param _H Hessian output */
         inline virtual void eval_hessian(const Vec &_x, Mat &_H) {
             //------------------------------------------------------//
-            //Todo: implement the Hessian H = (1, 0
-            //                                 0, gamma)
+            // implement the Hessian H = (1, 0
+            //                            0, gamma)
 
+            _H <<   1, 0,
+                    0, gamma_;
             //------------------------------------------------------//
         }
 
