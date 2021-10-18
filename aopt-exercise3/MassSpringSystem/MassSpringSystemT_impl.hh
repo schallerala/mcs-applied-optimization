@@ -68,8 +68,11 @@ namespace AOPT {
 
         const double diag_l = std::sqrt(2);
 
-        for (size_t y = 0; y < n_grid_y_; ++y) {
-            for (size_t x = 0; x < n_grid_x_; ++x) {
+        const int y_limit = n_grid_y_ + 1;
+        const int x_limit = n_grid_x_ + 1;
+
+        for (size_t y = 0; y < y_limit; ++y) {
+            for (size_t x = 0; x < x_limit; ++x) {
                 auto *pt = new Point(x, y);
                 int last_edge_index = sg_.add_vertex(*pt);
 
@@ -79,15 +82,15 @@ namespace AOPT {
 
                 if (y > 0) {
                     // connect vertically to edge on top
-                    sg_.add_edge(last_edge_index - n_grid_x_, last_edge_index);
+                    sg_.add_edge(last_edge_index - x_limit, last_edge_index);
 
-                    if (/* not first row && */ last_edge_index % n_grid_x_ > 0) {
+                    if (/* not first row && */ last_edge_index % x_limit > 0) {
                         // add top-left 2 bottom-right arrow (anchor tl)
-                        sg_.add_edge(last_edge_index - n_grid_x_ - 1, last_edge_index, 1, diag_l);
+                        sg_.add_edge(last_edge_index - x_limit - 1, last_edge_index, 1, diag_l);
                     }
-                    if (/* not first row && */ (last_edge_index + 1) % n_grid_x_ > 0) {
+                    if (/* not first row && */ (last_edge_index + 1) % x_limit > 0) {
                         // add bottom-left 2 top-right arrow (anchor bl)
-                        sg_.add_edge(last_edge_index, last_edge_index - n_grid_x_ + 1, 1, diag_l);
+                        sg_.add_edge(last_edge_index, last_edge_index - x_limit + 1, 1, diag_l);
                     }
                 }
             }
