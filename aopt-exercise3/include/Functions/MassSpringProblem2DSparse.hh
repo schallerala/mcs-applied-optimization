@@ -143,8 +143,52 @@ namespace AOPT {
             //used to store the value of k and l, i.e. coeff[0] = ks_[i], coeff[0] = ls_[i];
             Vec coeff(2);
             //------------------------------------------------------//
-            //TODO: assemble local hessian matrix to the global one
+            // assemble local hessian matrix to the global one
             //use he_ to store the local hessian matrix
+
+            for (size_t i = 0; i < springs_.size(); ++i) {
+                const auto& spring = springs_[i];
+
+                const int index_ax = 2 * spring.first;
+                const int index_ay = index_ax + 1;
+
+                const int index_bx = 2 * spring.second;
+                const int index_by = index_bx + 1;
+
+                xe_ << _x[index_ax], _x[index_ay], _x[index_bx], _x[index_by];
+                coeff << ks_[i], ls_[i];
+
+                func_.eval_hessian(xe_, coeff, he_);
+
+                {
+                    const auto ii = he_.block<2, 2>(0, 0);
+                    triplets.push_back(T(index_ax, index_ax, ii(0, 0)));
+                    triplets.push_back(T(index_ax, index_ax + 1, ii(0, 1)));
+                    triplets.push_back(T(index_ax + 1, index_ax, ii(1, 0)));
+                    triplets.push_back(T(index_ax + 1, index_ax + 1, ii(1, 1)));
+                }
+                {
+                    const auto ij = he_.block<2, 2>(0, 2);
+                    triplets.push_back(T(index_ax, index_bx, ij(0, 0)));
+                    triplets.push_back(T(index_ax, index_bx + 1, ij(0, 1)));
+                    triplets.push_back(T(index_ax + 1, index_bx, ij(1, 0)));
+                    triplets.push_back(T(index_ax + 1, index_bx + 1, ij(1, 1)));
+                }
+                {
+                    const auto ji = he_.block<2, 2>(2, 0);
+                    triplets.push_back(T(index_bx, index_ax, ji(0, 0)));
+                    triplets.push_back(T(index_bx, index_ax + 1, ji(0, 1)));
+                    triplets.push_back(T(index_bx + 1, index_ax, ji(1, 0)));
+                    triplets.push_back(T(index_bx + 1, index_ax + 1, ji(1, 1)));
+                }
+                {
+                    const auto jj = he_.block<2, 2>(2, 2);
+                    triplets.push_back(T(index_bx, index_bx, jj(0, 0)));
+                    triplets.push_back(T(index_bx, index_bx + 1, jj(0, 1)));
+                    triplets.push_back(T(index_bx + 1, index_bx, jj(1, 0)));
+                    triplets.push_back(T(index_bx + 1, index_bx + 1, jj(1, 1)));
+                }
+            }
 
 
             //------------------------------------------------------//

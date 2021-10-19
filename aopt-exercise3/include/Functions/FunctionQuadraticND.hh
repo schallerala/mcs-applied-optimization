@@ -52,7 +52,7 @@ namespace AOPT {
          * \param _g gradient output */
         inline virtual void eval_gradient(const Vec &_x, Vec &_g) {
             //------------------------------------------------------//
-            //Todo: implement the gradient
+            // implement the gradient
             _g = A_ * _x + b_;
             //------------------------------------------------------//
         }
@@ -64,7 +64,7 @@ namespace AOPT {
          * \param _H Hessian output */
         inline virtual void eval_hessian(const Vec &_x, Mat &_H) {
             //------------------------------------------------------//
-            //Todo: implement the Hessian
+            // implement the Hessian
             _H = A_;
             //------------------------------------------------------//
         }
