@@ -88,39 +88,39 @@ namespace AOPT {
             const double bx = _x[2];
             const double by = _x[3];
 
-            // 2 * k * ((ax - bx) ^ 2 - l ^ 2 + (ay - by) ^ 2) + 4 * (ax - bx) ^ 2 * k
+            // 2 * k * ((ax - bx) ^ 2 + (ay - by) ^ 2 - l ^ 2) + 4 * (ax - bx) ^ 2 * k
             const double deriv_ax_ax = 2 * k * (std::pow(ax - bx, 2) - std::pow(l, 2) + std::pow(ay - by, 2)) + 4 * std::pow(ax - bx, 2) * k;
             // 4 * k * (ax - bx) * (ay - by)
             const double deriv_ax_ay = 4 * k * (ax - bx) * (ay - by);
-            // -(2 * k * ((ax - bx) ^ 2 - l ^ 2 + (ay - by) ^ 2)) - 4 * (ax - bx) ^ 2 * k
+            // -(2 * k * ((ax - bx) ^ 2 + (ay - by) ^ 2 - l ^ 2)) - 4 * (ax - bx) ^ 2 * k
             const double deriv_ax_bx = -(2 * k * (std::pow(ax - bx, 2) - std::pow(l, 2) + std::pow(ay - by, 2))) - 4 * std::pow(ax - bx, 2) * k;
             // -(4 * k * (ax - bx) * (ay - by))
-            const double deriv_ax_by = -(4 * k * (ax - bx) * (ay - by));
+            const double deriv_ax_by = - deriv_ax_ay;
 
-            // 4 * k * (ay - by) * (ax - bx)
-            const double deriv_ay_ax = 4 * k * (ay - by) * (ax - bx);
-            // 2 * k * ((ax - bx) ^ 2 - l ^ 2 + (ay - by) ^ 2) + 4 * (ay - by) ^ 2 * k
+            // 4 * k * (ax - bx) * (ay - by)
+            const double deriv_ay_ax = deriv_ax_ay;
+            // 2 * k * ((ax - bx) ^ 2 + (ay - by) ^ 2 - l ^ 2) + 4 * (ay - by) ^ 2 * k
             const double deriv_ay_ay = 2 * k * (std::pow(ax - bx, 2) - std::pow(l, 2) + std::pow(ay - by, 2)) + 4 * std::pow(ay - by, 2) * k;
-            // -(4 * k * (ay - by) * (ax - bx))
-            const double deriv_ay_bx = -(4 * k * (ay - by) * (ax - bx));
-            // -(2 * k * ((ax - bx) ^ 2 - l ^ 2 + (ay - by) ^ 2)) - 4 * (ay - by) ^ 2 * k
+            // -(4 * k * (ax - bx) * (ay - by))
+            const double deriv_ay_bx = - deriv_ax_ay;
+            // -(2 * k * ((ax - bx) ^ 2 + (ay - by) ^ 2 - l ^ 2)) - 4 * (ay - by) ^ 2 * k
             const double deriv_ay_by = -(2 * k * (std::pow(ax - bx, 2) - std::pow(l, 2) + std::pow(ay - by, 2))) - 4 * std::pow(ay - by, 2) * k;
 
-            // -(2 * k * ((ax - bx) ^ 2 - l ^ 2 + (ay - by) ^ 2) + 4 * (ax - bx) ^ 2 * k)
-            const double deriv_bx_ax = -(2 * k * (std::pow(ax - bx, 2) - std::pow(l, 2) + std::pow(ay - by, 2)) + 4 * std::pow(ax - bx, 2) * k);
+            // -(2 * k * ((ax - bx) ^ 2 + (ay - by) ^ 2 - l ^ 2) + 4 * (ax - bx) ^ 2 * k)
+            const double deriv_bx_ax = -deriv_ax_ax;
             // -(4 * k * (ax - bx) * (ay - by))
-            const double deriv_bx_ay = -(4 * k * (ax - bx) * (ay - by));
-            // 4 * (ax - bx) ^ 2 * k + 2 * k * ((ax - bx) ^ 2 - l ^ 2 + (ay - by) ^ 2)
+            const double deriv_bx_ay = - deriv_ax_ay;
+            // 4 * (ax - bx) ^ 2 * k + 2 * k * ((ax - bx) ^ 2 + (ay - by) ^ 2 - l ^ 2)
             const double deriv_bx_bx = 4 * std::pow(ax - bx, 2) * k + 2 * k * (std::pow(ax - bx, 2) - std::pow(l, 2) + std::pow(ay - by, 2));
             // 4 * k * (ax - bx) * (ay - by)
-            const double deriv_bx_by = 4 * k * (ax - bx) * (ay - by);
+            const double deriv_bx_by = deriv_ax_ay;
 
-            // -(4 * k * (ay - by) * (ax - bx))
-            const double deriv_by_ax = -(4 * k * (ay - by) * (ax - bx));
-            // -(2 * k * ((ax - bx) ^ 2 - l ^ 2 + (ay - by) ^ 2) + 4 * (ay - by) ^ 2 * k)
-            const double deriv_by_ay = -(2 * k * (std::pow(ax - bx, 2) - std::pow(l, 2) + std::pow(ay - by, 2)) + 4 * std::pow(ay - by, 2) * k);
-            // 4 * k * (ay - by) * (ax - bx)
-            const double deriv_by_bx = 4 * k * (ay - by) * (ax - bx);
+            // -(4 * k * (ax - bx) * (ay - by))
+            const double deriv_by_ax = - deriv_ax_ay;
+            // -(2 * k * ((ax - bx) ^ 2 + (ay - by) ^ 2 - l ^ 2) + 4 * (ay - by) ^ 2 * k)
+            const double deriv_by_ay = - deriv_ay_ay;
+            // 4 * k * (ax - bx) * (ay - by)
+            const double deriv_by_bx = deriv_ax_ay;
             // 4 * (ay - by) ^ 2 * k + 2 * k * ((ax - bx) ^ 2 - l ^ 2 + (ay - by) ^ 2)
             const double deriv_by_by = 4 * std::pow(ay - by, 2) * k + 2 * k * (std::pow(ax - bx, 2) - std::pow(l, 2) + std::pow(ay - by, 2));
 
