@@ -51,11 +51,11 @@ namespace AOPT {
             const double bx = _x[2];
             const double by = _x[3];
 
-            const double deriv_ax = 0.5 * k * (2 * ax - 2 * bx);
-            const double deriv_ay = 0.5 * k * (2 * ay - 2 * by);
+            const double deriv_ax = k * (ax - bx);
+            const double deriv_ay = k * (ay - by);
 
-            const double deriv_bx = 0.5 * k * (2 * bx - 2 * ax);
-            const double deriv_by = 0.5 * k * (2 * by - 2 * ay);
+            const double deriv_bx = k * (bx - ax);
+            const double deriv_by = k * (by - ay);
 
             _g << deriv_ax, deriv_ay, deriv_bx, deriv_by;
 
