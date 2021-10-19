@@ -160,33 +160,29 @@ namespace AOPT {
 
                 func_.eval_hessian(xe_, coeff, he_);
 
+                auto push_block = [&triplets](const int i, const int j, const Eigen::Block<Mat, 2, 2, false>& block_view)
+                {
+                    triplets.push_back(T(i, j, block_view(0, 0)));
+                    triplets.push_back(T(i, j + 1, block_view(0, 1)));
+                    triplets.push_back(T(i + 1, j, block_view(1, 0)));
+                    triplets.push_back(T(i + 1, j + 1, block_view(1, 1)));
+                };
+
                 {
                     const auto ii = he_.block<2, 2>(0, 0);
-                    triplets.push_back(T(index_ax, index_ax, ii(0, 0)));
-                    triplets.push_back(T(index_ax, index_ax + 1, ii(0, 1)));
-                    triplets.push_back(T(index_ax + 1, index_ax, ii(1, 0)));
-                    triplets.push_back(T(index_ax + 1, index_ax + 1, ii(1, 1)));
+                    push_block(index_ax, index_ax, ii);
                 }
                 {
                     const auto ij = he_.block<2, 2>(0, 2);
-                    triplets.push_back(T(index_ax, index_bx, ij(0, 0)));
-                    triplets.push_back(T(index_ax, index_bx + 1, ij(0, 1)));
-                    triplets.push_back(T(index_ax + 1, index_bx, ij(1, 0)));
-                    triplets.push_back(T(index_ax + 1, index_bx + 1, ij(1, 1)));
+                    push_block(index_ax, index_bx, ij);
                 }
                 {
                     const auto ji = he_.block<2, 2>(2, 0);
-                    triplets.push_back(T(index_bx, index_ax, ji(0, 0)));
-                    triplets.push_back(T(index_bx, index_ax + 1, ji(0, 1)));
-                    triplets.push_back(T(index_bx + 1, index_ax, ji(1, 0)));
-                    triplets.push_back(T(index_bx + 1, index_ax + 1, ji(1, 1)));
+                    push_block(index_bx, index_ax, ji);
                 }
                 {
                     const auto jj = he_.block<2, 2>(2, 2);
-                    triplets.push_back(T(index_bx, index_bx, jj(0, 0)));
-                    triplets.push_back(T(index_bx, index_bx + 1, jj(0, 1)));
-                    triplets.push_back(T(index_bx + 1, index_bx, jj(1, 0)));
-                    triplets.push_back(T(index_bx + 1, index_bx + 1, jj(1, 1)));
+                    push_block(index_bx, index_bx, jj);
                 }
             }
 
