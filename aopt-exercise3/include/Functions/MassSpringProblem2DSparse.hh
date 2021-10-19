@@ -98,9 +98,30 @@ namespace AOPT {
             Vec coeff(2);
 
             //------------------------------------------------------//
-            //TODO: assemble local gradient vector to the global one
+            // assemble local gradient vector to the global one
             //use ge_ to store the result of the local gradient
             // gonna be the same as the dense!
+
+            for (size_t i = 0; i < springs_.size(); ++i) {
+                const auto& spring = springs_[i];
+
+                const int index_ax = 2 * spring.first;
+                const int index_ay = index_ax + 1;
+
+                const int index_bx = 2 * spring.second;
+                const int index_by = index_bx + 1;
+
+                xe_ << _x[index_ax], _x[index_ay], _x[index_bx], _x[index_by];
+                coeff << ks_[i], ls_[i];
+                ge_.setZero();
+
+                func_.eval_gradient(xe_, coeff, ge_);
+
+                _g[index_ax] += ge_[0];
+                _g[index_ay] += ge_[1];
+                _g[index_bx] += ge_[2];
+                _g[index_by] += ge_[3];
+            }
 
             //------------------------------------------------------//
         }
