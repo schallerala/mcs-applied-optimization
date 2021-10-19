@@ -100,6 +100,7 @@ namespace AOPT {
             //------------------------------------------------------//
             //TODO: assemble local gradient vector to the global one
             //use ge_ to store the result of the local gradient
+            // gonna be the same as the dense!
 
             //------------------------------------------------------//
         }

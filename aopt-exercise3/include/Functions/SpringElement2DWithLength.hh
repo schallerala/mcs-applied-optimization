@@ -46,10 +46,26 @@ namespace AOPT {
          * \param _g the output gradient, which should also be of dimension 4 */
         inline virtual void eval_gradient(const Vec &_x, const Vec &_coeffs, Vec &_g) override {
             //------------------------------------------------------//
-            //Todo: implement the gradient and store in _g
+            // implement the gradient and store in _g
 
             const double &k = _coeffs[0];
             const double &l = _coeffs[1];
+
+            const double ax = _x[0];
+            const double ay = _x[1];
+
+            const double bx = _x[2];
+            const double by = _x[3];
+
+            const double rhs = std::pow(ax - bx, 2) + std::pow(ay - by, 2) - std::pow(l, 2);
+
+            const double deriv_ax = 2 * k * (ax - bx) * rhs;
+            const double deriv_ay = 2 * k * (ay - by) * rhs;
+
+            const double deriv_bx = - deriv_ax;
+            const double deriv_by = - deriv_ay;
+
+            _g << deriv_ax, deriv_ay, deriv_bx, deriv_by;
 
             //------------------------------------------------------//
         }
