@@ -71,9 +71,39 @@ namespace AOPT {
          * \param _H the output Hessian, which should be a 4x4 Matrix */
         inline virtual void eval_hessian(const Vec &_x, const Vec &_coeffs, Mat &_H) override {
             //------------------------------------------------------//
-            //Todo: implement the hessian matrix and store in _H
+            // implement the hessian matrix and store in _H
+            const double &k = _coeffs[0];
 
+            const double ax = _x[0];
+            const double ay = _x[1];
 
+            const double bx = _x[2];
+            const double by = _x[3];
+
+            const double deriv_ax_ax = k;
+            const double deriv_ax_ay = 0;
+            const double deriv_ax_bx = -k;
+            const double deriv_ax_by = 0;
+
+            const double deriv_ay_ax = 0;
+            const double deriv_ay_ay = k;
+            const double deriv_ay_bx = 0;
+            const double deriv_ay_by = -k;
+
+            const double deriv_bx_ax = -k;
+            const double deriv_bx_ay = 0;
+            const double deriv_bx_bx = k;
+            const double deriv_bx_by = 0;
+
+            const double deriv_by_ax = 0;
+            const double deriv_by_ay = -k;
+            const double deriv_by_bx = 0;
+            const double deriv_by_by = k;
+
+            _H << deriv_ax_ax, deriv_ax_ay, deriv_ax_bx, deriv_ax_by,
+                    deriv_ay_ax, deriv_ay_ay, deriv_ay_bx, deriv_ay_by,
+                    deriv_bx_ax, deriv_bx_ay, deriv_bx_bx, deriv_bx_by,
+                    deriv_by_ax, deriv_by_ay, deriv_by_bx, deriv_by_by;
             //------------------------------------------------------//
         }
     };

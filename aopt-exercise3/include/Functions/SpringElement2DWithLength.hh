@@ -78,9 +78,56 @@ namespace AOPT {
          * \param _H the output Hessian, which should be a 4x4 Matrix */
         inline virtual void eval_hessian(const Vec &_x, const Vec &_coeffs, Mat &_H) override {
             //------------------------------------------------------//
-            //Todo: implement the hessian matrix and store in _H
+            // implement the hessian matrix and store in _H
+            const double &k = _coeffs[0];
+            const double &l = _coeffs[1];
 
+            const double ax = _x[0];
+            const double ay = _x[1];
 
+            const double bx = _x[2];
+            const double by = _x[3];
+
+            // 2 * k * ((ax - bx) ^ 2 - l ^ 2 + (ay - by) ^ 2) + 4 * (ax - bx) ^ 2 * k
+            const double deriv_ax_ax = 2 * k * (std::pow(ax - bx, 2) - std::pow(l, 2) + std::pow(ay - by, 2)) + 4 * std::pow(ax - bx, 2) * k;
+            // 4 * k * (ax - bx) * (ay - by)
+            const double deriv_ax_ay = 4 * k * (ax - bx) * (ay - by);
+            // -(2 * k * ((ax - bx) ^ 2 - l ^ 2 + (ay - by) ^ 2)) - 4 * (ax - bx) ^ 2 * k
+            const double deriv_ax_bx = -(2 * k * (std::pow(ax - bx, 2) - std::pow(l, 2) + std::pow(ay - by, 2))) - 4 * std::pow(ax - bx, 2) * k;
+            // -(4 * k * (ax - bx) * (ay - by))
+            const double deriv_ax_by = -(4 * k * (ax - bx) * (ay - by));
+
+            // 4 * k * (ay - by) * (ax - bx)
+            const double deriv_ay_ax = 4 * k * (ay - by) * (ax - bx);
+            // 2 * k * ((ax - bx) ^ 2 - l ^ 2 + (ay - by) ^ 2) + 4 * (ay - by) ^ 2 * k
+            const double deriv_ay_ay = 2 * k * (std::pow(ax - bx, 2) - std::pow(l, 2) + std::pow(ay - by, 2)) + 4 * std::pow(ay - by, 2) * k;
+            // -(4 * k * (ay - by) * (ax - bx))
+            const double deriv_ay_bx = -(4 * k * (ay - by) * (ax - bx));
+            // -(2 * k * ((ax - bx) ^ 2 - l ^ 2 + (ay - by) ^ 2)) - 4 * (ay - by) ^ 2 * k
+            const double deriv_ay_by = -(2 * k * (std::pow(ax - bx, 2) - std::pow(l, 2) + std::pow(ay - by, 2))) - 4 * std::pow(ay - by, 2) * k;
+
+            // -(2 * k * ((ax - bx) ^ 2 - l ^ 2 + (ay - by) ^ 2) + 4 * (ax - bx) ^ 2 * k)
+            const double deriv_bx_ax = -(2 * k * (std::pow(ax - bx, 2) - std::pow(l, 2) + std::pow(ay - by, 2)) + 4 * std::pow(ax - bx, 2) * k);
+            // -(4 * k * (ax - bx) * (ay - by))
+            const double deriv_bx_ay = -(4 * k * (ax - bx) * (ay - by));
+            // 4 * (ax - bx) ^ 2 * k + 2 * k * ((ax - bx) ^ 2 - l ^ 2 + (ay - by) ^ 2)
+            const double deriv_bx_bx = 4 * std::pow(ax - bx, 2) * k + 2 * k * (std::pow(ax - bx, 2) - std::pow(l, 2) + std::pow(ay - by, 2));
+            // 4 * k * (ax - bx) * (ay - by)
+            const double deriv_bx_by = 4 * k * (ax - bx) * (ay - by);
+
+            // -(4 * k * (ay - by) * (ax - bx))
+            const double deriv_by_ax = -(4 * k * (ay - by) * (ax - bx));
+            // -(2 * k * ((ax - bx) ^ 2 - l ^ 2 + (ay - by) ^ 2) + 4 * (ay - by) ^ 2 * k)
+            const double deriv_by_ay = -(2 * k * (std::pow(ax - bx, 2) - std::pow(l, 2) + std::pow(ay - by, 2)) + 4 * std::pow(ay - by, 2) * k);
+            // 4 * k * (ay - by) * (ax - bx)
+            const double deriv_by_bx = 4 * k * (ay - by) * (ax - bx);
+            // 4 * (ay - by) ^ 2 * k + 2 * k * ((ax - bx) ^ 2 - l ^ 2 + (ay - by) ^ 2)
+            const double deriv_by_by = 4 * std::pow(ay - by, 2) * k + 2 * k * (std::pow(ax - bx, 2) - std::pow(l, 2) + std::pow(ay - by, 2));
+
+            _H << deriv_ax_ax, deriv_ax_ay, deriv_ax_bx, deriv_ax_by,
+                    deriv_ay_ax, deriv_ay_ay, deriv_ay_bx, deriv_ay_by,
+                    deriv_bx_ax, deriv_bx_ay, deriv_bx_bx, deriv_bx_by,
+                    deriv_by_ax, deriv_by_ay, deriv_by_bx, deriv_by_by;
             //------------------------------------------------------//
         }
     };
