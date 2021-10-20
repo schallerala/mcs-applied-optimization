@@ -5,7 +5,7 @@ Schaller Alain, Fontana Jonas, Carrel Vincent
 
 QCQP to SOCP
 ===
-
+- See attached pictures at the root of the folder
 
 
 
@@ -14,9 +14,12 @@ QCQP to SOCP
 
 Linear Programming
 ===
+- See attached pictures at the root of the folder
+
 
 # Transform
 ---
+- Nothing to add.
 
 
 
@@ -25,10 +28,7 @@ Linear Programming
 
 # Transform general LP to standard form
 ---
-
-
-
-
+- Nothing to add.
 
 
 
