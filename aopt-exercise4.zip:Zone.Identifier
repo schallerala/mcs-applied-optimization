@@ -1,0 +1,4 @@
+[ZoneTransfer]
+ZoneId=3
+ReferrerUrl=https://ilias.unibe.ch/ilias.php?ref_id=2259428&target=2259428&cmd=showOverview&cmdClass=ilobjexercisegui&cmdNode=ea:r2&baseClass=ilexercisehandlergui
+HostUrl=https://ilias.unibe.ch/ilias.php?ref_id=2259428&file=aopt-exercise4.zip&ass_id=25792&cmd=downloadFile&cmdClass=ilexsubmissiongui&cmdNode=ea:r2:eq&baseClass=ilexercisehandlergui
