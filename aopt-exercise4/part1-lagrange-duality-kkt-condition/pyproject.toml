@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "part1-lagrange-duality-kkt-condition"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+
+[tool.poetry.dependencies]
+jupyter = "^1.0.0"
+matplotlib = "^3.4.3"
+numpy = "^1.21.3"
+python = "3.9"
+sympy = "^1.9"
+
+
+[tool.poetry.dev-dependencies]
+black = "^21.9b0"
+isort = "^5.9.3"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
