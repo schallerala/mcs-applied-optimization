@@ -25,12 +25,11 @@ namespace AOPT {
         }
 
         /* Note: the given matrix A should be square, as suggested by the check below. */
-        FunctionQuadraticND(const Mat& _A, const Vec& _b, const double _c)
-                : FunctionBase(), A_(0.5*(_A + _A.transpose())), b_(_b), c_(_c) {
-            if(_A.rows() != _A.cols())
+        FunctionQuadraticND(const Mat &_A, const Vec &_b, const double _c)
+                : FunctionBase(), A_(0.5 * (_A + _A.transpose())), b_(_b), c_(_c) {
+            if (_A.rows() != _A.cols())
                 std::cerr << "Warning: matrix not square in FunctionQuadraticND" << std::endl;
             n_ = A_.rows();
-
         }
 
         // number of unknowns
@@ -52,7 +51,37 @@ namespace AOPT {
          * \param _x the point on which to evaluate the function
          * \param _g gradient output */
         inline virtual void eval_gradient(const Vec &_x, Vec &_g) {
-            // TODO
+            // output a vector of size n (unknown) which is the value at index i is
+            //              d f(x)
+            //      f'(x) = ------
+            //               d x
+
+            // f'(x) = 1/2 * d/dx(x^T A x) + d/dx(b^T x)
+
+            // 1.
+            // d / d x_i (x^T A x) = sum_{j=0}^n ( a_{ij} * x_j ) + sum_{j=0}^n ( a_{ji} * x_j )
+
+            Vec derivation_xT_A_x(n_);
+
+            for (size_t i = 0; i < n_; ++i) {
+                derivation_xT_A_x[i] = A_.col(i).cwiseProduct(_x).sum() + A_.row(i).lazyProduct(_x);
+
+                // same as below
+//                // by col
+//                for (size_t j = 0; j < n_; ++j) {
+//                    derivation_xT_A_x[i] += A_(j, i) * _x[j];
+//                }
+//                // by row
+//                for (size_t j = 0; j < n_; ++j) {
+//                    derivation_xT_A_x[i] += A_(i, j) * _x[j];
+//                }
+            }
+
+            // 2.
+            // d / dx (b^T x) = b
+
+            // => return f'(x) in vector _g
+            _g = .5 * derivation_xT_A_x + b_;
         }
 
         /** evaluates the quadratic function's Hessian
@@ -65,8 +94,7 @@ namespace AOPT {
         }
 
     private:
-        void initialize_random_problem(double _max_val = 10.0, bool _convex = true, const int _random_index = 0)
-        {
+        void initialize_random_problem(double _max_val = 10.0, bool _convex = true, const int _random_index = 0) {
             std::cerr << "initialize random QP problem with " << n_ << " unknowns... " << std::endl;
             // create random matrix
             std::srand(_random_index);
@@ -75,13 +103,10 @@ namespace AOPT {
                     A_(i, j) = _max_val * (2.0 * double(std::rand()) / double(RAND_MAX) - 1.0);
 
             // symmetrize
-            if(_convex)
-            {
+            if (_convex) {
                 Mat B = A_.transpose() * A_;
                 A_ = B;
-            }
-            else
-            {
+            } else {
                 Mat B = 0.5 * (A_.transpose() + A_);
                 A_ = B;
             }
