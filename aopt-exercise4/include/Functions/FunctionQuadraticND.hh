@@ -41,7 +41,7 @@ namespace AOPT {
          *           It should be a ND vector*/
         inline virtual double eval_f(const Vec &_x) {
             //-------------------------------------------------------------------------------//
-            //Todo: implement the function 0.5 * (x^T A x) + b^T x + c
+            // implement the function 0.5 * (x^T A x) + b^T x + c
             double v = 0.5 * _x.transpose() * A_ * _x;
             v += b_.transpose() * _x + c_;
             return v;
@@ -51,14 +51,18 @@ namespace AOPT {
         /** evaluates the quadratic function's gradient
          * \param _x the point on which to evaluate the function
          * \param _g gradient output */
-        inline virtual void eval_gradient(const Vec &_x, Vec &_g) {}
+        inline virtual void eval_gradient(const Vec &_x, Vec &_g) {
+            // TODO
+        }
 
         /** evaluates the quadratic function's Hessian
          * \param _x the point on which to evaluate the Hessian.
          *           Actually useless since the Hessian is constant but the method
          *           should still use the same interface as FunctionBase
          * \param _H Hessian output */
-        inline virtual void eval_hessian(const Vec &_x, Mat &_H) {}
+        inline virtual void eval_hessian(const Vec &_x, Mat &_H) {
+            // TODO ?
+        }
 
     private:
         void initialize_random_problem(double _max_val = 10.0, bool _convex = true, const int _random_index = 0)
