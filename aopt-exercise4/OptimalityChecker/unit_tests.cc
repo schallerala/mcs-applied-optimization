@@ -1,5 +1,6 @@
 #include <Utils/OptimalityChecker.hh>
 #include <Functions/FunctionQuadraticND.hh>
+#include <Series4/exercise2.h>
 #include <vector>
 #include <iostream>
 #include "gtest/gtest.h"
@@ -300,6 +301,11 @@ TEST_F(KKTConditionsTest, conditionsRespectedWithLectureExample){
     AOPT::OptimalityChecker oc;
     ASSERT_TRUE(oc.is_KKT_satisfied(&obj_func, ineq_cons, eq_cons, x, lambda, nu));
 
+}
+
+
+TEST_F(KKTConditionsTest, runMain){
+    ASSERT_TRUE(evaluateExercise2());
 }
 
 int main(int _argc, char** _argv){
