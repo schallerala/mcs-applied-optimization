@@ -41,7 +41,7 @@ namespace AOPT {
          *           It should be a ND vector*/
         inline virtual double eval_f(const Vec &_x) {
             //-------------------------------------------------------------------------------//
-            //Todo: implement the function 0.5 * (x^T A x) + b^T x + c
+            // implement the function 0.5 * (x^T A x) + b^T x + c
             double v = 0.5 * _x.transpose() * A_ * _x;
             v += b_.transpose() * _x + c_;
             return v;
