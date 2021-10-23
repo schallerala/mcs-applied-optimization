@@ -51,14 +51,18 @@ namespace AOPT {
         /** evaluates the quadratic function's gradient
          * \param _x the point on which to evaluate the function
          * \param _g gradient output */
-        inline virtual void eval_gradient(const Vec &_x, Vec &_g) {}
+        inline virtual void eval_gradient(const Vec &_x, Vec &_g) {
+            // TODO
+        }
 
         /** evaluates the quadratic function's Hessian
          * \param _x the point on which to evaluate the Hessian.
          *           Actually useless since the Hessian is constant but the method
          *           should still use the same interface as FunctionBase
          * \param _H Hessian output */
-        inline virtual void eval_hessian(const Vec &_x, Mat &_H) {}
+        inline virtual void eval_hessian(const Vec &_x, Mat &_H) {
+            // TODO ?
+        }
 
     private:
         void initialize_random_problem(double _max_val = 10.0, bool _convex = true, const int _random_index = 0)
