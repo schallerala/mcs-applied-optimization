@@ -69,29 +69,32 @@ namespace AOPT {
 
         const auto WEIGHT = 1E5;
 
+        const auto M = n_grid_y_;
+        const auto N = n_grid_x_;
+
         // Didn't get why I didn't get to do a switch case of the enums value
         if (_scenario == FOUR_CORNERS) {
             // Attach the four corner nodes in a m x n spring graph to target coordinates
             // (0,0), (m, 0), (0, n) and (m, n) respectively.
-            const auto tl = get_grid_index(0, 0);
-            const auto tr = get_grid_index(0, n_grid_x_);
-            const auto bl = get_grid_index(n_grid_y_, 0);
-            const auto br = get_grid_index(n_grid_y_, n_grid_x_);
+            const auto tl = 0;
+            const auto tr = N;
+            const auto bl = (N + 1) * M;
+            const auto br = bl + M;
 
             msp_->add_constrained_spring_element(tl, WEIGHT, 0, 0);
-            msp_->add_constrained_spring_element(tr, WEIGHT, n_grid_y_, 0);
-            msp_->add_constrained_spring_element(bl, WEIGHT, 0, n_grid_x_);
-            msp_->add_constrained_spring_element(br, WEIGHT, n_grid_y_, n_grid_x_);
+            msp_->add_constrained_spring_element(tr, WEIGHT, M, 0);
+            msp_->add_constrained_spring_element(bl, WEIGHT, 0, N);
+            msp_->add_constrained_spring_element(br, WEIGHT, M, N);
 
         } else if (_scenario == SIDES) {
-            for (size_t i = 0; i <= n_grid_y_; ++i) {
+            for (size_t i = 0; i <= M; ++i) {
                 {
-                    const auto n_i_0_index = get_grid_index(i, 0);
-                    const auto &point_i_0 = sg_.point(n_i_0_index);
-                    msp_->add_constrained_spring_element(n_i_0_index, WEIGHT, point_i_0.x(), point_i_0.y());
+                    const auto i_0_index = get_grid_index(i, 0);
+                    const auto &point_i_0 = sg_.point(i_0_index);
+                    msp_->add_constrained_spring_element(i_0_index, WEIGHT, point_i_0.x(), point_i_0.y());
                 }
                 {
-                    msp_->add_constrained_spring_element(get_grid_index(i, n_grid_x_), WEIGHT, i, n_grid_x_);
+                    msp_->add_constrained_spring_element(get_grid_index(i, N), WEIGHT, i, N);
                 }
             }
 

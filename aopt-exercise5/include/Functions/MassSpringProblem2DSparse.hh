@@ -82,9 +82,28 @@ namespace AOPT {
             // assemble function values of all the constrained spring elements
             //use cs_xe_ to store the coordinate of the attached node index
 
-            double d = constrained_energy_drag(_x);
-            std::cout << "constrained energy " << d << std::endl;
-//            energy += d;
+            /*
+             * sum of n in C (1/2 * w_n * norm(x_n - p_n) ^ 2)
+             * with:
+             *      C: set of nodes equipped with extra force,
+             *      p_n: the target coordinates of node n,
+             *      w_n: constant that controls the effect of the force
+             *
+             * sum of n in C (1/2 * w_n * norm(x_n - p_n) ^ 2)
+             *  <=> sum of n in C (1/2 * w_n * ((x_n_x - p_x)^2 + (x_n_y - p_y)^2)
+             */
+
+            int attached_node_index;
+            double weight;
+            double px, py;
+
+            for (auto const& extra_forces_tuples : attached_node_indices_weights_px_py_) {
+                std::tie(attached_node_index, weight, px, py) = extra_forces_tuples;
+                const auto x_n_x = _x[2 * attached_node_index];
+                const auto x_n_y = _x[2 * attached_node_index + 1];
+
+                energy += .5 * weight * (std::pow(x_n_x - px, 2) + std::pow(x_n_y - py,  2));
+            }
 
             //------------------------------------------------------//
 
@@ -134,9 +153,36 @@ namespace AOPT {
             // assemble local gradient vector of all the constrained spring elements to the global one
             //use cs_ge_ to store the gradient of the attached node index
 
-            // TODO try to reverse engineer diff of _g vector
-            const auto energy = constrained_energy_drag(_x);
-            std::cout << "constrained energy: " << energy << std::endl;
+            /*
+             * sum of n in C (1/2 * w_n * norm(x_n - p_n) ^ 2)
+             * with:
+             *      C: set of nodes equipped with extra force,
+             *      p_n: the target coordinates of node n,
+             *      w_n: constant that controls the effect of the force
+             *
+             * sum of n in C (1/2 * w_n * norm(x_n - p_n) ^ 2)
+             *  <=> sum of n in C (1/2 * w_n * ((x_n_1 - p_x)^2 + (x_n_2 - p_y)^2)
+             *
+             * d/dx_1 = - p_x * w + w * x_n_1 = w * (x_n_1 - p_x)
+             * d/dx_2 = - p_y * w + w * x_n_2 = w * (x_n_2 - p_y)
+             */
+
+            int attached_node_index;
+            double weight;
+            double px, py;
+
+            for (auto const& extra_forces_tuples : attached_node_indices_weights_px_py_) {
+                std::tie(attached_node_index, weight, px, py) = extra_forces_tuples;
+                const auto x_n_x = _x[2 * attached_node_index];
+                const auto x_n_y = _x[2 * attached_node_index + 1];
+
+                const auto dx_1 = weight * (x_n_x - px);
+                const auto dx_2 = weight * (x_n_y - py);
+
+                _g[2 * attached_node_index] += dx_1;
+                _g[2 * attached_node_index + 1] += dx_2;
+            }
+
             //------------------------------------------------------//
 
         }
@@ -233,35 +279,6 @@ namespace AOPT {
 
 
     private:
-
-        /**
-         * sum of n in C (1/2 * w_n * norm(x_n - p_n) ^ 2)
-         * with:
-         *      C: set of nodes equipped with extra force,
-         *      p_n: the target coordinates of node n,
-         *      w_n: constant that controls the effect of the force
-         *
-         * @param _x position of all nodes
-         * @return energy under constraints
-         */
-        double constrained_energy_drag(const Vec &_x) {
-            double sum_energy = 0;
-
-            int attached_node_index;
-            double weight;
-            double px, py;
-
-            for (auto const& extra_forces_tuples : attached_node_indices_weights_px_py_) {
-                std::tie(attached_node_index, weight, px, py) = extra_forces_tuples;
-                const auto x_n_x = _x[2 * attached_node_index];
-                const auto x_n_y = _x[2 * attached_node_index + 1];
-
-                sum_energy += .5 * weight * (std::pow(x_n_x - px, 2) + std::pow(x_n_y - py,  2));
-            }
-            return sum_energy;
-        }
-
-
         int n_;
         std::vector<Edge> springs_;
 
