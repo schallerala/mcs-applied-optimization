@@ -23,7 +23,7 @@ namespace AOPT {
          * \param _t0 inital step of the method
          * \param _alpha and _tau variation constant, as stated by the method's definition
          * \return the final step t computed by the back-tracking line search */
-        template <class Problem>
+        template<class Problem>
         static double backtracking_line_search(Problem *_problem,
                                                const Vec &_x,
                                                const Vec &_g,
@@ -33,10 +33,10 @@ namespace AOPT {
                                                const double _tau = 0.6) {
             
             double t(0);
-            
+
             //------------------------------------------------------//
             //TODO: implement the backtracking line search algorithm
-            
+
 
             //------------------------------------------------------//
 
@@ -45,7 +45,7 @@ namespace AOPT {
 
 
     private:
-        template <class Problem>
+        template<class Problem>
         static double zoom(Problem *_problem,
                            const Vec &_x,
                            const Vec &_dx,
@@ -91,7 +91,7 @@ namespace AOPT {
                 //             p'(tlo) = dg_lo
                 t = (fx_hi - fx_lo) * _tlo - (_thi * _thi - _tlo * _tlo) * dg_lo / 2;
                 double div = (fx_hi - fx_lo) - (_thi - _tlo) * dg_lo;
-                if(div == 0)
+                if (div == 0)
                     t = _tlo;
                 else
                     t /= div;

@@ -27,8 +27,8 @@ namespace AOPT {
          *             finding it
          *
          * \return the minimum found by the method. */
-        template <class Problem>
-        static Vec solve(Problem *_problem, const Vec& _initial_x, const double _eps = 1e-4, const int _max_iters = 1000000) {
+        template<class Problem>
+        static Vec solve(Problem *_problem, const Vec &_initial_x, const double _eps = 1e-4, const int _max_iters = 1000000) {
             std::cout << "******** Gradient Descent ********" << std::endl;
 
             // squared epsilon for stopping criterion
@@ -43,7 +43,7 @@ namespace AOPT {
 
             //------------------------------------------------------//
             //TODO: implement the gradient descent
-            
+
 
             //------------------------------------------------------//
 
