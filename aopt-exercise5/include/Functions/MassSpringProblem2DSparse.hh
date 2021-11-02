@@ -79,9 +79,12 @@ namespace AOPT {
 
 
             //------------------------------------------------------//
-            //TODO: assemble function values of all the constrained spring elements
+            // assemble function values of all the constrained spring elements
             //use cs_xe_ to store the coordinate of the attached node index
 
+            double d = constrained_energy_drag(_x);
+            std::cout << "constrained energy " << d << std::endl;
+//            energy += d;
 
             //------------------------------------------------------//
 
@@ -128,10 +131,12 @@ namespace AOPT {
             //------------------------------------------------------//
 
             //------------------------------------------------------//
-            //TODO: assemble local gradient vector of all the constrained spring elements to the global one
+            // assemble local gradient vector of all the constrained spring elements to the global one
             //use cs_ge_ to store the gradient of the attached node index
 
-
+            // TODO try to reverse engineer diff of _g vector
+            const auto energy = constrained_energy_drag(_x);
+            std::cout << "constrained energy: " << energy << std::endl;
             //------------------------------------------------------//
 
         }
@@ -220,15 +225,43 @@ namespace AOPT {
             if (2 * _v_idx > n_ || _v_idx < 0)
                 std::cout << "Warning: invalid node constraint element was added... " << _v_idx << std::endl;
             else {
-                attached_node_indices_.push_back(_v_idx);
-                weights_.push_back(_w);
-                desired_points_.push_back(_px);
-                desired_points_.push_back(_py);
+                attached_node_indices_weights_px_py_.emplace_back(
+                        std::make_tuple(_v_idx, _w, _px, _py)
+                );
             }
         }
 
 
     private:
+
+        /**
+         * sum of n in C (1/2 * w_n * norm(x_n - p_n) ^ 2)
+         * with:
+         *      C: set of nodes equipped with extra force,
+         *      p_n: the target coordinates of node n,
+         *      w_n: constant that controls the effect of the force
+         *
+         * @param _x position of all nodes
+         * @return energy under constraints
+         */
+        double constrained_energy_drag(const Vec &_x) {
+            double sum_energy = 0;
+
+            int attached_node_index;
+            double weight;
+            double px, py;
+
+            for (auto const& extra_forces_tuples : attached_node_indices_weights_px_py_) {
+                std::tie(attached_node_index, weight, px, py) = extra_forces_tuples;
+                const auto x_n_x = _x[2 * attached_node_index];
+                const auto x_n_y = _x[2 * attached_node_index + 1];
+
+                sum_energy += .5 * weight * (std::pow(x_n_x - px, 2) + std::pow(x_n_y - py,  2));
+            }
+            return sum_energy;
+        }
+
+
         int n_;
         std::vector<Edge> springs_;
 
@@ -245,13 +278,7 @@ namespace AOPT {
         // hessian of each spring element
         Mat he_;
 
-
-        std::vector<int> attached_node_indices_;
-
-
-        //vector of constants
-        std::vector<double> weights_;
-        std::vector<double> desired_points_;
+        std::vector<std::tuple<int, double, double, double>> attached_node_indices_weights_px_py_;
 
         // coordinates of each attached node (local)
         Vec cs_xe_;

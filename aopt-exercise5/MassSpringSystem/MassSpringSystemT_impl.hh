@@ -62,10 +62,42 @@ namespace AOPT {
 
 
     template<class MassSpringProblem>
-    void MassSpringSystemT<MassSpringProblem>::add_constrained_spring_elements(const int _scenario) {
+    void MassSpringSystemT<MassSpringProblem>::add_constrained_spring_elements(const enum ConstraintsScenario _scenario) {
         //------------------------------------------------------//
-        //Todo: add constrained spring elements to the problem
+        // add constrained spring elements to the problem
         //implement both scenarios here.
+
+        const auto WEIGHT = 1E5;
+
+        // Didn't get why I didn't get to do a switch case of the enums value
+        if (_scenario == FOUR_CORNERS) {
+            // Attach the four corner nodes in a m x n spring graph to target coordinates
+            // (0,0), (m, 0), (0, n) and (m, n) respectively.
+            const auto tl = get_grid_index(0, 0);
+            const auto tr = get_grid_index(0, n_grid_x_);
+            const auto bl = get_grid_index(n_grid_y_, 0);
+            const auto br = get_grid_index(n_grid_y_, n_grid_x_);
+
+            msp_->add_constrained_spring_element(tl, WEIGHT, 0, 0);
+            msp_->add_constrained_spring_element(tr, WEIGHT, n_grid_y_, 0);
+            msp_->add_constrained_spring_element(bl, WEIGHT, 0, n_grid_x_);
+            msp_->add_constrained_spring_element(br, WEIGHT, n_grid_y_, n_grid_x_);
+
+        } else if (_scenario == SIDES) {
+            for (size_t i = 0; i <= n_grid_y_; ++i) {
+                {
+                    const auto n_i_0_index = get_grid_index(i, 0);
+                    const auto &point_i_0 = sg_.point(n_i_0_index);
+                    msp_->add_constrained_spring_element(n_i_0_index, WEIGHT, point_i_0.x(), point_i_0.y());
+                }
+                {
+                    msp_->add_constrained_spring_element(get_grid_index(i, n_grid_x_), WEIGHT, i, n_grid_x_);
+                }
+            }
+
+        } else {
+            throw std::invalid_argument("Expecting valid scenario enum as argument!");
+        }
 
 
         //------------------------------------------------------//

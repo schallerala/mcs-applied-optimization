@@ -53,6 +53,8 @@ namespace AOPT {
 
         enum SpringElementType {WITHOUT_LENGTH, WITH_LENGTH, WITH_LENGTH_PSD_HESS};
 
+        enum ConstraintsScenario { FOUR_CORNERS = 1, SIDES };
+
         double initial_system_energy() const;
 
         std::shared_ptr<MassSpringProblem> get_problem() const;
@@ -68,7 +70,7 @@ namespace AOPT {
         size_t n_edges() const;
 
         //functions of adding constraints
-        void add_constrained_spring_elements(const int _scenario = 1);
+        void add_constrained_spring_elements(enum ConstraintsScenario _scenario = FOUR_CORNERS);
         void add_constrained_spring_element_for_center_spring_node();
 
         //setup the matrix A and vector b which defines the linear equality constraints

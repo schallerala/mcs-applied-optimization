@@ -61,7 +61,7 @@ int main(int _argc, const char* _argv[]) {
     //construct mass spring system
     AOPT::MassSpringSystemT<AOPT::MassSpringProblem2DSparse> mss(n_grid_x, n_grid_y, func_index);
     //attach spring graph nodes to certain positions
-    mss.add_constrained_spring_elements(scenario);
+    mss.add_constrained_spring_elements(static_cast<AOPT::MassSpringSystemT<AOPT::MassSpringProblem2DSparse>::ConstraintsScenario>(scenario));
 
     //statistic instance
     auto opt_st = std::make_unique<AOPT::OptimizationStatistic>(mss.get_problem().get());
