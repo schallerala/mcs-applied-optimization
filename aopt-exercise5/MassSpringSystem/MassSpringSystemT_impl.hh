@@ -6,8 +6,8 @@ namespace AOPT {
 
 
     template<class MassSpringProblem>
-    double MassSpringSystemT<MassSpringProblem>::initial_system_energy() const{
-        if(msp_ != nullptr) {
+    double MassSpringSystemT<MassSpringProblem>::initial_system_energy() const {
+        if (msp_ != nullptr) {
             Vec points = get_spring_graph_points();
             return msp_.get()->eval_f(points);
         }
@@ -16,11 +16,11 @@ namespace AOPT {
     }
 
     template<class MassSpringProblem>
-    void MassSpringSystemT<MassSpringProblem>::set_spring_graph_points(const Vec& _points) {
+    void MassSpringSystemT<MassSpringProblem>::set_spring_graph_points(const Vec &_points) {
         int n_vertices = sg_.n_vertices();
 
-        for(size_t i=0; i<n_vertices; ++i)
-            sg_.set_vertex(i, Point(_points[2*i], _points[2*i+1]));
+        for (size_t i = 0; i < n_vertices; ++i)
+            sg_.set_vertex(i, Point(_points[2 * i], _points[2 * i + 1]));
     }
 
     template<class MassSpringProblem>
@@ -40,8 +40,8 @@ namespace AOPT {
 
         //initialize the problem pointer
         //for least square problem (Gauss-Newton)
-        if(_least_square) {
-           
+        if (_least_square) {
+
         } else { //for normal problem
             if (_spring_element_type == WITH_LENGTH) {
                 msp_ = std::make_shared<MassSpringProblem>(sewl_, n_unknowns_);
@@ -61,50 +61,49 @@ namespace AOPT {
     }
 
 
+    template<class MassSpringProblem>
+    void MassSpringSystemT<MassSpringProblem>::add_constrained_spring_elements(const int _scenario) {
+        //------------------------------------------------------//
+        //Todo: add constrained spring elements to the problem
+        //implement both scenarios here.
 
-template<class MassSpringProblem>
-void MassSpringSystemT<MassSpringProblem>::add_constrained_spring_elements(const int _scenario) {
-    //------------------------------------------------------//
-    //Todo: add constrained spring elements to the problem
-    //implement both scenarios here.
-    
-    
-    //------------------------------------------------------//
 
-    
-}
+        //------------------------------------------------------//
+
+
+    }
 
 
     template<class MassSpringProblem>
     void MassSpringSystemT<MassSpringProblem>::setup_spring_graph() {
         //------------------------------------------------------//
         //add vertices
-        for(int j = 0; j <= n_grid_y_; ++j)
+        for (int j = 0; j <= n_grid_y_; ++j)
             for (int i = 0; i <= n_grid_x_; ++i)
                 sg_.add_vertex(Point(i, j));
 
         //add edges
-        for(int j = 0; j < n_grid_y_; ++j) {
-            for(int i = 0; i < n_grid_x_; ++i) {
+        for (int j = 0; j < n_grid_y_; ++j) {
+            for (int i = 0; i < n_grid_x_; ++i) {
                 //horizontal edge
-                sg_.add_edge(get_grid_index(i, j), get_grid_index(i+1, j), 1., 1.);
+                sg_.add_edge(get_grid_index(i, j), get_grid_index(i + 1, j), 1., 1.);
                 //vertical edge
-                sg_.add_edge(get_grid_index(i, j), get_grid_index(i, j+1), 1., 1.);
+                sg_.add_edge(get_grid_index(i, j), get_grid_index(i, j + 1), 1., 1.);
                 //diagonal edge
-                sg_.add_edge(get_grid_index(i, j), get_grid_index(i+1, j+1), 1., sqrt(2.));
+                sg_.add_edge(get_grid_index(i, j), get_grid_index(i + 1, j + 1), 1., sqrt(2.));
                 //diagonal edge
-                sg_.add_edge(get_grid_index(i+1, j), get_grid_index(i, j+1), 1., sqrt(2.));
+                sg_.add_edge(get_grid_index(i + 1, j), get_grid_index(i, j + 1), 1., sqrt(2.));
             }
         }
 
         //add right most
-        for(int j = 0; j < n_grid_y_; ++j)
-            sg_.add_edge(get_grid_index(n_grid_x_, j), get_grid_index(n_grid_x_, j+1), 1., 1.);
+        for (int j = 0; j < n_grid_y_; ++j)
+            sg_.add_edge(get_grid_index(n_grid_x_, j), get_grid_index(n_grid_x_, j + 1), 1., 1.);
 
         //add top cap
-        for(int i = 0; i < n_grid_x_; ++i)
-            sg_.add_edge(get_grid_index(i, n_grid_y_), get_grid_index(i+1, n_grid_y_), 1., 1.);
-        
+        for (int i = 0; i < n_grid_x_; ++i)
+            sg_.add_edge(get_grid_index(i, n_grid_y_), get_grid_index(i + 1, n_grid_y_), 1., 1.);
+
         //------------------------------------------------------//
     }
 
@@ -114,9 +113,9 @@ void MassSpringSystemT<MassSpringProblem>::add_constrained_spring_elements(const
         Vec points(n_unknowns_);
         int n_vertices = sg_.n_vertices();
 
-        for(size_t i=0; i<n_vertices; ++i) {
-            points[2*i] = sg_.point(i)[0];
-            points[2*i+1] = sg_.point(i)[1];
+        for (size_t i = 0; i < n_vertices; ++i) {
+            points[2 * i] = sg_.point(i)[0];
+            points[2 * i + 1] = sg_.point(i)[1];
         }
 
         return points;
@@ -124,17 +123,17 @@ void MassSpringSystemT<MassSpringProblem>::add_constrained_spring_elements(const
 
     template<class MassSpringProblem>
     int MassSpringSystemT<MassSpringProblem>::get_grid_index(const int _i, const int _j) const {
-        assert(_i<=n_grid_x_ && _j<=n_grid_y_);
-        return (n_grid_x_+1)*_j + _i;
+        assert(_i <= n_grid_x_ && _j <= n_grid_y_);
+        return (n_grid_x_ + 1) * _j + _i;
     }
 
     template<class MassSpringProblem>
-    size_t MassSpringSystemT<MassSpringProblem>::n_grid_points() const{
-        return (n_grid_x_+1) * (n_grid_y_+1);
+    size_t MassSpringSystemT<MassSpringProblem>::n_grid_points() const {
+        return (n_grid_x_ + 1) * (n_grid_y_ + 1);
     }
 
     template<class MassSpringProblem>
-    size_t MassSpringSystemT<MassSpringProblem>::n_edges() const{
+    size_t MassSpringSystemT<MassSpringProblem>::n_edges() const {
         return sg_.n_edges();
     }
 }

@@ -29,11 +29,10 @@ namespace AOPT {
         // triplet
         using T = FunctionBaseSparse::T;
 
-        MassSpringProblem2DSparse(ParametricFunctionBase& _spring, const int _n_unknowns) :
+        MassSpringProblem2DSparse(ParametricFunctionBase &_spring, const int _n_unknowns) :
                 FunctionBaseSparse(),
-            n_(_n_unknowns),
-            func_(_spring)
-        {
+                n_(_n_unknowns),
+                func_(_spring) {
             xe_.resize(func_.n_unknowns());
             ge_.resize(func_.n_unknowns());
             he_.resize(func_.n_unknowns(), func_.n_unknowns());
@@ -63,12 +62,12 @@ namespace AOPT {
             //use vector xe_ to store the local coordinates of two nodes of every spring
             //then pass it to func_.eval_f(...)
 
-            for(size_t i=0; i<springs_.size(); ++i) {
-                xe_[0] = _x[2*springs_[i].first];
-                xe_[1] = _x[2*springs_[i].first+1];
+            for (size_t i = 0; i < springs_.size(); ++i) {
+                xe_[0] = _x[2 * springs_[i].first];
+                xe_[1] = _x[2 * springs_[i].first + 1];
 
-                xe_[2] = _x[2*springs_[i].second];
-                xe_[3] = _x[2*springs_[i].second+1];
+                xe_[2] = _x[2 * springs_[i].second];
+                xe_[3] = _x[2 * springs_[i].second + 1];
 
                 coeff[0] = ks_[i];
                 coeff[1] = ls_[i];
@@ -78,17 +77,16 @@ namespace AOPT {
 
             //------------------------------------------------------//
 
-            
+
             //------------------------------------------------------//
             //TODO: assemble function values of all the constrained spring elements
             //use cs_xe_ to store the coordinate of the attached node index
-            
+
 
             //------------------------------------------------------//
-            
+
             return energy;
         }
-
 
 
         /** The problem's energy gradient is a composition of the individual gradient
@@ -108,7 +106,7 @@ namespace AOPT {
 
             //------------------------------------------------------//
             //use ge_ to store the result of the local gradient
-            for(size_t i=0; i<springs_.size(); ++i) {
+            for (size_t i = 0; i < springs_.size(); ++i) {
                 xe_[0] = _x[2 * springs_[i].first];
                 xe_[1] = _x[2 * springs_[i].first + 1];
 
@@ -126,14 +124,14 @@ namespace AOPT {
                 _g[2 * springs_[i].second] += ge_[2];
                 _g[2 * springs_[i].second + 1] += ge_[3];
             }
-            
+
             //------------------------------------------------------//
-            
+
             //------------------------------------------------------//
             //TODO: assemble local gradient vector of all the constrained spring elements to the global one
             //use cs_ge_ to store the gradient of the attached node index
-            
-            
+
+
             //------------------------------------------------------//
 
         }
@@ -148,16 +146,16 @@ namespace AOPT {
          * \param _x the problem's springs positions.
          *           It should contain the positions of all nodes of the system.
          *           i.e. (_x[2*i], _x[2*i+1]) is the position of the i-th node **/
-        virtual void eval_hessian(const Vec &_x, SMat& _h) override {
+        virtual void eval_hessian(const Vec &_x, SMat &_h) override {
             std::vector<T> triplets;
-            triplets.reserve(16*springs_.size());
+            triplets.reserve(16 * springs_.size());
 
             //used to store the value of k and l, i.e. coeff[0] = ks_[i], coeff[0] = ls_[i];
             Vec coeff(2);
             //------------------------------------------------------//
             //use he_ to store the local hessian matrix
 
-            for(int i=0; i<ks_.size(); ++i) {
+            for (int i = 0; i < ks_.size(); ++i) {
                 int id0 = 2 * springs_[i].first;
                 int id1 = 2 * springs_[i].first + 1;
                 int id2 = 2 * springs_[i].second;
@@ -176,31 +174,31 @@ namespace AOPT {
                 func_.eval_hessian(xe_, coeff, he_);
 
                 //copy to global
-                triplets.emplace_back(id0, id0, he_(0,0));
-                triplets.emplace_back(id0, id1, he_(0,1));
-                triplets.emplace_back(id0, id2, he_(0,2));
-                triplets.emplace_back(id0, id3, he_(0,3));
+                triplets.emplace_back(id0, id0, he_(0, 0));
+                triplets.emplace_back(id0, id1, he_(0, 1));
+                triplets.emplace_back(id0, id2, he_(0, 2));
+                triplets.emplace_back(id0, id3, he_(0, 3));
 
-                triplets.emplace_back(id1, id0, he_(1,0));
-                triplets.emplace_back(id1, id1, he_(1,1));
-                triplets.emplace_back(id1, id2, he_(1,2));
-                triplets.emplace_back(id1, id3, he_(1,3));
+                triplets.emplace_back(id1, id0, he_(1, 0));
+                triplets.emplace_back(id1, id1, he_(1, 1));
+                triplets.emplace_back(id1, id2, he_(1, 2));
+                triplets.emplace_back(id1, id3, he_(1, 3));
 
-                triplets.emplace_back(id2, id0, he_(2,0));
-                triplets.emplace_back(id2, id1, he_(2,1));
-                triplets.emplace_back(id2, id2, he_(2,2));
-                triplets.emplace_back(id2, id3, he_(2,3));
+                triplets.emplace_back(id2, id0, he_(2, 0));
+                triplets.emplace_back(id2, id1, he_(2, 1));
+                triplets.emplace_back(id2, id2, he_(2, 2));
+                triplets.emplace_back(id2, id3, he_(2, 3));
 
-                triplets.emplace_back(id3, id0, he_(3,0));
-                triplets.emplace_back(id3, id1, he_(3,1));
-                triplets.emplace_back(id3, id2, he_(3,2));
-                triplets.emplace_back(id3, id3, he_(3,3));
+                triplets.emplace_back(id3, id0, he_(3, 0));
+                triplets.emplace_back(id3, id1, he_(3, 1));
+                triplets.emplace_back(id3, id2, he_(3, 2));
+                triplets.emplace_back(id3, id3, he_(3, 3));
             }
-           
+
             //------------------------------------------------------//
 
 
-        
+
             _h.resize(n_unknowns(), n_unknowns());
             _h.setZero();
             _h.setFromTriplets(triplets.begin(), triplets.end());
@@ -208,7 +206,7 @@ namespace AOPT {
 
 
         void add_spring_element(const int _v_idx0, const int _v_idx1, const double _k = 1., const double _l = 1.) {
-            if (2 * _v_idx0 > (int) n_ || _v_idx0 < 0 || 2 * _v_idx1 >= (int) n_ || _v_idx1 < 0)
+            if (2 * _v_idx0 > n_ || _v_idx0 < 0 || 2 * _v_idx1 >= n_ || _v_idx1 < 0)
                 std::cout << "Warning: invalid spring element was added... " << _v_idx0 << " " << _v_idx1 << std::endl;
             else {
                 springs_.emplace_back(_v_idx0, _v_idx1);
@@ -217,8 +215,9 @@ namespace AOPT {
             }
         }
 
-        void add_constrained_spring_element(const int _v_idx, const double _w = 1., const double _px = 0., const double _py = 0.) {
-            if (2 * _v_idx > (int) n_ || _v_idx < 0)
+        void add_constrained_spring_element(const int _v_idx, const double _w = 1., const double _px = 0.,
+                                            const double _py = 0.) {
+            if (2 * _v_idx > n_ || _v_idx < 0)
                 std::cout << "Warning: invalid node constraint element was added... " << _v_idx << std::endl;
             else {
                 attached_node_indices_.push_back(_v_idx);
@@ -233,7 +232,7 @@ namespace AOPT {
         int n_;
         std::vector<Edge> springs_;
 
-        ParametricFunctionBase& func_;
+        ParametricFunctionBase &func_;
 
         //vector of constants
         std::vector<double> ks_;

@@ -22,9 +22,13 @@ namespace AOPT {
          * \return the energy of the spring */
         inline virtual double eval_f(const Vec &_x, const Vec &_coeffs) final {
             //------------------------------------------------------//
-            //Todo: implement the function f(x) = 1/2 * penalty * ((x[0] - px)^2 + (x[1] - py)^2)
-          
-            
+            // implement the function f(x) = 1/2 * penalty * ((x[0] - px)^2 + (x[1] - py)^2)
+
+            const auto penalty = _coeffs[0];
+            const auto px = _coeffs[1];
+            const auto py = _coeffs[2];
+
+            return .5 * penalty * (std::pow(_x[0] - px, 2) + std::pow(_x[1] - py, 2));
             //------------------------------------------------------//
         }
 
@@ -35,8 +39,16 @@ namespace AOPT {
          * \param _g gradient output */
         inline virtual void eval_gradient(const Vec &_x, const Vec &_coeffs, Vec &_g) final {
             //------------------------------------------------------//
-            //Todo: implement the gradient and store in _g
-           
+            // implement the gradient and store in _g
+
+            const auto penalty = _coeffs[0];
+            const auto px = _coeffs[1];
+            const auto py = _coeffs[2];
+
+            const auto dx0 = - penalty * px + penalty * _x[0];
+            const auto dx1 = - penalty * py + penalty * _x[1];
+
+            _g << dx0, dx1;
             //------------------------------------------------------//
         }
 
@@ -47,8 +59,17 @@ namespace AOPT {
          * \param _H Hessian output */
         inline virtual void eval_hessian(const Vec &_x, const Vec &_coeffs, Mat &_H) final {
             //------------------------------------------------------//
-            //Todo: implement the hessian matrix and store in _H
-            
+            // implement the hessian matrix and store in _H
+
+            const auto penalty = _coeffs[0];
+
+            const auto dx0_x0 = penalty;
+            const auto dx0_x1 = 0;
+            const auto dx1_x0 = 0;
+            const auto dx1_x1 = penalty;
+
+            _H <<   dx0_x0, dx0_x1,
+                    dx1_x0, dx1_x1;
             //------------------------------------------------------//
         }
     };
