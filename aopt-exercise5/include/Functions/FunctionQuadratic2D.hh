@@ -34,14 +34,23 @@ namespace AOPT {
         /** evaluates the quadratic function's gradient
          * \param _x the point on which to evaluate the function
          * \param _g gradient output */
-        inline virtual void eval_gradient(const Vec &_x, Vec &_g) {}
+        inline virtual void eval_gradient(const Vec &_x, Vec &_g) {
+            _g[0] = _x[0];
+            _g[1] = gamma_ * _x[1];
+        }
 
         /** evaluates the quadratic function's Hessian
          * \param _x the point on which to evaluate the Hessian.
          *           Actually useless since the Hessian is constant but the method
          *           should still use the same interface as FunctionBase
          * \param _H Hessian output */
-        inline virtual void eval_hessian(const Vec &_x, Mat &_H) {}
+        inline virtual void eval_hessian(const Vec &_x, Mat &_H) {
+            // implement the Hessian H = (1, 0
+            //                            0, gamma)
+
+            _H <<   1, 0,
+                    0, gamma_;
+        }
 
         double get_gamma() const { return gamma_; }
 
