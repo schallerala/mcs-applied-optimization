@@ -97,6 +97,10 @@ namespace AOPT {
             double weight;
             double px, py;
 
+            // NOTE: Here code is duplicated with ConstrainedSpringElement2D which isn't initialized in this class.
+            //      Took the liberty to change the vectors of constraints to keep relative data together, but
+            //      not sure if it was expected from us to also add a field for this constrained function.
+
             for (auto const& extra_forces_tuples : attached_node_indices_weights_px_py_) {
                 std::tie(attached_node_index, weight, px, py) = extra_forces_tuples;
                 const auto x_n_x = _x[2 * attached_node_index];
@@ -166,6 +170,10 @@ namespace AOPT {
              * d/dx_1 = - p_x * w + w * x_n_1 = w * (x_n_1 - p_x)
              * d/dx_2 = - p_y * w + w * x_n_2 = w * (x_n_2 - p_y)
              */
+
+            // NOTE: Here code is duplicated with ConstrainedSpringElement2D which isn't initialized in this class.
+            //      Took the liberty to change the vectors of constraints to keep relative data together, but
+            //      not sure if it was expected from us to also add a field for this constrained function.
 
             int attached_node_index;
             double weight;
