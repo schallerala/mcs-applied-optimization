@@ -20,7 +20,7 @@ namespace AOPT {
          * \param _x starting point of the method. Should be of the same dimension as the Problem's
          * \param _g gradient at the starting point.
          * \param _dx delta x
-         * \param _t0 inital step of the method
+         * \param _t0 initial step of the method
          * \param _alpha and _tau variation constant, as stated by the method's definition
          * \return the final step t computed by the back-tracking line search */
         template<class Problem>
@@ -31,7 +31,7 @@ namespace AOPT {
                                                const double _t0,
                                                const double _alpha = 0.2,
                                                const double _tau = 0.6) {
-            
+
             double t(0);
 
             //------------------------------------------------------//
