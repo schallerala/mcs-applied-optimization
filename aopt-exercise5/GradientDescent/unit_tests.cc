@@ -42,7 +42,7 @@ public:
     // f(x) = log(x)
 
     // constructor
-    LogFunction(){}
+    LogFunction() {}
 
     // number of unknowns
     inline virtual int n_unknowns() { return 1; }
@@ -54,7 +54,7 @@ public:
 
     // gradient evaluation
     inline virtual void eval_gradient(const Vec &_x, Vec &_g) {
-        _g[0] = 1./_x[0];
+        _g[0] = 1. / _x[0];
     }
 
     // hessian matrix evaluation
@@ -65,7 +65,7 @@ public:
 
 /** checks that the basic functions of the ConstrainedSpringElement
  * give the expected results (computed by hand) */
-TEST(ConstrainedSpringElement, CheckFunctions){
+TEST(ConstrainedSpringElement, CheckFunctions) {
     typedef ConstrainedSpringElement2D::Vec Vec;
     typedef ConstrainedSpringElement2D::Mat Mat;
 
@@ -73,22 +73,22 @@ TEST(ConstrainedSpringElement, CheckFunctions){
 
 
     Vec x(2), coeffs(3), g(2);
-    Mat H(2,2);
+    Mat H(2, 2);
 
-    x << 1,1;
+    x << 1, 1;
     coeffs << 1000000, 0, 0;
 
     ASSERT_EQ(cse.eval_f(x, coeffs), 1000000);
 
-    cse.eval_gradient(x,coeffs, g);
+    cse.eval_gradient(x, coeffs, g);
     Vec expected_g(2);
     expected_g << 1000000, 1000000;
     ASSERT_EQ(g, expected_g);
 
     cse.eval_hessian(x, coeffs, H);
-    Mat expected_hess(2,2);
-    expected_hess<<1000000,  0,
-            0,  1000000;
+    Mat expected_hess(2, 2);
+    expected_hess << 1000000, 0,
+            0, 1000000;
     ASSERT_EQ(H, expected_hess);
 }
 
@@ -96,7 +96,7 @@ TEST(ConstrainedSpringElement, CheckFunctions){
 
 /** This tests compares your implementation's energy computation result
  * with the solution's*/
-TEST(MassSpringProblem, CheckFunction){
+TEST(MassSpringProblem, CheckFunction) {
     MassSpringSystemT<AOPT::MassSpringProblem2DSparse> mss(5, 5, 1);
     //attach spring graph nodes to certain positions
     //it checks the first scenario which has constrained spring
@@ -106,10 +106,10 @@ TEST(MassSpringProblem, CheckFunction){
     //generate points
     const int n_vertices = 36;
 
-    FunctionBase::Vec points(2*n_vertices);
-    for(int i=0; i<n_vertices; ++i) {
-        points[2*i] = sin(i * 0.3);
-        points[2*i+1] = sin(i * 0.1);
+    FunctionBase::Vec points(2 * n_vertices);
+    for (int i = 0; i < n_vertices; ++i) {
+        points[2 * i] = sin(i * 0.3);
+        points[2 * i + 1] = sin(i * 0.1);
     }
 
     mss.set_spring_graph_points(points);
@@ -124,7 +124,7 @@ TEST(MassSpringProblem, CheckFunction){
  * finite difference computation based on the base function.
  * i.e. checks that the analytical expression of the gradient gives the same
  * result as the numerical approach */
-TEST(MassSpringProblem, CheckGradient){
+TEST(MassSpringProblem, CheckGradient) {
     MassSpringSystemT<AOPT::MassSpringProblem2DSparse> mss(5, 5, 1);
     //attach spring graph nodes to certain positions
     mss.add_constrained_spring_elements();
@@ -137,7 +137,7 @@ TEST(MassSpringProblem, CheckGradient){
 
 /** Checks that your implementation of the back-tracking line search algorithm
 works properly for a simple problem*/
-TEST(LineSearch, CheckBackTrackingLineSearch){
+TEST(LineSearch, CheckBackTrackingLineSearch) {
     using Vec = FunctionQuadratic2D::Vec;
 
     LogFunction func;
@@ -156,7 +156,7 @@ TEST(LineSearch, CheckBackTrackingLineSearch){
 
 
 /** Checks that the gradient descent gives the proper result */
-TEST(GradientDescent, CheckAlgorithm){
+TEST(GradientDescent, CheckAlgorithm) {
     using Vec = FunctionQuadratic2D::Vec;
 
     FunctionQuadratic2D func;
@@ -172,8 +172,7 @@ TEST(GradientDescent, CheckAlgorithm){
 }
 
 
-
-int main(int _argc, char** _argv){
+int main(int _argc, char **_argv) {
 
     testing::InitGoogleTest(&_argc, _argv);
     return RUN_ALL_TESTS();
