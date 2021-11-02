@@ -40,10 +40,10 @@ std::vector<AOPT::GradientDescent::Vec> get_start_points(int n_grid_x, int n_gri
 
 int main(int _argc, const char *_argv[]) {
     if (_argc != 7) {
-        std::cout << "Usage: input should be 'function index(0: f without length, 1: f with length),"
+        std::cerr << "Usage: input should be 'function index(0: f without length, 1: f with length),"
                      "constrained spring scenario  (1 or 2 )"
                      "number of grid in x, number of grid in y, max iteration, filename', e.g. "
-                     "./GradientDescent 0 2 2 10000 /usr/spring" << std::endl;
+                     "./GradientDescent 0 1 2 2 10000 /usr/spring" << std::endl << _argc << std::endl;
         return -1;
     }
 
