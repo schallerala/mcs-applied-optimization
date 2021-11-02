@@ -32,11 +32,25 @@ namespace AOPT {
                                                const double _alpha = 0.2,
                                                const double _tau = 0.6) {
 
-            double t(0);
+            double t = _t0;
+
+            Vec g = _g;
 
             //------------------------------------------------------//
-            //TODO: implement the backtracking line search algorithm
+            // implement the backtracking line search algorithm
+            
+            while (true) {
+                _problem->eval_gradient(_x, g);
+                
+                const auto lhs = _problem->eval_f(_x + t * _dx);
+                const auto rhs = _problem->eval_f(_x) + t * _alpha * g.transpose() * _dx;
 
+                if (lhs <= rhs)
+                    break;
+
+                t *= _tau;
+            }
+            
 
             //------------------------------------------------------//
 
