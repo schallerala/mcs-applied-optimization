@@ -76,7 +76,7 @@ int main(int _argc, const char *_argv[]) {
         mss.set_spring_graph_points(start_points[i]);
         //initial energy
         auto energy = mss.initial_system_energy();
-        std::cout << "\nInitial MassSpring system energy is " << energy << std::endl;
+        std::cout << "Initial MassSpring system energy is " << energy << std::endl;
 
         //save graph before optimization
         std::string fn = filename + std::string(std::to_string(i + 1));
