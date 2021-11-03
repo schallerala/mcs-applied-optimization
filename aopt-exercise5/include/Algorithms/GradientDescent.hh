@@ -54,6 +54,7 @@ namespace AOPT {
                 dx = -g;
 
                 // 2. Line Search: choose a step size t^{(k)} > 0
+                // use the alpha and tau constant as given in the slides
                 const auto t_k = LineSearch::backtracking_line_search(_problem, x, g, dx, 1., .5, .75);
 
                 // 3. Update: x^{(k+1)} = x^{(k)} + t^{(k)} * \Delta x^{(k)}
