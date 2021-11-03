@@ -3,6 +3,7 @@
 #include <MassSpringSystemT.hh>
 #include <Functions/ConstrainedSpringElement2D.hh>
 #include <Functions/FunctionQuadratic2D.hh>
+#include <Functions/FunctionNonConvex2D.hh>
 #include <Utils/RandomNumberGenerator.hh>
 #include <Utils/DerivativeChecker.hh>
 #include <Algorithms/GradientDescent.hh>
@@ -96,12 +97,12 @@ TEST(ConstrainedSpringElement, CheckFunctions) {
 
 /** This tests compares your implementation's energy computation result
  * with the solution's*/
-TEST(MassSpringProblem, CheckFunction) {
+TEST(MassSpringProblem, CheckFunctionForScenario1) {
     MassSpringSystemT<AOPT::MassSpringProblem2DSparse> mss(5, 5, 1);
     //attach spring graph nodes to certain positions
     //it checks the first scenario which has constrained spring
     //elements at four corner nodes
-    mss.add_constrained_spring_elements();
+    mss.add_constrained_spring_elements(AOPT::MassSpringSystemT<MassSpringProblem2DSparse>::FOUR_CORNERS);
 
     //generate points
     const int n_vertices = 36;
@@ -115,7 +116,29 @@ TEST(MassSpringProblem, CheckFunction) {
     mss.set_spring_graph_points(points);
 
     auto energy = mss.initial_system_energy();
-    ASSERT_FLOAT_EQ(energy, 49960568);
+    ASSERT_FLOAT_EQ(energy, 5161567.5);
+}
+
+TEST(MassSpringProblem, CheckFunctionForScenario2) {
+    MassSpringSystemT<AOPT::MassSpringProblem2DSparse> mss(5, 5, 1);
+    //attach spring graph nodes to certain positions
+    //it checks the first scenario which has constrained spring
+    //elements at four corner nodes
+    mss.add_constrained_spring_elements(AOPT::MassSpringSystemT<MassSpringProblem2DSparse>::SIDES);
+
+    //generate points
+    const int n_vertices = 36;
+
+    FunctionBase::Vec points(2 * n_vertices);
+    for (int i = 0; i < n_vertices; ++i) {
+        points[2 * i] = sin(i * 0.3);
+        points[2 * i + 1] = sin(i * 0.1);
+    }
+
+    mss.set_spring_graph_points(points);
+
+    auto energy = mss.initial_system_energy();
+    ASSERT_FLOAT_EQ(energy, 13216806);
 }
 
 
@@ -171,6 +194,21 @@ TEST(GradientDescent, CheckAlgorithm) {
     ASSERT_EQ(result, expected_result);
 }
 
+/** Checks that the gradient descent gives the proper result */
+TEST(GradientDescent, CheckAlgorithm2) {
+    using Vec = FunctionQuadratic2D::Vec;
+
+    FunctionQuadratic2D func(10);
+
+    Vec start_pt(2);
+    start_pt << 10, 5;
+
+    Vec result = GradientDescent::solve(&func, start_pt);
+
+    Vec expected_result(2);
+    expected_result << 0, 0;
+    ASSERT_NEAR(result.norm(), expected_result.norm(), 1e-4);
+}
 
 int main(int _argc, char **_argv) {
 
