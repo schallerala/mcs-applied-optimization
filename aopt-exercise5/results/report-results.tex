@@ -1,0 +1,38 @@
+\documentclass[multi=page,crop,border=15pt,varwidth=28cm]{standalone}
+
+\usepackage{float}
+\usepackage{graphicx}
+\graphicspath{ {./assets/} }
+
+\newcommand{\newresult}[2]{%
+\begin{page}
+\Large{\textbf{#2}}
+
+\begin{minipage}[t]{14cm}
+    \begin{figure}[H]
+        \includegraphics[width=\textwidth]{#1__before}
+        \caption{Before}
+    \end{figure}
+\end{minipage}
+\begin{minipage}[t]{14cm}
+    \begin{figure}[H]
+        \includegraphics[width=\textwidth]{#1__after}
+        \caption{After}
+    \end{figure}
+\end{minipage}
+\end{page}}
+
+
+
+\begin{document}
+
+\newresult{result__0-without-length__1-corners-constrained}{Function index 0: f without length -- Constrained spring scenario 1: Corners}
+
+\newresult{result__0-without-length__2-sides-constrained}{Function index 0: f without length -- Constrained spring scenario 2: Sides}
+
+\newresult{result__1-with-length__1-corners-constrained}{Function index 1: f with length -- Constrained spring scenario 1: Corners}
+
+\newresult{result__1-with-length__2-sides-constrained}{Function index 1: f with length -- Constrained spring scenario 2: Sides}
+
+
+\end{document}
