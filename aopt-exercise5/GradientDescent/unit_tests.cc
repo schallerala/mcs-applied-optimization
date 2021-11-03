@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 #include <Utils/StopWatch.hh>
 #include <MassSpringSystemT.hh>
 #include <Functions/ConstrainedSpringElement2D.hh>
@@ -208,6 +209,38 @@ TEST(GradientDescent, CheckAlgorithm2) {
     Vec expected_result(2);
     expected_result << 0, 0;
     ASSERT_NEAR(result.norm(), expected_result.norm(), 1e-4);
+}
+
+TEST(GradientDescent, LeftNanLE) {
+    ASSERT_FALSE(NAN <= 0);
+}
+
+TEST(GradientDescent, RightNanLE) {
+    ASSERT_FALSE(0 <= NAN);
+}
+
+TEST(GradientDescent, LeftNanGT) {
+    ASSERT_FALSE(NAN > 0);
+}
+
+TEST(GradientDescent, RightNanGT) {
+    ASSERT_FALSE(0 > NAN);
+}
+
+TEST(GradientDescent, NotLeftNanLE) {
+    ASSERT_TRUE( ! (NAN <= 0));
+}
+
+TEST(GradientDescent, NotRightNanLE) {
+    ASSERT_TRUE( ! (0 <= NAN));
+}
+
+TEST(GradientDescent, NotLeftNanGT) {
+    ASSERT_TRUE( ! (NAN > 0));
+}
+
+TEST(GradientDescent, NotRightNanGT) {
+    ASSERT_TRUE( ! (0 > NAN));
 }
 
 int main(int _argc, char **_argv) {

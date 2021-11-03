@@ -49,13 +49,12 @@ namespace AOPT {
             // repeat
             for (size_t k = 0; k < _max_iters; ++k, x = x_next) {
                 // 1. Determine descent direction \Delta x^{(k)}
-                //      \Delta x^{(k)} = - \nabla f(x)
+                //      search direction: \Delta x^{(k)} = - \nabla f(x)
                 _problem->eval_gradient(x, g);
-                dx = -g; // aka search direction
+                dx = -g;
 
                 // 2. Line Search: choose a step size t^{(k)} > 0
-                // TODO how to compute first t^{(0)} to give to backtracking line search
-                const auto t_k = LineSearch::backtracking_line_search(_problem, x, g, dx, 1.);
+                const auto t_k = LineSearch::backtracking_line_search(_problem, x, g, dx, 1., .5, .75);
 
                 // 3. Update: x^{(k+1)} = x^{(k)} + t^{(k)} * \Delta x^{(k)}
                 x_next = x + t_k * dx;
@@ -63,7 +62,7 @@ namespace AOPT {
                 // 4. k = k + 1
 
                 // until \nabla f(x^{(k)}) <= epsilon^2
-                if (g.norm() <= e2 || /* protection against impossible solutions */ x.hasNaN())
+                if (g.squaredNorm() <= e2 || /* protection against impossible solutions */ x.hasNaN())
                     break;
             }
 

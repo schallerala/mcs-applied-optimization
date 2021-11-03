@@ -34,23 +34,23 @@ namespace AOPT {
 
             double t = _t0;
 
-            Vec g = _g;
-
             //------------------------------------------------------//
             // implement the backtracking line search algorithm
-            
-            while (true) {
-                _problem->eval_gradient(_x, g);
-                
-                const auto lhs = _problem->eval_f(_x + t * _dx);
-                const auto rhs = _problem->eval_f(_x) + t * _alpha * g.transpose() * _dx;
 
-                if (lhs <= rhs)
+            const auto f_k = _problem->eval_f(_x);
+
+            while (true) { // bit scary, but don't be :)
+                const auto lhs = _problem->eval_f(_x + t * _dx);
+                const auto rhs = f_k + t * _alpha * _g.transpose() * _dx;
+
+                // if lhs or rhs is NaN, it will in any case produce false.
+                // also in this case, break
+                if ( ! (lhs > rhs))
                     break;
 
                 t *= _tau;
             }
-            
+
 
             //------------------------------------------------------//
 
