@@ -28,11 +28,12 @@ namespace AOPT {
          *
          * \return the minimum found by the method. */
         template<class Problem>
-        static Vec solve(Problem *_problem, const Vec &_initial_x, const double _eps = 1e-4, const int _max_iters = 1000000) {
+        static Vec
+        solve(Problem *_problem, const Vec &_initial_x, const double _eps = 1e-4, const int _max_iters = 1000000) {
             std::cout << "******** Gradient Descent ********" << std::endl;
 
             // squared epsilon for stopping criterion
-            double e2 = _eps * _eps;
+            const double e2 = _eps * _eps;
 
             // get starting point
             Vec x = _initial_x;
@@ -40,7 +41,7 @@ namespace AOPT {
 
             // allocate gradient storage
             Vec g(_problem->n_unknowns());
-            Vec delta_x_k;
+            Vec dx;
 
             //------------------------------------------------------//
             // implement the gradient descent
@@ -50,18 +51,19 @@ namespace AOPT {
                 // 1. Determine descent direction \Delta x^{(k)}
                 //      \Delta x^{(k)} = - \nabla f(x)
                 _problem->eval_gradient(x, g);
-                delta_x_k = -g;
+                dx = -g; // aka search direction
 
                 // 2. Line Search: choose a step size t^{(k)} > 0
-                // TODO find step size? Or step with delta x?
+                // TODO how to compute first t^{(0)} to give to backtracking line search
+                const auto t_k = LineSearch::backtracking_line_search(_problem, x, g, dx, 200.);
 
                 // 3. Update: x^{(k+1)} = x^{(k)} + t^{(k)} * \Delta x^{(k)}
-                x_next = x + delta_x_k;
+                x_next = x + t_k * dx;
 
                 // 4. k = k + 1
 
                 // until \nabla f(x^{(k)}) <= epsilon^2
-                if (g.norm() <= e2)
+                if (g.norm() <= e2 || /* protection against impossible solutions */ x.hasNaN())
                     break;
             }
 
