@@ -180,7 +180,9 @@ TEST(ProjectedNewton, CheckAlgorithmOnSpringElementWithoutLength){
     Vec start_pt(4);
     start_pt << 0, 0, 1, 1;
 
-    Vec result = NewtonMethods::solve_with_projected_hessian(&sparse_sel, start_pt);
+    // TODO review: without a low enough epsilon, will stop too soon for the assertion
+    //      --> review the stopping criteria
+    Vec result = NewtonMethods::solve_with_projected_hessian(&sparse_sel, start_pt, 10, 10E-10);
 
     Vec expected_result(4);
     expected_result << 0.5, 0.5, 0.5, 0.5;

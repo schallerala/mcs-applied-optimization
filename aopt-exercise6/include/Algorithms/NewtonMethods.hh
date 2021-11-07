@@ -127,9 +127,10 @@ namespace AOPT {
             std::cout << "******** Newton Method with projected hessian ********" << std::endl;
 
             // squared epsilon for stopping criterion
-            double e2 = 2 * _eps * _eps;
+            const double e2 = 2 * _eps;
+            const double ee = _eps * _eps;
 
-            int n = _problem->n_unknowns();
+            const int n = _problem->n_unknowns();
 
             // get starting point
             Vec x = _initial_x;
@@ -142,7 +143,6 @@ namespace AOPT {
 
             // allocate search direction vector storage
             Vec delta_x(n);
-            int iter(0);
 
             // identity and scalar to add positive values to the diagonal
             SMat I(n, n);
@@ -150,12 +150,53 @@ namespace AOPT {
 
             _converged = false;
 
-            Eigen::SimplicialLLT<SMat> solver;
-
             //------------------------------------------------------//
-            //TODO: implement Newton with projected hessian method
+            // implement Newton with projected hessian method
             //Hint: if the factorization fails, then add delta * I to the hessian.
             //      repeat until factorization succeeds (make sure to update delta!)
+
+            auto fp = std::numeric_limits<double>::max();
+
+            // /!\ don't compute the inverse of the hessian matrix
+            //      --> use cholesky factorization
+            //      --> solve left hand side
+            //      --> check LDLT module of the Eigen library
+
+            // repeat:
+            for (size_t i = 0; i < _max_iters; ++i) {
+                // 1. compute newton step: delta_x = -H^-1 * g
+                //      --> but use Eigen LLT solver
+                _problem->eval_gradient(x, g);
+                _problem->eval_hessian(x, H);
+                delta_x = solve_delta_x(_problem, x, g, H, _gamma);
+
+                // 2. compute newton decrement lambda^2 = -g^T * delta_x
+                const double lambda_2 = -g.transpose() * delta_x;
+
+                // 3. Stopping criterion: quit if lambda^2/2 <= epsilon
+                if (lambda_2 <= e2)
+                    break;
+
+                // Additional checks like given in the instructions
+                const auto f = _problem->eval_f(x);
+                if (
+                        // * objective function does not increase
+                        f >= fp ||
+                        // * norm of gradient is not greater than epsilon
+                        g.squaredNorm() <= ee
+                        )
+                    break;
+
+                // 4. Line search: choose step size: t > 0 (e.g. backtracking t_0 = 1)
+                // use the alpha and tau constant as given in the slides
+                const auto t_k = LineSearch::backtracking_line_search(_problem, x, g, delta_x, 1., .5, .75);
+
+                // 5. Update: x = x + t * delta_x
+                x += t_k * delta_x;
+
+                // updates for stopping criteria
+                fp = f;
+            }
 
             //------------------------------------------------------//
 
@@ -163,6 +204,53 @@ namespace AOPT {
             return x;
         }
 
+    private:
+        static Vec
+        solve_delta_x(FunctionBaseSparse *_problem, const Vec &_x, const Vec &_g, const SMat &_hessian, const double _gamma) {
+            const int n = _problem->n_unknowns();
+
+            // allocate search direction vector storage
+            Vec delta_x(n);
+
+            Eigen::SimplicialLLT<SMat> solver;
+
+            // Attempt to perform Cholesky decomposition of the hessian matrix _hessian
+            // if fails:
+            //      iterate on adding this value to the diagonal: _hessian = _hessian + delta*I
+            //      until matrix is positive definite (LLT computation success)
+            //      on every iteration delta = delta * gamma, gamma > 1.
+            //      recommended delta_0 = 10E-4 * abs(trace(_hessian)) / n
+            //      --> trace being "the sum of the coefficients on the main diagonal."
+
+            // compute newton step: delta_x = -_hessian^-1 * _g
+            //      /!\ H is costly to compute. Use cholesky factorization
+            //      --> H = L * L^T
+            solver.compute(_hessian);
+
+            // if computation not successful, start iterating over offset delta
+            if (solver.info() != Eigen::ComputationInfo::Success) {
+                // recommended delta_0 = 10E-4 * abs(trace(_hessian)) / n
+                const auto delta_0 = 10E-4 * std::abs(_hessian.diagonal().sum()) / n;
+                // on every iteration delta = delta * gamma
+                double delta = delta_0;
+                solver.setShift(0, delta);
+                solver.compute(_hessian);
+                // until matrix is positive definite (LLT computation success)
+                while (solver.info() != Eigen::ComputationInfo::Success) {
+                    delta *= _gamma;
+                    solver.setShift(0, delta);
+                    solver.compute(_hessian);
+                }
+            }
+
+            // solver.solve(b)
+            //      returns the solution _x of A _x = b using the current decomposition of A.
+            //      --> A being the hessian matrix we did plug in the `compute` method
+            //      --> _x being delta_x
+            delta_x = solver.solve(-_g);
+
+            return delta_x;
+        }
 
     };
 
