@@ -28,9 +28,9 @@ namespace AOPT {
             std::cout << "******** Newton Method ********" << std::endl;
 
             // squared epsilon for stopping criterion
-            double e2 = 2 * _eps * _eps;
+            const double e2 = 2 * _eps;
 
-            int n = _problem->n_unknowns();
+            const int n = _problem->n_unknowns();
 
             // get starting point
             Vec x = _initial_x;
@@ -43,13 +43,50 @@ namespace AOPT {
 
             // allocate search direction vector storage
             Vec delta_x(n);
-            int iter(0);
-
 
             Eigen::SimplicialLLT<SMat> solver;
 
             //------------------------------------------------------//
-            //TODO: implement Newton method
+            // implement Newton method
+
+            // * objective function does not increase
+            // * norm of gradient is not greater than epsilon
+            // * set a hard limit to the number of iterations
+
+            // /!\ don't compute the inverse of the hessian matrix
+            //      --> use cholesky factorization
+            //      --> solve left hand side
+            //      --> check LDLT module of the Eigen library
+
+            // repeat:
+            for (size_t i = 0; i < _max_iters; ++i) {
+                // 1. compute newton step: delta_x = -H^-1 * g
+                //      /!\ H is costly to compute. Use cholesky factorization
+                //      --> H = L * L^T
+                _problem->eval_hessian(x, H);
+                solver.compute(H);
+
+                // solver.solve(b)
+                //      returns the solution x of A x = b using the current decomposition of A.
+                //      --> A being the hessian matrix we did plug in the `compute` method
+                //      --> x being delta_x
+                _problem->eval_gradient(x, g);
+                delta_x = solver.solve(-g);
+
+                // 2. compute newton decrement lambda^2 = -g^T * delta_x
+                const auto lambda_2 = -g.transpose() * delta_x;
+
+                // 3. Stopping criterion: quit if lambda^2/2 <= epsilon
+                if (lambda_2 <= e2)
+                    break;
+
+                // 4. Line search: choose step size: t > 0 (e.g. backtracking t_0 = 1)
+                // use the alpha and tau constant as given in the slides
+                const auto t_k = LineSearch::backtracking_line_search(_problem, x, g, delta_x, 1., .5, .75);
+
+                // 5. Update: x = x + t * delta_x
+                x += t_k * delta_x;
+            }
 
             //------------------------------------------------------//
 

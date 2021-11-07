@@ -61,7 +61,7 @@ namespace AOPT {
                 if (f >= fp || g2 <= e2) break;
 
                 // step size
-                double t = LineSearch::backtracking_line_search(_problem, x, g, -g, 1.);
+                double t = LineSearch::backtracking_line_search(_problem, x, g, -g, 1., .5, .75);
 
                 // update
                 x += t * (-g);
