@@ -54,9 +54,9 @@ namespace AOPT {
 
                 double f = _problem->eval_f(x);
                 // print status
-                std::cout << "iter: " << iter <<
-                          "   obj = " << f <<
-                          "   ||g||^2 = " << g2<< std::endl;
+//                std::cout << "iter: " << iter <<
+//                          "   obj = " << f <<
+//                          "   ||g||^2 = " << g2<< std::endl;
 
                 if (f >= fp || g2 <= e2) break;
 

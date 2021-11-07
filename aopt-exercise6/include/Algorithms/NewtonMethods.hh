@@ -168,7 +168,11 @@ namespace AOPT {
                 //      --> but use Eigen LLT solver
                 _problem->eval_gradient(x, g);
                 _problem->eval_hessian(x, H);
-                delta_x = solve_delta_x(_problem, x, g, H, _gamma);
+                _converged = solve_delta_x(_problem, x, g, H, _gamma, delta_x);
+
+                // if impossible to find the appropriate delta_x
+                if ( ! _converged)
+                    break;
 
                 // 2. compute newton decrement lambda^2 = -g^T * delta_x
                 const double lambda_2 = -g.transpose() * delta_x;
@@ -205,12 +209,9 @@ namespace AOPT {
         }
 
     private:
-        static Vec
-        solve_delta_x(FunctionBaseSparse *_problem, const Vec &_x, const Vec &_g, const SMat &_hessian, const double _gamma) {
+        static bool
+        solve_delta_x(FunctionBaseSparse *_problem, const Vec &_x, const Vec &_g, const SMat &_hessian, const double _gamma, Vec &_delta_x) {
             const int n = _problem->n_unknowns();
-
-            // allocate search direction vector storage
-            Vec delta_x(n);
 
             Eigen::SimplicialLLT<SMat> solver;
 
@@ -238,6 +239,9 @@ namespace AOPT {
                 // until matrix is positive definite (LLT computation success)
                 while (solver.info() != Eigen::ComputationInfo::Success) {
                     delta *= _gamma;
+                    if ( ! std::isfinite(delta))
+                        return false;
+
                     solver.setShift(0, delta);
                     solver.compute(_hessian);
                 }
@@ -247,9 +251,9 @@ namespace AOPT {
             //      returns the solution _x of A _x = b using the current decomposition of A.
             //      --> A being the hessian matrix we did plug in the `compute` method
             //      --> _x being delta_x
-            delta_x = solver.solve(-_g);
+            _delta_x = solver.solve(-_g);
 
-            return delta_x;
+            return true;
         }
 
     };
