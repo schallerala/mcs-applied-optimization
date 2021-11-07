@@ -29,6 +29,7 @@ namespace AOPT {
 
             // squared epsilon for stopping criterion
             const double e2 = 2 * _eps;
+            const double ee = _eps * _eps;
 
             const int n = _problem->n_unknowns();
 
@@ -49,9 +50,7 @@ namespace AOPT {
             //------------------------------------------------------//
             // implement Newton method
 
-            // * objective function does not increase
-            // * norm of gradient is not greater than epsilon
-            // * set a hard limit to the number of iterations
+            auto fp = std::numeric_limits<double>::max();
 
             // /!\ don't compute the inverse of the hessian matrix
             //      --> use cholesky factorization
@@ -80,12 +79,25 @@ namespace AOPT {
                 if (lambda_2 <= e2)
                     break;
 
+                // Additional checks like given in the instructions
+                const auto f = _problem->eval_f(x);
+                if (
+                        // * objective function does not increase
+                        f >= fp ||
+                        // * norm of gradient is not greater than epsilon
+                        g.squaredNorm() <= ee
+                )
+                    break;
+
                 // 4. Line search: choose step size: t > 0 (e.g. backtracking t_0 = 1)
                 // use the alpha and tau constant as given in the slides
                 const auto t_k = LineSearch::backtracking_line_search(_problem, x, g, delta_x, 1., .5, .75);
 
                 // 5. Update: x = x + t * delta_x
                 x += t_k * delta_x;
+
+                // updates for stopping criteria
+                fp = f;
             }
 
             //------------------------------------------------------//
