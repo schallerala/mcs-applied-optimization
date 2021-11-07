@@ -23,11 +23,12 @@ namespace AOPT {
          * \param _initial_x starting point of the method
          * \param _eps epsilon under which the method stops
          * \param _max_iters maximum iteration of the method*/
-        static Vec solve(FunctionBaseSparse *_problem, const Vec& _initial_x, const double _eps = 1e-4, const int _max_iters = 1000000) {
+        static Vec solve(FunctionBaseSparse *_problem, const Vec &_initial_x, const double _eps = 1e-4,
+                         const int _max_iters = 1000000) {
             std::cout << "******** Newton Method ********" << std::endl;
 
             // squared epsilon for stopping criterion
-            double e2 = 2* _eps * _eps;
+            double e2 = 2 * _eps * _eps;
 
             int n = _problem->n_unknowns();
 
@@ -46,10 +47,10 @@ namespace AOPT {
 
 
             Eigen::SimplicialLLT<SMat> solver;
-  
+
             //------------------------------------------------------//
             //TODO: implement Newton method
-           
+
             //------------------------------------------------------//
 
             return x;
@@ -64,18 +65,20 @@ namespace AOPT {
          * \param _tau_factor the evolution factor of the tau coefficient
          * \param _eps epsilon under which the method stops
          * \param _max_iters maximum iteration of the method*/
-        static Vec solve_with_projected_hessian(FunctionBaseSparse *_problem, const Vec& _initial_x, const double _gamma = 10.0,
-                                                const double _eps = 1e-4, const int _max_iters = 1000000) {
+        static Vec
+        solve_with_projected_hessian(FunctionBaseSparse *_problem, const Vec &_initial_x, const double _gamma = 10.0,
+                                     const double _eps = 1e-4, const int _max_iters = 1000000) {
             bool converged = false;
             return solve_with_projected_hessian(_problem, converged, _initial_x, _gamma, _eps, _max_iters);
         }
 
-        static Vec solve_with_projected_hessian(FunctionBaseSparse *_problem, bool& _converged, const Vec& _initial_x, const double _gamma = 10.0,
+        static Vec solve_with_projected_hessian(FunctionBaseSparse *_problem, bool &_converged, const Vec &_initial_x,
+                                                const double _gamma = 10.0,
                                                 const double _eps = 1e-4, const int _max_iters = 1000000) {
             std::cout << "******** Newton Method with projected hessian ********" << std::endl;
 
             // squared epsilon for stopping criterion
-            double e2 = 2*_eps * _eps;
+            double e2 = 2 * _eps * _eps;
 
             int n = _problem->n_unknowns();
 
@@ -104,13 +107,12 @@ namespace AOPT {
             //TODO: implement Newton with projected hessian method
             //Hint: if the factorization fails, then add delta * I to the hessian.
             //      repeat until factorization succeeds (make sure to update delta!)
-           
+
             //------------------------------------------------------//
 
 
             return x;
         }
-
 
 
     };

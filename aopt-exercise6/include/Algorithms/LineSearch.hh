@@ -35,7 +35,7 @@ namespace AOPT {
             double t(0);
 
             //------------------------------------------------------//
-            //TODO: implement the backtracking line search algorithm
+            // implement the backtracking line search algorithm
             t = _t0;
 
             // pre-compute objective
