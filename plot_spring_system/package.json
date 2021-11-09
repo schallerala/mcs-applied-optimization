@@ -1,0 +1,24 @@
+{
+  "name": "plot_spring_system",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test:index": "node index.js ~/development/unifr/applied-optimization/aopt-exercise6/build/results_output/execution_GradientDescent_0_0_10__1_edges.csv ~/development/unifr/applied-optimization/aopt-exercise6/build/results_output/execution_GradientDescent_0_0_10__1_nodes.csv out.svg",
+    "start": "node produce_all_output.js ~/development/unifr/applied-optimization/aopt-exercise6/build/results_output/"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "d3": "^7.1.1",
+    "globby": "^12.0.2",
+    "jsdom": "^18.0.1"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.1.0",
+    "@types/jsdom": "^16.2.13",
+    "@types/node": "^16.11.7"
+  }
+}
