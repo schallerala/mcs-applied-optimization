@@ -65,7 +65,6 @@ add_subdirectory(NewtonMethods)
 # FN_INDEXES: without or with spring length
 set(FN_INDEXES 0 1)
 # 0: dense, 1: sparse matrix
-# FIXME, missing config 2 for Newton execution
 set(SPARSE_MATRIX_CONFIGS 0 1)
 set(GRID_SIDES 5 10 20)
 set(EXECUTABLES GradientDescent NewtonMethods)
