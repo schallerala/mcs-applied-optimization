@@ -19,10 +19,9 @@ for (let i = 0; i < allCsv.length; i += 4) {
     const file1After = allCsv[i + 2];
     const file2After = allCsv[i + 3];
 
-    // ex: execution_GradientDescent_0_0_10__1_edges.csv
-    const outputFilenameBase = basename(file1Before).split("_").reverse().slice(1).reverse().join('_');
+    // ex: <path>/execution_GradientDescent_0_0_10__1_edges.csv
+    const outputFilenameBase = file1Before.slice(0, -"_edges.csv".length);
 
-    // console.log(file1Before, file2Before, `${outputFilenameBase}_before.svg`);
     produceSystemSvg(file1Before, file2Before, `${outputFilenameBase}_before.svg`);
-    produceSystemSvg(file1After, file2After, `${outputFilenameBase}_after.svg`);
+    produceSystemSvg(file1After, file2After, `${outputFilenameBase}_optimized.svg`);
 }

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test:index": "node index.js ~/development/unifr/applied-optimization/aopt-exercise6/build/results_output/execution_GradientDescent_0_0_10__1_edges.csv ~/development/unifr/applied-optimization/aopt-exercise6/build/results_output/execution_GradientDescent_0_0_10__1_nodes.csv out.svg",
+    "test:index": "node index.js ~/development/unifr/applied-optimization/aopt-exercise6/build/results_output/execution_GradientDescent_0_0_5__1_opt_edges.csv ~/development/unifr/applied-optimization/aopt-exercise6/build/results_output/execution_GradientDescent_0_0_5__1_opt_nodes.csv out.svg",
     "start": "node produce_all_output.js ~/development/unifr/applied-optimization/aopt-exercise6/build/results_output/"
   },
   "type": "module",

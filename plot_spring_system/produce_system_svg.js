@@ -92,30 +92,24 @@ function setData(nodes, links) {
         max_x = Math.max(max_x, node[0]);
         max_y = Math.max(max_y, node[1]);
     });
-    var range_x = max_x - min_x;
-    var range_y = max_y - min_y;
     console.log("x range", min_x, max_x);
     console.log("y range", min_y, max_y);
-    var scale;
-    if (range_y / SVG_HEIGHT < range_x / SVG_WIDTH) {
-        scale = d3
-            .scaleLinear()
-            .domain([min_x, max_x])
-            .range([config.padding, SVG_WIDTH - config.padding]);
-    } else {
-        scale = d3
-            .scaleLinear()
-            .domain([min_y, max_y])
-            .range([config.padding, SVG_HEIGHT - config.padding]);
-    }
+    const scaleX = d3
+        .scaleLinear()
+        .domain([min_x, max_x])
+        .range([config.padding, SVG_WIDTH - config.padding]);
+    const scaleY = d3
+        .scaleLinear()
+        .domain([min_y, max_y])
+        .range([config.padding, SVG_HEIGHT - config.padding]);
 
     nodes.forEach(function (node) {
-        node[0] = scale(node[0]);
-        node[1] = scale(node[1]);
+        node[0] = scaleX(node[0]);
+        (node[0] < 0 || node[0] > SVG_WIDTH) && console.error("scaled out of viewport:", node[0]);
+        node[1] = scaleY(node[1]);
+        (node[1] < 0 || node[1] > SVG_HEIGHT) && console.error("scaled out of viewport:", node[1]);
     });
-    console.log(nodes);
-
-    // TODO: data scaling
+    // console.log(nodes);
 
     g_nodes = nodes;
     g_links = links;
