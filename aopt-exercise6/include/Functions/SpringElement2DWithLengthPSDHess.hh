@@ -33,8 +33,8 @@ namespace AOPT {
             //          Vec evals = solver.eigenvalues();
             //      2. to convert a vector d to a (dense) diagonal matrix D, use
             //          D = d.asDiagonal()
-            const Vec D = solver.eigenvalues();
-            const auto Q = solver.eigenvectors();
+            const auto& D = solver.eigenvalues();
+            const auto& Q = solver.eigenvectors();
 
             Vec new_m_i(D.size());
 
