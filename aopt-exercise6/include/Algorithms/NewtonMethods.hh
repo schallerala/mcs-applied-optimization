@@ -141,13 +141,7 @@ namespace AOPT {
             // allocate hessian storage
             SMat H(n, n);
 
-            // allocate search direction vector storage
-            Vec delta_x(n);
-
-            // identity and scalar to add positive values to the diagonal
-            SMat I(n, n);
-            I.setIdentity();
-
+            // initial setup, in case for loop reaches max iteration
             _converged = false;
 
             //------------------------------------------------------//
@@ -168,18 +162,16 @@ namespace AOPT {
                 //      --> but use Eigen LLT solver
                 _problem->eval_gradient(x, g);
                 _problem->eval_hessian(x, H);
-                _converged = solve_delta_x(_problem, x, g, H, _gamma, delta_x);
-
-                // if impossible to find the appropriate delta_x
-                if ( ! _converged)
-                    break;
+                const auto delta_x = solve_delta_x(_problem, x, g, H, _gamma);
 
                 // 2. compute newton decrement lambda^2 = -g^T * delta_x
                 const double lambda_2 = -g.transpose() * delta_x;
 
                 // 3. Stopping criterion: quit if lambda^2/2 <= epsilon
-                if (lambda_2 <= e2)
+                if (lambda_2 <= e2) {
+                    _converged = true;
                     break;
+                }
 
                 // Additional checks like given in the instructions
                 const auto f = _problem->eval_f(x);
@@ -188,8 +180,10 @@ namespace AOPT {
                         f >= fp ||
                         // * norm of gradient is not greater than epsilon
                         g.squaredNorm() <= ee
-                        )
+                        ) {
+                    _converged = false;
                     break;
+                }
 
                 // 4. Line search: choose step size: t > 0 (e.g. backtracking t_0 = 1)
                 // use the alpha and tau constant as given in the slides
@@ -204,13 +198,12 @@ namespace AOPT {
 
             //------------------------------------------------------//
 
-
             return x;
         }
 
     private:
-        static bool
-        solve_delta_x(FunctionBaseSparse *_problem, const Vec &_x, const Vec &_g, const SMat &_hessian, const double _gamma, Vec &_delta_x) {
+        static Vec
+        solve_delta_x(FunctionBaseSparse *_problem, const Vec &_x, const Vec &_g, const SMat &_hessian, const double _gamma) {
             const int n = _problem->n_unknowns();
 
             Eigen::SimplicialLLT<SMat> solver;
@@ -230,30 +223,31 @@ namespace AOPT {
 
             // if computation not successful, start iterating over offset delta
             if (solver.info() != Eigen::ComputationInfo::Success) {
-                // recommended delta_0 = 10E-4 * abs(trace(_hessian)) / n
-                const auto delta_0 = 10E-4 * std::abs(_hessian.diagonal().sum()) / n;
-                // on every iteration delta = delta * gamma
-                double delta = delta_0;
-                solver.setShift(0, delta);
+                // recommended m_0 = 10E-4 * abs(trace(_hessian)) / n
+                const auto hessian_trace = _hessian.diagonal().sum();
+                const auto m_0 = 10E-4 * std::abs(hessian_trace) / n;
+                // on every iteration m = m * gamma
+                double m = m_0;
+
+                solver.setShift(m);
                 solver.compute(_hessian);
+
                 // until matrix is positive definite (LLT computation success)
                 while (solver.info() != Eigen::ComputationInfo::Success) {
-                    delta *= _gamma;
-                    if ( ! std::isfinite(delta))
-                        return false;
+                    m *= _gamma;
 
-                    solver.setShift(0, delta);
+                    solver.setShift(m);
                     solver.compute(_hessian);
                 }
             }
 
             // solver.solve(b)
-            //      returns the solution _x of A _x = b using the current decomposition of A.
+            //      returns the solution x of A x = b using the current decomposition of A.
             //      --> A being the hessian matrix we did plug in the `compute` method
-            //      --> _x being delta_x
-            _delta_x = solver.solve(-_g);
+            //      --> x being delta_x
+            const auto delta_x = solver.solve(-_g);
 
-            return true;
+            return delta_x;
         }
 
     };
