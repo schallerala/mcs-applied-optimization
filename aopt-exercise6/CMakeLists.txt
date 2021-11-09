@@ -79,10 +79,10 @@ add_custom_command(OUTPUT ${RES_DIR}
         COMMAND mkdir ${RES_DIR}
         COMMENT "Create result output folder")
 
-foreach(EXECUTABLE IN LISTS EXECUTABLES)
+foreach(GRID_SIDE IN LISTS GRID_SIDES)
     foreach(FN_INDEX IN LISTS FN_INDEXES)
         foreach(SPARSE_MATRIX IN LISTS SPARSE_MATRIX_CONFIGS)
-            foreach(GRID_SIDE IN LISTS GRID_SIDES)
+            foreach(EXECUTABLE IN LISTS EXECUTABLES)
                 SET(CUSTOM_EXECUTION_TARGET all-${EXECUTABLE}-${FN_INDEX}_${SPARSE_MATRIX}_${GRID_SIDE})
                 SET(LOG_OUTPUT_FILE ${RES_DIR}/output_${CUSTOM_EXECUTION_TARGET}.log)
                 add_custom_command(OUTPUT ${LOG_OUTPUT_FILE}
@@ -97,8 +97,23 @@ foreach(EXECUTABLE IN LISTS EXECUTABLES)
     endforeach()
 endforeach()
 
-add_custom_target(all-ex3
-        DEPENDS ${ALL_TARGETS_LIST} result.tsv)
+# Add a few more run to use function index 2 which can be set for Newton method
+foreach(GRID_SIDE IN LISTS GRID_SIDES)
+    # FN_INDEX = 2: f with length with positive local hessian
+    SET(FN_INDEX 2)
+    foreach(SPARSE_MATRIX IN LISTS SPARSE_MATRIX_CONFIGS)
+        SET(EXECUTABLE NewtonMethods)
+        SET(CUSTOM_EXECUTION_TARGET all-${EXECUTABLE}-${FN_INDEX}_${SPARSE_MATRIX}_${GRID_SIDE})
+        SET(LOG_OUTPUT_FILE ${RES_DIR}/output_${CUSTOM_EXECUTION_TARGET}.log)
+        add_custom_command(OUTPUT ${LOG_OUTPUT_FILE}
+                COMMAND echo "Arguments: ${FN_INDEX} ${SPARSE_MATRIX} ${GRID_SIDE}" > ${LOG_OUTPUT_FILE}
+                DEPENDS ${RES_DIR})
+        add_custom_target(${CUSTOM_EXECUTION_TARGET}
+                ${EXECUTABLE} ${FN_INDEX} ${SPARSE_MATRIX} ${GRID_SIDE} ${GRID_SIDE} ${MAX_ITER} ${RES_DIR}/execution_${EXECUTABLE}_${FN_INDEX}_${SPARSE_MATRIX}_${GRID_SIDE}__ 2>&1 | tee -a ${LOG_OUTPUT_FILE}
+                DEPENDS ${EXECUTABLE} ${LOG_OUTPUT_FILE})
+        list(APPEND ALL_TARGETS_LIST ${CUSTOM_EXECUTION_TARGET})
+    endforeach()
+endforeach()
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/parse_logs.awk
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -106,3 +121,6 @@ add_custom_command(OUTPUT result.tsv
         COMMAND cat ${RES_DIR}/*.log | awk -f parse_logs.awk > result.tsv
         DEPENDS all-ex3
         COMMENT "Parse logs to create result file for import")
+
+add_custom_target(all-ex3
+        DEPENDS ${ALL_TARGETS_LIST} result.tsv)

@@ -11,11 +11,11 @@ function print_group_header(group, headers_t) {
 }
 
 BEGIN {
-    printf "method\tfunction index\tsparse\tgrid side\ttotal time"
-    print_group_header("total time evaluation", "time percentage")
-    print_group_header("eval_f", "time evals avg")
-    print_group_header("eval_grad", "time evals avg factor")
-    print_group_header("eval_hess", "time evals avg factor")
+    printf "method\tfunction index\tsparse\tgrid side\ttotal time[s]"
+    print_group_header("total time evaluation", "time[s] percentage[%%]")
+    print_group_header("eval_f", "time[s] evals avg[s]")
+    print_group_header("eval_grad", "time[s] evals avg[s] factor")
+    print_group_header("eval_hess", "time[s] evals avg[s] factor")
     printf "\n"
 }
 
