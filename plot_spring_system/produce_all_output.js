@@ -12,16 +12,18 @@ const allCsv = globbySync(join(resultOutput, '*.csv')).sort();
 if (allCsv.length % 4 != 0)
     throw new Error("Expected a multiple of 4 csv files (2 before 2 after: nodes and links) - Got: " + allCsv.length);
 
-for (let i = 0; i < allCsv.length; i += 4) {
-    const file1Before = allCsv[i];
-    const file2Before = allCsv[i + 1];
+(async function () {
+    for (let i = 0; i < allCsv.length; i += 4) {
+        const file1Before = allCsv[i];
+        const file2Before = allCsv[i + 1];
 
-    const file1After = allCsv[i + 2];
-    const file2After = allCsv[i + 3];
+        const file1After = allCsv[i + 2];
+        const file2After = allCsv[i + 3];
 
-    // ex: <path>/execution_GradientDescent_0_0_10__1_edges.csv
-    const outputFilenameBase = file1Before.slice(0, -"_edges.csv".length);
+        // ex: <path>/execution_GradientDescent_0_0_10__1_edges.csv
+        const outputFilenameBase = file1Before.slice(0, -"_edges.csv".length);
 
-    produceSystemSvg(file1Before, file2Before, `${outputFilenameBase}_before.svg`);
-    produceSystemSvg(file1After, file2After, `${outputFilenameBase}_optimized.svg`);
-}
+        await produceSystemSvg(file1Before, file2Before, `${outputFilenameBase}_before`);
+        await produceSystemSvg(file1After, file2After, `${outputFilenameBase}_optimized`);
+    }
+})().then(() => console.log("Done"));

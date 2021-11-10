@@ -2,6 +2,7 @@ import { JSDOM } from "jsdom";
 
 import * as d3 from "d3";
 import * as fs from "fs";
+import sharp from "sharp";
 
 const SVG_WIDTH = 800;
 const SVG_HEIGHT = 800;
@@ -205,7 +206,9 @@ function handleFiles(filenames) {
  * @param {string} filename2 path + filename
  * @param {string} svgOutput path + filename
  */
-export function produceSystemSvg(filename1, filename2, svgOutput) {
+export async function produceSystemSvg(filename1, filename2, outputFilename) {
+    const svgOutput = outputFilename + ".svg";
+    const pngOutput = outputFilename + ".png";
     // svg.append("rect")
     //     .attr("x", 10)
     //     .attr("y", 10)
@@ -233,4 +236,7 @@ export function produceSystemSvg(filename1, filename2, svgOutput) {
     // setupDropzone(document, handleFiles);
 
     fs.writeFileSync(svgOutput, body.html());
+    await sharp(svgOutput)
+        .png()
+        .toFile(pngOutput);
 }

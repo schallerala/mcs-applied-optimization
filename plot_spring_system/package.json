@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test:index": "node index.js ~/development/unifr/applied-optimization/aopt-exercise6/build/results_output/execution_GradientDescent_0_0_5__1_opt_edges.csv ~/development/unifr/applied-optimization/aopt-exercise6/build/results_output/execution_GradientDescent_0_0_5__1_opt_nodes.csv out.svg",
+    "test:index": "node index.js ~/development/unifr/applied-optimization/aopt-exercise6/build/results_output/execution_NewtonMethods_1_1_20___edges.csv ~/development/unifr/applied-optimization/aopt-exercise6/build/results_output/execution_NewtonMethods_1_1_20___nodes.csv out",
     "start": "node produce_all_output.js ~/development/unifr/applied-optimization/aopt-exercise6/build/results_output/"
   },
   "type": "module",
@@ -14,7 +14,8 @@
   "dependencies": {
     "d3": "^7.1.1",
     "globby": "^12.0.2",
-    "jsdom": "^18.0.1"
+    "jsdom": "^18.0.1",
+    "sharp": "^0.29.2"
   },
   "devDependencies": {
     "@types/d3": "^7.1.0",
