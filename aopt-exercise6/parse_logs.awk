@@ -11,7 +11,7 @@ function print_group_header(group, headers_t) {
 }
 
 BEGIN {
-    printf "method\tfunction index\tsparse\tgrid side\ttotal time[s]"
+    printf "method\targ1\targ2\tgrid side\ttotal time[s]"
     print_group_header("total time evaluation", "time[s] percentage[%%]")
     print_group_header("eval_f", "time[s] evals avg[s]")
     print_group_header("eval_grad", "time[s] evals avg[s] factor")
@@ -20,15 +20,15 @@ BEGIN {
 }
 
 $1 == "Arguments:" {
-    FN_INDEX=$2
-    SPARSE_MATRIX=$3
+    ARG1=$2
+    ARG2=$3
     GRID_SIDE=$4
 }
 
 $0 ~ /\*\*\*\*\*\*\*\*/ {
     gsub(/\*/, "")
     method = trim($0)
-    printf method "\t" FN_INDEX "\t" SPARSE_MATRIX "\t" GRID_SIDE
+    printf method "\t" ARG1 "\t" ARG2 "\t" GRID_SIDE
     next
 }
 

@@ -123,7 +123,7 @@ foreach(GRID_SIDE IN LISTS GRID_SIDES)
                     COMMAND echo "Arguments: ${ARG1} ${ARG2} ${GRID_SIDE}" > ${LOG_OUTPUT_FILE}
                     DEPENDS ${RES_DIR})
             add_custom_target(${CUSTOM_EXECUTION_TARGET}
-                    ${EXECUTABLE} ${ARG1} ${ARG2} ${GRID_SIDE} ${GRID_SIDE} ${MAX_ITER} ${RES_DIR}/execution_${EXECUTABLE}_${ARG1}_${ARG2}_${GRID_SIDE}__
+                    ${EXECUTABLE} ${ARG1} ${ARG2} ${GRID_SIDE} ${GRID_SIDE} ${MAX_ITER} ${RES_DIR}/execution_${EXECUTABLE}_${ARG1}_${ARG2}_${GRID_SIDE}__ 2>&1 | tee -a ${LOG_OUTPUT_FILE}
                     DEPENDS ${EXECUTABLE} ${LOG_OUTPUT_FILE})
             list(APPEND ALL_TARGETS_LIST ${CUSTOM_EXECUTION_TARGET})
         endforeach()

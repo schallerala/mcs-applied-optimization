@@ -1,0 +1,95 @@
+\documentclass[multi=page,crop,border=15pt,varwidth=120cm]{standalone}
+
+\usepackage{float}
+\usepackage{graphicx}
+\graphicspath{ {./assets/} }
+
+\newcommand{\newresult}[2]{%
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{#1}
+    \caption{#2}
+\end{figure}
+}
+
+
+\begin{document}
+
+\begin{page}
+    \begin{minipage}[t]{14cm}
+        \newresult{execution_GradientDescent_0_1_5__1_optimized}{\textbf{Gradient Descent}: 0: f without length \& Constrained spring scenario: 1 Corners \& Grid size: $5$}
+    \end{minipage}
+    \begin{minipage}[t]{14cm}
+        \newresult{execution_GradientDescent_1_1_5__1_optimized}{\textbf{Gradient Descent}: 1: f with length \& Constrained spring scenario: 1 Corners \& Grid size: $5$}
+    \end{minipage}
+\end{page}
+
+\begin{page}
+    \begin{minipage}[t]{14cm}
+        \newresult{execution_GradientDescent_0_1_10__1_optimized}{\textbf{Gradient Descent}: 0: f without length \& Constrained spring scenario: 1 Corners \& Grid size: $10$}
+    \end{minipage}
+    \begin{minipage}[t]{14cm}
+        \newresult{execution_GradientDescent_1_1_10__1_optimized}{\textbf{Gradient Descent}: 1: f with length \& Constrained spring scenario: 1 Corners \& Grid size: $10$}
+    \end{minipage}
+\end{page}
+
+\begin{page}
+    \begin{minipage}[t]{14cm}
+        \newresult{execution_GradientDescent_0_1_20__1_optimized}{\textbf{Gradient Descent}: 0: f without length \& Constrained spring scenario: 1 Corners \& Grid size: $20$}
+    \end{minipage}
+    \begin{minipage}[t]{14cm}
+        \newresult{execution_GradientDescent_1_1_20__1_optimized}{\textbf{Gradient Descent}: 1: f with length \& Constrained spring scenario: 1 Corners \& Grid size: $20$}
+    \end{minipage}
+\end{page}
+
+\begin{page}
+    \begin{minipage}[t]{14cm}
+        \newresult{execution_NewtonMethods_1_0_5___optimized}{\textbf{Newton Method with projected hessian}: 0: f without length \& Grid size: $5$}
+    \end{minipage}
+    \begin{minipage}[t]{14cm}
+        \newresult{execution_NewtonMethods_1_1_5___optimized}{\textbf{Newton Method with projected hessian}: 1: f with length \& Grid size: $5$}
+    \end{minipage}
+\end{page}
+
+\begin{page}
+    \begin{minipage}[t]{14cm}
+        \newresult{execution_NewtonMethods_1_0_10___optimized}{\textbf{Newton Method with projected hessian}: 0: f without length \& Grid size: $10$}
+    \end{minipage}
+    \begin{minipage}[t]{14cm}
+        \newresult{execution_NewtonMethods_1_1_10___optimized}{\textbf{Newton Method with projected hessian}: 1: f with length \& Grid size: $10$}
+    \end{minipage}
+\end{page}
+
+\begin{page}
+    \begin{minipage}[t]{14cm}
+        \newresult{execution_NewtonMethods_1_0_20___optimized}{\textbf{Newton Method with projected hessian}: 0: f without length \& Grid size: $20$}
+    \end{minipage}
+    \begin{minipage}[t]{14cm}
+        \newresult{execution_NewtonMethods_1_1_20___optimized}{\textbf{Newton Method with projected hessian}: 1: f with length \& Grid size: $20$}
+    \end{minipage}
+\end{page}
+
+\begin{page}
+\begin{table}[]
+\begin{tabular}{llllllllllllllllllllll}
+method                               & Function index & function index description & Newton method     & Constrained spring scenario & arg1 & arg2 & grid side & total time{[}s{]} & total time evaluation time{[}s{]} & total time evaluation percentage{[}\%{]} & eval\_f time{[}s{]} & eval\_f evals & eval\_f avg{[}s{]} & eval\_grad time{[}s{]} & eval\_grad evals & eval\_grad avg{[}s{]} & eval\_grad factor & eval\_hess time{[}s{]} & eval\_hess evals & eval\_hess avg{[}s{]} & eval\_hess factor \\
+Gradient Descent                     & 0              & 0: f without length        &                   & Corners                     & 0    & 1    & 5         & 0.642575          & 0.446178                          & 69.4359                                  & 0.43307             & 356582        & 0                  & 0.01311                & 10000            & 0                     & 1.07903           & 0                      & 0                & nan                   & nan               \\
+Newton Method with projected hessian & 0              & 0: f without length        & projected hessian &                             & 1    & 0    & 5         & 0.00039           & 0.000151                          & 38.7179                                  & 0                   & 3             & 0                  & 0                      & 2                & 0                     & 1.5               & 0.00014                & 2                & 0.00007               & 53.625            \\
+Gradient Descent                     & 1              & 1: f with length           &                   & Corners                     & 1    & 1    & 5         & 0.44231           & 0.279225                          & 63.1288                                  & 0.27168             & 221556        & 0                  & 0.00755                & 6269             & 0                     & 0.98189           & 0                      & 0                & nan                   & nan               \\
+Newton Method with projected hessian & 1              & 1: f with length           & projected hessian &                             & 1    & 1    & 5         & 0.006222          & 0.001453                          & 23.3526                                  & 0.00023             & 224           & 0                  & 0.00007                & 67               & 0                     & 1.00151           & 0.00116                & 67               & 0.00002               & 17.05516          \\
+Gradient Descent                     & 0              & 0: f without length        &                   & Corners                     & 0    & 1    & 10        & 1.92696           & 1.72793                           & 89.6711                                  & 1.67734             & 356660        & 0                  & 0.05059                & 10000            & 0.00001               & 1.07576           & 0                      & 0                & nan                   & nan               \\
+Newton Method with projected hessian & 0              & 0: f without length        & projected hessian &                             & 1    & 0    & 10        & 0.001345          & 4.36E-04                          & 32.4164                                  & 0.00003             & 7             & 0.00001            & 0.00002                & 3                & 0.00001               & 1.2               & 0.00038                & 3                & 0.00013               & 25.53333          \\
+Gradient Descent                     & 1              & 1: f with length           &                   & Corners                     & 1    & 1    & 10        & 2.28461           & 2.12735                           & 93.1164                                  & 2.07993             & 356631        & 0.00001            & 0.04742                & 10000            & 0                     & 0.81301           & 0                      & 0                & nan                   & nan               \\
+Newton Method with projected hessian & 1              & 1: f with length           & projected hessian &                             & 1    & 1    & 10        & 0.022427          & 0.004903                          & 21.862                                   & 0.0011              & 189           & 0.00001            & 0.00021                & 48               & 0                     & 0.76175           & 0.00359                & 48               & 0.00007               & 12.83532          \\
+Gradient Descent                     & 0              & 0: f without length        &                   & Corners                     & 0    & 1    & 20        & 7.06815           & 6.6395                            & 93.9355                                  & 6.42999             & 355971        & 0.00002            & 0.20951                & 10000            & 0.00002               & 1.15988           & 0                      & 0                & nan                   & nan               \\
+Newton Method with projected hessian & 0              & 0: f without length        & projected hessian &                             & 1    & 0    & 20        & 0.021927          & 0.005825                          & 26.5654                                  & 0.00086             & 44            & 0.00002            & 0.00026                & 12               & 0.00002               & 1.11966           & 0.0047                 & 12               & 0.00039               & 20.10684          \\
+Gradient Descent                     & 1              & 1: f with length           &                   & Corners                     & 1    & 1    & 20        & 8.37444           & 7.96245                           & 95.0803                                  & 7.79506             & 356763        & 0.00002            & 0.16739                & 10000            & 0.00002               & 0.7661            & 0                      & 0                & nan                   & nan               \\
+Newton Method with projected hessian & 1              & 1: f with length           & projected hessian &                             & 1    & 1    & 20        & 0.408186          & 0.057967                          & 14.2011                                  & 0.01129             & 499           & 0.00002            & 0.00281                & 150              & 0.00002               & 0.82784           & 0.04387                & 150              & 0.00029               & 12.9228
+\end{tabular}
+\end{table}
+\end{page}
+
+
+
+
+
+\end{document}
