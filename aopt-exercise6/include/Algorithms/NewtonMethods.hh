@@ -82,11 +82,11 @@ namespace AOPT {
                 // Additional checks like given in the instructions
                 const auto f = _problem->eval_f(x);
                 if (
-                        // * objective function does not increase
+                    // * objective function does not increase
                         f >= fp ||
                         // * norm of gradient is not greater than epsilon
                         g.squaredNorm() <= ee
-                )
+                        )
                     break;
 
                 // 4. Line search: choose step size: t > 0 (e.g. backtracking t_0 = 1)
@@ -138,6 +138,9 @@ namespace AOPT {
             // allocate gradient storage
             Vec g(n);
 
+            // allocate delta_x storage
+            Vec delta_x(n);
+
             // allocate hessian storage
             SMat H(n, n);
 
@@ -162,7 +165,7 @@ namespace AOPT {
                 //      --> but use Eigen LLT solver
                 _problem->eval_gradient(x, g);
                 _problem->eval_hessian(x, H);
-                const auto delta_x = solve_delta_x(_problem, x, g, H, _gamma);
+                solve_delta_x(_problem, x, g, H, _gamma, delta_x);
 
                 // 2. compute newton decrement lambda^2 = -g^T * delta_x
                 const double lambda_2 = -g.transpose() * delta_x;
@@ -176,7 +179,7 @@ namespace AOPT {
                 // Additional checks like given in the instructions
                 const auto f = _problem->eval_f(x);
                 if (
-                        // * objective function does not increase
+                    // * objective function does not increase
                         f >= fp ||
                         // * norm of gradient is not greater than epsilon
                         g.squaredNorm() <= ee
@@ -202,8 +205,10 @@ namespace AOPT {
         }
 
     private:
-        static Vec
-        solve_delta_x(FunctionBaseSparse *_problem, const Vec &_x, const Vec &_g, const SMat &_hessian, const double _gamma) {
+        static void
+        solve_delta_x(FunctionBaseSparse *_problem, const Vec &_x, const Vec &_g, const SMat &_hessian,
+                      const double _gamma,
+                      Vec &delta_x) {
             const int n = _problem->n_unknowns();
 
             Eigen::SimplicialLLT<SMat> solver;
@@ -245,9 +250,7 @@ namespace AOPT {
             //      returns the solution x of A x = b using the current decomposition of A.
             //      --> A being the hessian matrix we did plug in the `compute` method
             //      --> x being delta_x
-            const auto delta_x = solver.solve(-_g);
-
-            return delta_x;
+            delta_x = solver.solve(-_g);
         }
 
     };

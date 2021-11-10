@@ -64,8 +64,6 @@ add_subdirectory(NewtonMethods)
 
 # FN_INDEXES: without or with spring length
 set(FN_INDEXES 0 1)
-# 0: dense, 1: sparse matrix
-set(SPARSE_MATRIX_CONFIGS 0 1)
 set(GRID_SIDES 5 10 20)
 set(EXECUTABLES GradientDescent NewtonMethods)
 set(MAX_ITER 10000)
@@ -74,43 +72,61 @@ SET(RES_DIR results_output)
 
 set(ALL_TARGETS_LIST)
 
+# Newton method:
+#       - 2 methods:
+#               0: standard newton
+#               1: projected hessian
+#       - 3 function index:
+#               0: f without length
+#               1: f with length
+#               2: f with length with positive local hessian
+#       - grid x
+#       - grid y
+#       - max iteration
+#       - output_prefix
+
+# Gradient descent:
+#       - 2 function index:
+#               0: f without length
+#               1: f with length
+#       - constrained spring scenario
+#               1: corners
+#               2: sides
+#       - grid x
+#       - grid y
+#       - max iteration
+#       - output_prefix
+
+# --> Use:
+#       Newton method: method 1: projected hessian
+#       Gradient descent: constrained spring scenario: 1
+
 add_custom_command(OUTPUT ${RES_DIR}
         COMMAND mkdir ${RES_DIR}
         COMMENT "Create result output folder")
 
 foreach(GRID_SIDE IN LISTS GRID_SIDES)
     foreach(FN_INDEX IN LISTS FN_INDEXES)
-        foreach(SPARSE_MATRIX IN LISTS SPARSE_MATRIX_CONFIGS)
-            foreach(EXECUTABLE IN LISTS EXECUTABLES)
-                SET(CUSTOM_EXECUTION_TARGET all-${EXECUTABLE}-${FN_INDEX}_${SPARSE_MATRIX}_${GRID_SIDE})
-                SET(LOG_OUTPUT_FILE ${RES_DIR}/output_${CUSTOM_EXECUTION_TARGET}.log)
-                add_custom_command(OUTPUT ${LOG_OUTPUT_FILE}
-                        COMMAND echo "Arguments: ${FN_INDEX} ${SPARSE_MATRIX} ${GRID_SIDE}" > ${LOG_OUTPUT_FILE}
-                        DEPENDS ${RES_DIR})
-                add_custom_target(${CUSTOM_EXECUTION_TARGET}
-                        ${EXECUTABLE} ${FN_INDEX} ${SPARSE_MATRIX} ${GRID_SIDE} ${GRID_SIDE} ${MAX_ITER} ${RES_DIR}/execution_${EXECUTABLE}_${FN_INDEX}_${SPARSE_MATRIX}_${GRID_SIDE}__ 2>&1 | tee -a ${LOG_OUTPUT_FILE}
-                        DEPENDS ${EXECUTABLE} ${LOG_OUTPUT_FILE})
-                list(APPEND ALL_TARGETS_LIST ${CUSTOM_EXECUTION_TARGET})
-            endforeach()
-        endforeach()
-    endforeach()
-endforeach()
+        foreach(EXECUTABLE IN LISTS EXECUTABLES)
+            if (${EXECUTABLE} MATCHES NewtonMethods)
+                SET(ARG1 1) # method: projected hessian
+                SET(ARG2 ${FN_INDEX}) # function index
+            else() # Gradient Descent
+                SET(ARG1 ${FN_INDEX}) # function index
+                SET(ARG2 1) # constrained spring scenario: 1 corners
+            endif()
 
-# Add a few more run to use function index 2 which can be set for Newton method
-foreach(GRID_SIDE IN LISTS GRID_SIDES)
-    # FN_INDEX = 2: f with length with positive local hessian
-    SET(FN_INDEX 2)
-    foreach(SPARSE_MATRIX IN LISTS SPARSE_MATRIX_CONFIGS)
-        SET(EXECUTABLE NewtonMethods)
-        SET(CUSTOM_EXECUTION_TARGET all-${EXECUTABLE}-${FN_INDEX}_${SPARSE_MATRIX}_${GRID_SIDE})
-        SET(LOG_OUTPUT_FILE ${RES_DIR}/output_${CUSTOM_EXECUTION_TARGET}.log)
-        add_custom_command(OUTPUT ${LOG_OUTPUT_FILE}
-                COMMAND echo "Arguments: ${FN_INDEX} ${SPARSE_MATRIX} ${GRID_SIDE}" > ${LOG_OUTPUT_FILE}
-                DEPENDS ${RES_DIR})
-        add_custom_target(${CUSTOM_EXECUTION_TARGET}
-                ${EXECUTABLE} ${FN_INDEX} ${SPARSE_MATRIX} ${GRID_SIDE} ${GRID_SIDE} ${MAX_ITER} ${RES_DIR}/execution_${EXECUTABLE}_${FN_INDEX}_${SPARSE_MATRIX}_${GRID_SIDE}__ 2>&1 | tee -a ${LOG_OUTPUT_FILE}
-                DEPENDS ${EXECUTABLE} ${LOG_OUTPUT_FILE})
-        list(APPEND ALL_TARGETS_LIST ${CUSTOM_EXECUTION_TARGET})
+            SET(CUSTOM_EXECUTION_TARGET all-${EXECUTABLE}_${ARG1}_${ARG2}_${GRID_SIDE})
+            SET(LOG_OUTPUT_FILE ${RES_DIR}/output_${CUSTOM_EXECUTION_TARGET}.log)
+
+            add_custom_command(OUTPUT ${LOG_OUTPUT_FILE}
+                    COMMAND echo "Arguments: ${ARG1} ${ARG2} ${GRID_SIDE}" > ${LOG_OUTPUT_FILE}
+                    DEPENDS ${RES_DIR})
+            add_custom_target(${CUSTOM_EXECUTION_TARGET}
+                    ${EXECUTABLE} ${ARG1} ${ARG2} ${GRID_SIDE} ${GRID_SIDE} ${MAX_ITER} ${RES_DIR}/execution_${EXECUTABLE}_${ARG1}_${ARG2}_${GRID_SIDE}__
+                    DEPENDS ${EXECUTABLE} ${LOG_OUTPUT_FILE})
+            list(APPEND ALL_TARGETS_LIST ${CUSTOM_EXECUTION_TARGET})
+        endforeach()
     endforeach()
 endforeach()
 
