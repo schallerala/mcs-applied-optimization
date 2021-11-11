@@ -22,6 +22,6 @@ target_link_libraries(${PROJECT_NAME}-test
         )
 
 
-gtest_add_tests(TARGET ${PROJECT_NAME}-test
-        EXTRA_ARGS "--gtest_color=yes"
-        )
+#gtest_add_tests(TARGET ${PROJECT_NAME}-test
+#        EXTRA_ARGS "--gtest_color=yes"
+#        )

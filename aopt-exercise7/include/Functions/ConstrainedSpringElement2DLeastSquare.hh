@@ -12,7 +12,7 @@ namespace AOPT {
      * */
     class ConstrainedSpringElement2DLeastSquare : public ParametricFunctionBase {
     public:
-        ConstrainedSpringElement2DLeastSquare(): ParametricFunctionBase() {}
+        ConstrainedSpringElement2DLeastSquare() : ParametricFunctionBase() {}
 
         // number of unknowns
         inline virtual int n_unknowns() override { return 1; }
@@ -26,6 +26,7 @@ namespace AOPT {
             //------------------------------------------------------//
             //Todo: implement the function rj(x) = sqrt(k) * (x-p)
 
+            return 0;
             //------------------------------------------------------//
         }
 

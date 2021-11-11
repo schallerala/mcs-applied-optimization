@@ -41,7 +41,6 @@ namespace AOPT {
          *           It should be a ND vector*/
         inline virtual double eval_f(const Vec &_x) {
             //-------------------------------------------------------------------------------//
-            //Todo: implement the function 0.5 * (x^T A x) + b^T x + c
             double v = 0.5 * _x.transpose() * A_ * _x;
             v += b_.transpose() * _x + c_;
             return v;
@@ -53,7 +52,6 @@ namespace AOPT {
          * \param _g gradient output */
         inline virtual void eval_gradient(const Vec &_x, Vec &_g) {
             //------------------------------------------------------//
-            //Todo: implement the gradient
             _g = A_*_x + b_;
             //------------------------------------------------------//
         }
@@ -65,7 +63,6 @@ namespace AOPT {
          * \param _H Hessian output */
         inline virtual void eval_hessian(const Vec &_x, Mat &_H) {
             //------------------------------------------------------//
-            //Todo: implement the Hessian
             _H = A_;
             //------------------------------------------------------//
         }

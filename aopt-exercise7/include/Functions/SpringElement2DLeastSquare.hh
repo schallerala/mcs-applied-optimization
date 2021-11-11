@@ -35,6 +35,7 @@ namespace AOPT {
             //------------------------------------------------------//
             //Todo: implement the function rj(x) = sqrt(k) * (xa[0,1] - xb[0,1])
 
+            return 0;
             //------------------------------------------------------//
         }
 
@@ -47,7 +48,7 @@ namespace AOPT {
         inline virtual void eval_gradient(const Vec &_x, const Vec &_coeffs, Vec &_g) override {
             //------------------------------------------------------//
             //Todo: implement the gradient and store in _g
-           
+
             //------------------------------------------------------//
         }
 

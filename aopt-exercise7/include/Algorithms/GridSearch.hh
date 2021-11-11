@@ -35,9 +35,6 @@ namespace AOPT {
             Vec x_min(2);
             
             //------------------------------------------------------//
-            //Todo: implement the 2d version of the grid search
-            // algorithm to find minimum value of _func between _x_l and _x_u
-            //------------------------------------------------------//
 
             //set-up the evaluation point and delta vector
             Vec x(2), dx(2);
@@ -89,10 +86,6 @@ namespace AOPT {
             double f_min = std::numeric_limits<double>::max();
             Vec x_min(n);
             //------------------------------------------------------//
-            //Todo: implement the nd version of the grid search
-            // algorithm to find minimum value of a nd quadratic function
-            // set f_min with the minimum, which is then stored in the referenced argument _f_min
-
             // iteratively walk through all grid cells with n-dimensional indices idx
             std::vector<int> idx(n, 0);
             // current grid coordiantes x and grid size dx

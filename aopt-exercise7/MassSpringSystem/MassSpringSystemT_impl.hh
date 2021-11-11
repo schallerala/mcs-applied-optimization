@@ -72,7 +72,6 @@ namespace AOPT {
     template<class MassSpringProblem>
     void MassSpringSystemT<MassSpringProblem>::add_constrained_spring_elements(const int _scenario) {
         //------------------------------------------------------//
-        //Todo: add constrained spring elements to the problem
         //implement both scenarios here.
         
         const double w(100000);
@@ -96,7 +95,6 @@ namespace AOPT {
     template<class MassSpringProblem>
     void MassSpringSystemT<MassSpringProblem>::setup_spring_graph() {
         //------------------------------------------------------//
-        //TODO: set up the spring graph of n_grid_x by n_grid_y ()
         //add vertices
         for(int j = 0; j <= n_grid_y_; ++j)
             for (int i = 0; i <= n_grid_x_; ++i)

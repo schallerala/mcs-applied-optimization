@@ -16,7 +16,7 @@ namespace AOPT {
         using Mat = FunctionBaseSparse::Mat;
         using MapVec = Eigen::Map<Vec>;
 
-        LBFGS(const int _m): m_(_m) {}
+        LBFGS(const int _m) : m_(_m) {}
 
 
         /**
@@ -26,8 +26,8 @@ namespace AOPT {
         * \param _initial_x starting point of the method
         * \param _eps epsilon under which the method stops
         * \param _max_iters maximum iteration of the method*/
-        template <class Problem>
-        Vec solve(Problem *_problem, const Vec& _initial_x, const double _eps = 1e-4, const int _max_iters = 1000000) {
+        template<class Problem>
+        Vec solve(Problem *_problem, const Vec &_initial_x, const double _eps = 1e-4, const int _max_iters = 1000000) {
             std::cout << "******** LBFGS ********" << std::endl;
 
             int n = _problem->n_unknowns();
@@ -38,8 +38,8 @@ namespace AOPT {
             //get starting point
             Vec x = _initial_x;
 
-            if(m_ < 1) {
-                std::cout<<"\nError: m should be larger than 0!"<<std::endl;
+            if (m_ < 1) {
+                std::cout << "\nError: m should be larger than 0!" << std::endl;
                 return x;
             }
 
@@ -66,10 +66,10 @@ namespace AOPT {
                 //print status
                 std::cout << "iter: " << k <<
                           "   obj = " << f <<
-                          "   ||g||^2 = " << g2<< std::endl;
+                          "   ||g||^2 = " << g2 << std::endl;
 
-                if(g2 < e2) {
-                    std::cout<<"Gradient norm converges!"<<std::endl;
+                if (g2 < e2) {
+                    std::cout << "Gradient norm converges!" << std::endl;
                     return x;
                 }
 
@@ -83,8 +83,8 @@ namespace AOPT {
                 double t = LineSearch::backtracking_line_search(_problem, x, g, -r_, 1.);
 //                double t = LineSearch::wolfe_line_search(_problem, x, g, -r_, 1.);
 
-                if(t < 1e-16) {
-                    std::cout<<"The step length is too small!"<<std::endl;
+                if (t < 1e-16) {
+                    std::cout << "The step length is too small!" << std::endl;
                     return x;
                 }
 
@@ -99,8 +99,8 @@ namespace AOPT {
                 //evaluate current f
                 f = _problem->eval_f(x);
 
-                if(k > 0 && fp_ <= f) {
-                    std::cout<<"Function value converges!"<<std::endl;
+                if (k > 0 && fp_ <= f) {
+                    std::cout << "Function value converges!" << std::endl;
                     return x;
                 }
 
@@ -125,21 +125,20 @@ namespace AOPT {
         }
 
 
-
     private:
-        void two_loop_recursion(const Vec& _g, const Vec& _sk, const Vec& _yk, const int _k) {
+        void two_loop_recursion(const Vec &_g, const Vec &_sk, const Vec &_yk, const int _k) {
             //------------------------------------------------------//
             //TODO: implement the two-loop recursion as described in the lecture slides
-            
-            
+
+
             //------------------------------------------------------//
         }
 
-        void update_storage(const Vec& _g, const Vec& _sk, const Vec& _yk, const int _k) {
+        void update_storage(const Vec &_g, const Vec &_sk, const Vec &_yk, const int _k) {
             //------------------------------------------------------//
             //TODO: update the si and yi stored in the mat_s_ and mat_y_ respectively
             //update rho_i stored in rho_[i]
-            
+
             //------------------------------------------------------//
         }
 

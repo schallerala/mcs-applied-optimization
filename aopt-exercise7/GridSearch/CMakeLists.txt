@@ -21,9 +21,9 @@ target_link_libraries(${PROJECT_NAME}-test
         )
 
 
-gtest_add_tests(TARGET ${PROJECT_NAME}-test
-        EXTRA_ARGS "--gtest_color=yes"
-        )
+#gtest_add_tests(TARGET ${PROJECT_NAME}-test
+#        EXTRA_ARGS "--gtest_color=yes"
+#        )
 
 set_target_properties(${PROJECT_NAME}-test PROPERTIES
         CXX_STANDARD 14
