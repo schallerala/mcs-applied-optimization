@@ -63,7 +63,7 @@ namespace AOPT {
             do {
                 double g2 = g.squaredNorm();
 
-                //print status
+                // print status
                 std::cout << "iter: " << k <<
                           "   obj = " << f <<
                           "   ||g||^2 = " << g2 << std::endl;
@@ -75,7 +75,6 @@ namespace AOPT {
 
                 //compute r_
                 //------------------------------------------------------//
-                //TODO: complete the function
                 two_loop_recursion(g, sk, yk, k);
                 //------------------------------------------------------//
 
@@ -112,7 +111,6 @@ namespace AOPT {
                 yk = g - gp_;
 
                 //------------------------------------------------------//
-                //TODO: complete the function
                 update_storage(g, sk, yk, k);
                 //------------------------------------------------------//
 
@@ -128,17 +126,107 @@ namespace AOPT {
     private:
         void two_loop_recursion(const Vec &_g, const Vec &_sk, const Vec &_yk, const int _k) {
             //------------------------------------------------------//
-            //TODO: implement the two-loop recursion as described in the lecture slides
+            // implement the two-loop recursion as described in the lecture slides
 
+            // q = gradient f_k
+            Vec q = _g;
+
+            // for i=k - 1 ... k - m do
+            // FIXME: can be correct!
+            //      Imagine k at iteration 12'000, try to access up to 12'000 - m, with m = 3
+            for (size_t i = std::max(_k - 1, 0); i > std::max(_k - m_, 0); --i) {
+                // alpha_i = rho_i * s_i^T * q <-- computed in LBFGS::update_storage
+                // q = q - alpha_i * y_i
+                q -= alpha_[i] * mat_y_.col(i);
+            }
+
+            // H_k^0 = gamma_k * I
+            // gamma_k = (s_{k-1}^T * y_{k - 1}) / (y_{k - 1}^T * y_{k - 1}) <-- computed in outer loop
+            // gamma_k used to choose H_k^0
+            const double gamma_k = _k > 0
+                                 // wait for after the 1st iteration, as it the history will be empty at first
+                                 ? (double)(_sk.transpose() * _yk) / (_yk.transpose() * _yk)
+                                 : 1.;
+
+            const Mat H_k_0 = gamma_k * Mat::Identity(_g.size(), _g.size());
+
+            std::cout << "H_k_0\n" << H_k_0 << std::endl;
+
+            // r = H_k^0 * q
+            r_ = H_k_0 * q;
+
+            // for i = k - m ... k - 1 do
+            // FIXME: can be correct!
+            //      Imagine k at iteration 12'000, try to access 12'000 - m, with m = 3
+            for (size_t i = std::max(0, _k - m_); i < std::max(_k - 1, 0); ++i) {
+                // rho_k = 1 / (y_k^T * s_k) <-- computed in LBFGS::update_storage
+                // beta = rho_i * y_i^T * r
+                const double beta = rho_[i] * mat_y_.col(i).transpose() * r_;
+                // r = r + s_i * (alpha_i - beta);
+                r_ += mat_s_.col(i) * (alpha_[i] - beta);
+            }
+
+            std::cout << "r_:\n" << r_ << std::endl;
 
             //------------------------------------------------------//
         }
 
         void update_storage(const Vec &_g, const Vec &_sk, const Vec &_yk, const int _k) {
-            //------------------------------------------------------//
-            //TODO: update the si and yi stored in the mat_s_ and mat_y_ respectively
-            //update rho_i stored in rho_[i]
+            assert(m_ > 0);
 
+            //------------------------------------------------------//
+            // update the si and yi stored in the mat_s_ and mat_y_ respectively
+            const auto shift_left_matrix = [_k](Mat &matrix, const int m) {
+                const int last = std::min(m - 1, _k);
+                if (_k < m)
+                    return last;
+
+                for (size_t i = 0; i < last; ++i) {
+                    matrix.col(i) = matrix.col(i + 1);
+                }
+                return last;
+            };
+
+            const auto shift_up_vector = [_k](Vec &vector, const int m) {
+                const int last = std::min(m - 1, _k);
+                if (_k < m)
+                    return last;
+
+                for (size_t i = 0; i < last; ++i) {
+                    vector[i] = vector[i + 1];
+                }
+                return last;
+            };
+
+            // 1. shift sk in history
+            const auto next_col = shift_left_matrix(mat_s_, m_);
+            // 2. shift yk in history
+            shift_left_matrix(mat_y_, m_);
+
+            // 3. append sk in history
+            mat_s_.col(next_col) = _sk;
+            // 4. append yk in history
+            mat_y_.col(next_col) = _yk;
+
+            // 5. compute new rho: rho_k = 1 / (y_k^T * s_k)
+            const auto next_rho = 1 / (_yk.transpose() * _sk);
+            // 7. shift rho in history
+            const auto next_row = shift_up_vector(rho_, m_); // next_row will be same as next_col, but still store
+                                                                // variable for clarity
+            // 8. add new rho in history
+            rho_[next_row] = next_rho;
+
+            // 9. compute new alpha: alpha_i = rho_i * s_i^T * q, with q = g
+            const auto next_alpha = next_rho * _sk.transpose() * _g;
+            // 10. shift alpha in history
+            shift_up_vector(alpha_, m_);
+            // 10. add new alpha in history
+            alpha_[next_row] = next_alpha;
+
+            std::cout << "history sk\n" << mat_s_ << std::endl;
+            std::cout << "history yk\n" << mat_y_ << std::endl;
+            std::cout << "history rho\n" << rho_ << std::endl;
+            std::cout << "history alpha\n" << alpha_ << std::endl;
             //------------------------------------------------------//
         }
 
@@ -146,11 +234,14 @@ namespace AOPT {
         void init_storage(const int _n) {
             mat_y_.resize(_n, m_);
             mat_s_.resize(_n, m_);
-            xp_.resize(_n);
-            gp_.resize(_n);
-            r_.resize(_n);
             rho_.resize(m_);
             alpha_.resize(m_);
+
+            // for readability
+            rho_.setZero();
+            mat_y_.setZero();
+            mat_s_.setZero();
+            alpha_.setZero();
         }
 
     private:
