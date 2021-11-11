@@ -128,13 +128,18 @@ namespace AOPT {
             //------------------------------------------------------//
             // implement the two-loop recursion as described in the lecture slides
 
+            // juste so close to what is done on different project:
+            // https://github.com/hjmshi/PyTorch-LBFGS/blob/master/functions/LBFGS.py#L323-L333
+            // FIXME however, doesn't work, both test fail, with even once the direction going
+            //      towards a greater objective function (error message from backtracking line search)
+
             // q = gradient f_k
             Vec q = _g;
 
             // for i=k - 1 ... k - m do
-            // FIXME: can be correct!
-            //      Imagine k at iteration 12'000, try to access up to 12'000 - m, with m = 3
-            for (size_t i = std::max(_k - 1, 0); i > std::max(_k - m_, 0); --i) {
+            // --> from `last` to `oldest`
+            // --> navigate from right to left in the history
+            for (int i = std::min(m_ - 1, _k - 1); i >= 0; --i) {
                 // alpha_i = rho_i * s_i^T * q <-- computed in LBFGS::update_storage
                 // q = q - alpha_i * y_i
                 q -= alpha_[i] * mat_y_.col(i);
@@ -156,14 +161,16 @@ namespace AOPT {
             r_ = H_k_0 * q;
 
             // for i = k - m ... k - 1 do
-            // FIXME: can be correct!
-            //      Imagine k at iteration 12'000, try to access 12'000 - m, with m = 3
-            for (size_t i = std::max(0, _k - m_); i < std::max(_k - 1, 0); ++i) {
-                // rho_k = 1 / (y_k^T * s_k) <-- computed in LBFGS::update_storage
-                // beta = rho_i * y_i^T * r
-                const double beta = rho_[i] * mat_y_.col(i).transpose() * r_;
-                // r = r + s_i * (alpha_i - beta);
-                r_ += mat_s_.col(i) * (alpha_[i] - beta);
+            // --> from `oldest` to `last`
+            // --> navigate from left to right in the history
+            if (_k > 0) {
+                for (size_t i = 0; i < std::min(_k, m_); ++i) {
+                    // rho_k = 1 / (y_k^T * s_k) <-- computed in LBFGS::update_storage
+                    // beta = rho_i * y_i^T * r
+                    const double beta = rho_[i] * mat_y_.col(i).transpose() * r_;
+                    // r = r + s_i * (alpha_i - beta);
+                    r_ += mat_s_.col(i) * (alpha_[i] - beta);
+                }
             }
 
             std::cout << "r_:\n" << r_ << std::endl;
