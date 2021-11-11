@@ -60,6 +60,12 @@ namespace AOPT {
             gp_ = g;
 
 
+            // TODO PERSO: what to do with the "hint" given in the instruction sheet?
+            //      Hint: whenever the back-tracking line search fails to find a step length that meets the
+            //      curvature condition, you need to skip the up- date. Make use of the global variables in the
+            //      class for implementation.
+            //      as no other comment was added anywhere else.
+
             do {
                 double g2 = g.squaredNorm();
 
