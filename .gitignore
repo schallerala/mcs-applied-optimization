@@ -335,3 +335,4 @@ TSWLatexianTemp*
 *build*/
 include/.DS_Store
 *.user
+/aopt-exercise*/Exercise*-*.zip
