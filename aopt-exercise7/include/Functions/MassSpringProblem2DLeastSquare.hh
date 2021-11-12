@@ -251,12 +251,17 @@ namespace AOPT {
              *
              * Second hint: use triplets to set up the sparse matrix */
 
+            // https://slides.cgg.unibe.ch/aopt21/08-UnconstrainedOptimization-III-deck.html#/7/0/9
+            // r(x) = (r_1(x), r_2(x), ..., r_m(x))^T
+            // H ~= 2 * J^T * J
+            // J_{ij} = d r_i / d x_j
+
+            // place all different derivative on the J_i row
             const auto push_n_triplets = [](auto &triplets, const int i, const int n, const auto &g) {
                 for (size_t j = 0; j < n; ++j) {
                     triplets.emplace_back(i, j, g[j]);
                 }
             };
-
 
             for (size_t i = 0; i < springs_.size(); ++i) {
                 xe_[0] = _x[2 * springs_[i].first];
@@ -290,6 +295,15 @@ namespace AOPT {
 
             /** hint:  set the hessian for the constrained springs */
 
+            // Here for the constraints with
+            // r(x) = (r_1(x), r_2(x), ..., r_n(x), ..., r_m(x))^T
+            // between r_1 and r_n, those correspond to the r_j of the sprint element which contains n unknowns.
+            // Starting from r_{n+1} until r_m, we place the constrained r_j, which in how case, only contains 1
+            // unknown.
+            // Therefore, the rows of the Jacobian matrix J_{n+1} until J_{m} will only have a value
+            // in their first index and the rest will be 0, as there is no derivative to be done.
+            // --> which also explains the usage of a triplets and a sparse matrix as storage.
+
             // used to store the value of w_n and desired point
             Vec coeff1(2);
 
@@ -302,15 +316,13 @@ namespace AOPT {
                 cs_xe_[0] = _x[2 * attached_node_indices_[i]];
                 // get local gradient
                 cse_.eval_gradient(cs_xe_, coeff1, cs_ge_);
-                // TODO where to place cs_ge_ (has only a single value)
-                triplets.emplace_back(num_rj + 2 * i, 0, cs_ge_[0]);
+                triplets.emplace_back(num_rj + 2 * i, 0, cs_ge_[0]); // see comment on top for 0 index
 
                 // eval gradient for ending node point
                 cs_xe_[0] = _x[2 * attached_node_indices_[i] + 1];
                 // get local gradient
                 cse_.eval_gradient(cs_xe_, coeff1, cs_ge_);
-                // TODO where to place cs_ge_ (has only a single value)
-                triplets.emplace_back(num_rj + 2 * i + 1, 0, cs_ge_[0]);
+                triplets.emplace_back(num_rj + 2 * i + 1, 0, cs_ge_[0]); // see comment on top for 0 index
             }
 
             //------------------------------------------------------//
