@@ -75,14 +75,15 @@ namespace AOPT {
             double energy(0);
 
             //------------------------------------------------------//
-            /**TODO: assemble function values of all the elements
+            /** assemble function values of all the elements
              * f(x) = 1/2*sum(rj^2(x))
              * Hint: implement eval_r to set r, containing all rj, and then use it to compute the energy */
+            Vec r;
+            eval_r(_x, r);
 
-
+            energy = .5 * r.squaredNorm();
 
             //------------------------------------------------------//
-
 
             return energy;
         }
@@ -94,17 +95,21 @@ namespace AOPT {
          *           It should contain the positions of all nodes of the system.
          *           i.e. (_x[2*i], _x[2*i+1]) is the position of the i-th node
          *
-         * \param _g gradint of the objective which is J^T*r, where J is the jacobian matrix */
+         * \param _g gradient of the objective which is J^T*r, where J is the jacobian matrix */
         virtual void eval_gradient(const Vec &_x, Vec &_g) override {
             _g.resize(n_unknowns());
 
-
             //------------------------------------------------------//
-            /** TODO: approximate the gradient
+            /** approximate the gradient
              *  Hint: implement eval_r(_x, r) to compute r,
              *        then eval_jacobian(_x, J) to compute J,
              * and then compute the gradient with J^T*r */
+            Vec r;
+            eval_r(_x, r);
+            SMat J;
+            eval_jacobian(_x, J);
 
+            _g = J.transpose() * r;
 
             //------------------------------------------------------//
         }
@@ -117,9 +122,11 @@ namespace AOPT {
          * \param _h the hessian matrix of the least square problem, approximated as J^T*J.  **/
         virtual void eval_hessian(const Vec &_x, SMat &_h) override {
             //------------------------------------------------------//
-            //approximate the hessian with J^T*J
+            // approximate the hessian with J^T*J
+            SMat J;
+            eval_jacobian(_x, J);
 
-
+            _h = J.transpose() * J;
             //------------------------------------------------------//
         }
 
@@ -172,19 +179,18 @@ namespace AOPT {
              *       else if spring_type_ == WITH_LENGTH, it is SpringElement2DWithLengthLeastSquare
              *       and every spring element has one rj(x), where x is a 4D vector */
             for (size_t i = 0; i < springs_.size(); ++i) {
-                xe_[0] = _x[2 * springs_[i].first];
-                xe_[1] = _x[2 * springs_[i].first + 1];
-
-                xe_[2] = _x[2 * springs_[i].second];
-                xe_[3] = _x[2 * springs_[i].second + 1];
-
                 coeff[0] = ks_[i];
                 coeff[1] = ls_[i];
 
                 if (spring_type_ == WITHOUT_LENGTH) {
+                    xe_[0] = _x[2 * springs_[i].first];
+                    xe_[1] = _x[2 * springs_[i].first + 1];
                     // without length: 2 rj(x)
-                    _r[2 * i] = func_.eval_f(xe_.head(2), coeff);
-                    _r[2 * i + 1] = func_.eval_f(xe_.tail(2), coeff);
+                    _r[2 * i] = func_.eval_f(xe_, coeff);
+
+                    xe_[0] = _x[2 * springs_[i].second];
+                    xe_[1] = _x[2 * springs_[i].second + 1];
+                    _r[2 * i + 1] = func_.eval_f(xe_, coeff);
                 }
                 else {
                     // with length: 1 rj(x)
@@ -264,22 +270,21 @@ namespace AOPT {
             };
 
             for (size_t i = 0; i < springs_.size(); ++i) {
-                xe_[0] = _x[2 * springs_[i].first];
-                xe_[1] = _x[2 * springs_[i].first + 1];
-
-                xe_[2] = _x[2 * springs_[i].second];
-                xe_[3] = _x[2 * springs_[i].second + 1];
-
                 coeff[0] = ks_[i];
                 coeff[1] = ls_[i];
 
                 if (spring_type_ == WITHOUT_LENGTH) {
                     // without length: 2 times len(_x) = 2
+                    xe_[0] = _x[2 * springs_[i].first];
+                    xe_[1] = _x[2 * springs_[i].first + 1];
                     // get first local gradient
-                    func_.eval_gradient(xe_.head(2), coeff, ge_);
+                    func_.eval_gradient(xe_, coeff, ge_);
                     push_n_triplets(triplets, i, 0, func_.n_unknowns(), ge_);
+
+                    xe_[0] = _x[2 * springs_[i].second];
+                    xe_[1] = _x[2 * springs_[i].second + 1];
                     // get second local gradient
-                    func_.eval_gradient(xe_.tail(2), coeff, ge_);
+                    func_.eval_gradient(xe_, coeff, ge_);
                     push_n_triplets(triplets, i, func_.n_unknowns(), func_.n_unknowns(), ge_);
                 }
                 else {
