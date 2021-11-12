@@ -269,6 +269,8 @@ namespace AOPT {
             // H ~= 2 * J^T * J
             // J_{ij} = d r_i / d x_j
 
+            // FIXME! Not that easy just to transpose gradient in jacobian matrix row
+
             // place all different derivative on the J_i row
             const auto push_n_triplets = [](auto &triplets, const int i, const int start, const int n, const auto &g) {
                 for (size_t j = start; j < n; ++j) {
@@ -284,7 +286,7 @@ namespace AOPT {
                     // without length: 2 times len(_x) = 2
                     xe_[0] = _x[2 * springs_[i].first];
                     xe_[1] = _x[2 * springs_[i].first + 1];
-                    
+
                     // get first local gradient
                     func_.eval_gradient(xe_, coeff, ge_);
                     push_n_triplets(triplets, i, 0, func_.n_unknowns(), ge_);
@@ -349,6 +351,9 @@ namespace AOPT {
 
             //set up sparse matrix
             _J.setFromTriplets(triplets.begin(), triplets.end());
+
+            // TODO remove me
+            std::cout << "J:\n" << _J.toDense() << std::endl;
         }
 
 
