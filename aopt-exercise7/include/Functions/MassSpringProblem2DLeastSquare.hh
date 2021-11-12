@@ -153,24 +153,44 @@ namespace AOPT {
         void eval_r(const Vec &_x, Vec &_r) {
 
             //set dimension of vector r, depending on the type of spring
-            int num_rj;
-            if (spring_type_ == WITHOUT_LENGTH)
-                num_rj = 2 * springs_.size();
-            else if (spring_type_ == WITH_LENGTH)
-                num_rj = springs_.size();
+            const size_t num_rj = spring_type_ == WITHOUT_LENGTH
+                                  ? 2 * springs_.size()
+                                  : springs_.size();
 
-            int dim = num_rj + 2 * attached_node_indices_.size();
+            const size_t dim = num_rj + 2 * attached_node_indices_.size();
             _r.resize(dim);
 
 
+            // used to store the value of k and l, i.e. coeff[0] = ks_[i];
+            Vec coeff(2);
+
             //------------------------------------------------------//
-            /**TODO: assemble function values of all the elements
+            /** assemble function values of all the elements
              *
              * Hint: if spring_type_ == WITHOUT_LENGTH, it is SpringElement2DLeastSquare
              *       and every spring element has two rj(x), where x is a 2D vector
              *       else if spring_type_ == WITH_LENGTH, it is SpringElement2DWithLengthLeastSquare
              *       and every spring element has one rj(x), where x is a 4D vector */
+            for (size_t i = 0; i < springs_.size(); ++i) {
+                xe_[0] = _x[2 * springs_[i].first];
+                xe_[1] = _x[2 * springs_[i].first + 1];
 
+                xe_[2] = _x[2 * springs_[i].second];
+                xe_[3] = _x[2 * springs_[i].second + 1];
+
+                coeff[0] = ks_[i];
+                coeff[1] = ls_[i];
+
+                if (spring_type_ == WITHOUT_LENGTH) {
+                    // without length: 2 rj(x)
+                    _r[2 * i] = func_.eval_f(xe_.head(2), coeff);
+                    _r[2 * i + 1] = func_.eval_f(xe_.tail(2), coeff);
+                }
+                else {
+                    // with length: 1 rj(x)
+                    _r[i] = func_.eval_f(xe_, coeff);
+                }
+            }
 
 
             //------------------------------------------------------//
@@ -180,6 +200,24 @@ namespace AOPT {
              *       Since those are very similar to the springs without length
              *       in their expression, you can use that to get inspired */
 
+            // used to store the value of w_n and desired point
+            Vec coeff1(2);
+
+            for (size_t i = 0; i < attached_node_indices_.size(); ++i) {
+                coeff1[0] = weights_[i];
+                coeff1[1] = desired_points_[i];
+
+                // eval f for starting node point
+                cs_xe_[0] = _x[2 * attached_node_indices_[i]];
+                // get local f constraint
+                _r[num_rj + 2 * i] = cse_.eval_f(cs_xe_, coeff1);
+
+                // eval f for ending node point
+                cs_xe_[0] = _x[2 * attached_node_indices_[i] + 1];
+                // get local f constraint
+                _r[num_rj + 2 * i + 1] = cse_.eval_f(cs_xe_, coeff1);
+            }
+
             //------------------------------------------------------//
 
         }
@@ -188,33 +226,92 @@ namespace AOPT {
         void eval_jacobian(const Vec &_x, SMat &_J) {
 
             //get dimension of vector r
-            int num_rj;
-            if (spring_type_ == WITHOUT_LENGTH)
-                num_rj = 2 * springs_.size();
-            else if (spring_type_ == WITH_LENGTH)
-                num_rj = springs_.size();
+            const size_t num_rj = spring_type_ == WITHOUT_LENGTH
+                                  ? 2 * springs_.size()
+                                  : springs_.size();
 
-            int dim = num_rj + 2 * attached_node_indices_.size();
+            const size_t dim = num_rj + 2 * attached_node_indices_.size();
 
             //allocate memory
             _J.resize(dim, n_unknowns());
 
             std::vector<T> triplets;
+            // TODO 4 * springs_.size()?
             triplets.reserve(4 * springs_.size() + 2 * attached_node_indices_.size());
+
+            // used to store the value of k and l, i.e. coeff[0] = ks_[i];
+            Vec coeff(2);
+
             //------------------------------------------------------//
-            /**TODO: put local gradient vector to the Jacobian matrix
+            /** put local gradient vector to the Jacobian matrix
+             *
              * Hint: Here you also have to differentiate between
              *      spring_type_ == WITHOUT_LENGTH --> SpringElement2DLeastSquare
              *      spring_type_ == WITH_LENGTH --> SpringElement2DWithLengthLeastSquare
              *
              * Second hint: use triplets to set up the sparse matrix */
 
+            const auto push_n_triplets = [](auto &triplets, const int i, const int n, const auto &g) {
+                for (size_t j = 0; j < n; ++j) {
+                    triplets.emplace_back(i, j, g[j]);
+                }
+            };
+
+
+            for (size_t i = 0; i < springs_.size(); ++i) {
+                xe_[0] = _x[2 * springs_[i].first];
+                xe_[1] = _x[2 * springs_[i].first + 1];
+
+                xe_[2] = _x[2 * springs_[i].second];
+                xe_[3] = _x[2 * springs_[i].second + 1];
+
+                coeff[0] = ks_[i];
+                coeff[1] = ls_[i];
+
+                if (spring_type_ == WITHOUT_LENGTH) {
+                    // without length: 2 times len(_x) = 2
+                    // get first local gradient
+                    func_.eval_gradient(xe_.head(2), coeff, ge_);
+                    push_n_triplets(triplets, i, func_.n_unknowns(), ge_);
+                    // get second local gradient
+                    func_.eval_gradient(xe_.tail(2), coeff, ge_);
+                    push_n_triplets(triplets, i, func_.n_unknowns(), ge_);
+                }
+                else {
+                    // with length: len(_x) = 4
+                    // get local gradient
+                    func_.eval_gradient(xe_, coeff, ge_);
+                    push_n_triplets(triplets, i, func_.n_unknowns(), ge_);
+                }
+            }
 
 
             //------------------------------------------------------//
 
             /** hint:  set the hessian for the constrained springs */
 
+            // used to store the value of w_n and desired point
+            Vec coeff1(2);
+
+            // use cs_ge_ to store the gradient of the attached node index
+            for (size_t i = 0; i < attached_node_indices_.size(); ++i) {
+                coeff1[0] = weights_[i];
+                coeff1[1] = desired_points_[i];
+
+                // eval gradient for starting node point
+                cs_xe_[0] = _x[2 * attached_node_indices_[i]];
+                // get local gradient
+                cse_.eval_gradient(cs_xe_, coeff1, cs_ge_);
+                // TODO where to place cs_ge_ (has only a single value)
+                triplets.emplace_back(num_rj + 2 * i, 0, cs_ge_[0]);
+
+                // eval gradient for ending node point
+                cs_xe_[0] = _x[2 * attached_node_indices_[i] + 1];
+                // get local gradient
+                cse_.eval_gradient(cs_xe_, coeff1, cs_ge_);
+                // TODO where to place cs_ge_ (has only a single value)
+                triplets.emplace_back(num_rj + 2 * i + 1, 0, cs_ge_[0]);
+            }
 
             //------------------------------------------------------//
 
