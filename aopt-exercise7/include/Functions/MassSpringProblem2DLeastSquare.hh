@@ -236,7 +236,7 @@ namespace AOPT {
             _J.resize(dim, n_unknowns());
 
             std::vector<T> triplets;
-            // TODO 4 * springs_.size()?
+            // 4 * springs_.size() as transposing the derivative vector(s) on each row of the jacobian matrix
             triplets.reserve(4 * springs_.size() + 2 * attached_node_indices_.size());
 
             // used to store the value of k and l, i.e. coeff[0] = ks_[i];
@@ -257,8 +257,8 @@ namespace AOPT {
             // J_{ij} = d r_i / d x_j
 
             // place all different derivative on the J_i row
-            const auto push_n_triplets = [](auto &triplets, const int i, const int n, const auto &g) {
-                for (size_t j = 0; j < n; ++j) {
+            const auto push_n_triplets = [](auto &triplets, const int i, const int start, const int n, const auto &g) {
+                for (size_t j = start; j < n; ++j) {
                     triplets.emplace_back(i, j, g[j]);
                 }
             };
@@ -277,16 +277,16 @@ namespace AOPT {
                     // without length: 2 times len(_x) = 2
                     // get first local gradient
                     func_.eval_gradient(xe_.head(2), coeff, ge_);
-                    push_n_triplets(triplets, i, func_.n_unknowns(), ge_);
+                    push_n_triplets(triplets, i, 0, func_.n_unknowns(), ge_);
                     // get second local gradient
                     func_.eval_gradient(xe_.tail(2), coeff, ge_);
-                    push_n_triplets(triplets, i, func_.n_unknowns(), ge_);
+                    push_n_triplets(triplets, i, func_.n_unknowns(), func_.n_unknowns(), ge_);
                 }
                 else {
                     // with length: len(_x) = 4
                     // get local gradient
                     func_.eval_gradient(xe_, coeff, ge_);
-                    push_n_triplets(triplets, i, func_.n_unknowns(), ge_);
+                    push_n_triplets(triplets, i, 0, func_.n_unknowns(), ge_);
                 }
             }
 
