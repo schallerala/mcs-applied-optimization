@@ -59,13 +59,6 @@ namespace AOPT {
             xp_ = x;
             gp_ = g;
 
-
-            // TODO PERSO: what to do with the "hint" given in the instruction sheet?
-            //      Hint: whenever the back-tracking line search fails to find a step length that meets the
-            //      curvature condition, you need to skip the up- date. Make use of the global variables in the
-            //      class for implementation.
-            //      as no other comment was added anywhere else.
-
             do {
                 double g2 = g.squaredNorm();
 
@@ -134,10 +127,8 @@ namespace AOPT {
             //------------------------------------------------------//
             // implement the two-loop recursion as described in the lecture slides
 
-            // juste so close to what is done on different project:
+            // close to what is done on different project:
             // https://github.com/hjmshi/PyTorch-LBFGS/blob/master/functions/LBFGS.py#L323-L333
-            // FIXME however, doesn't work, both test fail, with even once the direction going
-            //      towards a greater objective function (error message from backtracking line search)
 
             // q = gradient f_k
             Vec q = _g;
@@ -146,7 +137,8 @@ namespace AOPT {
             // --> from `last` to `oldest`
             // --> navigate from right to left in the history
             for (int i = std::min(m_ - 1, _k - 1); i >= 0; --i) {
-                // alpha_i = rho_i * s_i^T * q <-- computed in LBFGS::update_storage
+                // alpha_i = rho_i * s_i^T * q <-- can't precomputed, as it is based on the q variable
+                alpha_[i] = rho_[i] * mat_s_.col(i).transpose() * q;
                 // q = q - alpha_i * y_i
                 q -= alpha_[i] * mat_y_.col(i);
             }
@@ -155,13 +147,13 @@ namespace AOPT {
             // gamma_k = (s_{k-1}^T * y_{k - 1}) / (y_{k - 1}^T * y_{k - 1}) <-- computed in outer loop
             // gamma_k used to choose H_k^0
             const double gamma_k = _k > 0
-                                 // wait for after the 1st iteration, as it the history will be empty at first
+                                 // wait for after the 1st iteration, as the history is empty at first
                                  ? (double)(_sk.transpose() * _yk) / (_yk.transpose() * _yk)
                                  : 1.;
 
             const Mat H_k_0 = gamma_k * Mat::Identity(_g.size(), _g.size());
 
-            std::cout << "H_k_0\n" << H_k_0 << std::endl;
+//            std::cout << "H_k_0\n" << H_k_0 << std::endl;
 
             // r = H_k^0 * q
             r_ = H_k_0 * q;
@@ -179,7 +171,7 @@ namespace AOPT {
                 }
             }
 
-            std::cout << "r_:\n" << r_ << std::endl;
+//            std::cout << "r_:\n" << r_ << std::endl;
 
             //------------------------------------------------------//
         }
@@ -229,17 +221,9 @@ namespace AOPT {
             // 8. add new rho in history
             rho_[next_row] = next_rho;
 
-            // 9. compute new alpha: alpha_i = rho_i * s_i^T * q, with q = g
-            const auto next_alpha = next_rho * _sk.transpose() * _g;
-            // 10. shift alpha in history
-            shift_up_vector(alpha_, m_);
-            // 10. add new alpha in history
-            alpha_[next_row] = next_alpha;
-
-            std::cout << "history sk\n" << mat_s_ << std::endl;
-            std::cout << "history yk\n" << mat_y_ << std::endl;
-            std::cout << "history rho\n" << rho_ << std::endl;
-            std::cout << "history alpha\n" << alpha_ << std::endl;
+//            std::cout << "history sk\n" << mat_s_ << std::endl;
+//            std::cout << "history yk\n" << mat_y_ << std::endl;
+//            std::cout << "history rho\n" << rho_ << std::endl;
             //------------------------------------------------------//
         }
 
