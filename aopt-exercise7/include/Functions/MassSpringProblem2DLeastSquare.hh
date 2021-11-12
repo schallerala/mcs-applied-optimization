@@ -183,9 +183,10 @@ namespace AOPT {
                 coeff[1] = ls_[i];
 
                 if (spring_type_ == WITHOUT_LENGTH) {
+                    // without length: 2 rj(x)
+
                     xe_[0] = _x[2 * springs_[i].first];
                     xe_[1] = _x[2 * springs_[i].first + 1];
-                    // without length: 2 rj(x)
                     _r[2 * i] = func_.eval_f(xe_, coeff);
 
                     xe_[0] = _x[2 * springs_[i].second];
@@ -194,6 +195,11 @@ namespace AOPT {
                 }
                 else {
                     // with length: 1 rj(x)
+
+                    xe_[0] = _x[2 * springs_[i].first];
+                    xe_[1] = _x[2 * springs_[i].first + 1];
+                    xe_[2] = _x[2 * springs_[i].second];
+                    xe_[3] = _x[2 * springs_[i].second + 1];
                     _r[i] = func_.eval_f(xe_, coeff);
                 }
             }
@@ -211,14 +217,15 @@ namespace AOPT {
 
             for (size_t i = 0; i < attached_node_indices_.size(); ++i) {
                 coeff1[0] = weights_[i];
-                coeff1[1] = desired_points_[i];
 
                 // eval f for starting node point
+                coeff1[1] = desired_points_[2 * i];
                 cs_xe_[0] = _x[2 * attached_node_indices_[i]];
                 // get local f constraint
                 _r[num_rj + 2 * i] = cse_.eval_f(cs_xe_, coeff1);
 
                 // eval f for ending node point
+                coeff1[1] = desired_points_[2 * i + 1];
                 cs_xe_[0] = _x[2 * attached_node_indices_[i] + 1];
                 // get local f constraint
                 _r[num_rj + 2 * i + 1] = cse_.eval_f(cs_xe_, coeff1);
@@ -277,18 +284,25 @@ namespace AOPT {
                     // without length: 2 times len(_x) = 2
                     xe_[0] = _x[2 * springs_[i].first];
                     xe_[1] = _x[2 * springs_[i].first + 1];
+                    
                     // get first local gradient
                     func_.eval_gradient(xe_, coeff, ge_);
                     push_n_triplets(triplets, i, 0, func_.n_unknowns(), ge_);
 
                     xe_[0] = _x[2 * springs_[i].second];
                     xe_[1] = _x[2 * springs_[i].second + 1];
+
                     // get second local gradient
                     func_.eval_gradient(xe_, coeff, ge_);
                     push_n_triplets(triplets, i, func_.n_unknowns(), func_.n_unknowns(), ge_);
                 }
                 else {
                     // with length: len(_x) = 4
+                    xe_[0] = _x[2 * springs_[i].first];
+                    xe_[1] = _x[2 * springs_[i].first + 1];
+                    xe_[2] = _x[2 * springs_[i].second];
+                    xe_[3] = _x[2 * springs_[i].second + 1];
+
                     // get local gradient
                     func_.eval_gradient(xe_, coeff, ge_);
                     push_n_triplets(triplets, i, 0, func_.n_unknowns(), ge_);
@@ -315,15 +329,16 @@ namespace AOPT {
             // use cs_ge_ to store the gradient of the attached node index
             for (size_t i = 0; i < attached_node_indices_.size(); ++i) {
                 coeff1[0] = weights_[i];
-                coeff1[1] = desired_points_[i];
 
                 // eval gradient for starting node point
+                coeff1[1] = desired_points_[2 * i];
                 cs_xe_[0] = _x[2 * attached_node_indices_[i]];
                 // get local gradient
                 cse_.eval_gradient(cs_xe_, coeff1, cs_ge_);
                 triplets.emplace_back(num_rj + 2 * i, 0, cs_ge_[0]); // see comment on top for 0 index
 
                 // eval gradient for ending node point
+                coeff1[1] = desired_points_[2 * i + 1];
                 cs_xe_[0] = _x[2 * attached_node_indices_[i] + 1];
                 // get local gradient
                 cse_.eval_gradient(cs_xe_, coeff1, cs_ge_);
