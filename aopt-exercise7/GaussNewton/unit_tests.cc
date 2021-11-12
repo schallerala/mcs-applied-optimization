@@ -59,7 +59,8 @@ TEST(SpringElement2DWithoutLengthLeastSquare, FunctionsEvaluation){
     x<<-0.7, 2;
     coeffs<<3;
 
-    Vec g(1);
+    // TODO ANNOUNCE WRONG
+    Vec g(2);
 
     ASSERT_NEAR(spring.eval_f(x, coeffs), -4.67653718, 1e-6);
 
@@ -68,8 +69,10 @@ TEST(SpringElement2DWithoutLengthLeastSquare, FunctionsEvaluation){
     spring.eval_gradient(x, coeffs, g);
     //std::cout<<"energy gradient: "<<std::setprecision(10)<<g<<std::endl;
 
-    Vec expected_g(1);
-    expected_g <<  1.732050808;
+    // TODO ANNOUNCE WRONG
+    Vec expected_g(2);
+    // TODO ANNOUNCE WRONG
+    expected_g <<  1.732050808, -1.732050808;
     ASSERT_NEAR((g - expected_g).norm(), 0.0, 1e-6);
 
 }
