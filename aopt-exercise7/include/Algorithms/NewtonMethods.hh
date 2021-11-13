@@ -74,9 +74,9 @@ namespace AOPT {
                 double f = _problem->eval_f(x);
 
                 // print status
-                std::cout << "iter: " << iter <<
-                          "   obj = " << f <<
-                          "   ||lambda||^2 = " << lambda2 << std::endl;
+//                std::cout << "iter: " << iter <<
+//                          "   obj = " << f <<
+//                          "   ||lambda||^2 = " << lambda2 << std::endl;
 
                 if (lambda2 <= e2 || fp <= f) break;
 
@@ -181,10 +181,10 @@ namespace AOPT {
                 double f = _problem->eval_f(x);
 
                 // print status
-                std::cout << "iter: " << iter
-                          << "   obj = " << f
-                          << "   ||lambda||^2 = " << lambda2
-                          << "   n_projection_steps = " << cnt << std::endl;
+//                std::cout << "iter: " << iter
+//                          << "   obj = " << f
+//                          << "   ||lambda||^2 = " << lambda2
+//                          << "   n_projection_steps = " << cnt << std::endl;
 
                 if (lambda2 <= e2 || fp <= f) {
                     _converged = true;
@@ -283,9 +283,9 @@ namespace AOPT {
 
                 // print status
                 double f = _problem->eval_f(x);
-                std::cerr << "iter: " << iter <<
-                          "   obj = " << f <<
-                          "   lambda^2 = " << lambda2 << std::endl;
+//                std::cerr << "iter: " << iter <<
+//                          "   obj = " << f <<
+//                          "   lambda^2 = " << lambda2 << std::endl;
 
                 // check stopping criterion
                 if (lambda2 <= eps2 || f >= fp)
@@ -377,9 +377,9 @@ namespace AOPT {
                 res = sqrt(res);
 
                 // print status
-                std::cerr << "iter: " << iter <<
-                          "   obj = " << f <<
-                          "   residual = " << res << " constraint violation = " << violation << std::endl;
+//                std::cerr << "iter: " << iter <<
+//                          "   obj = " << f <<
+//                          "   residual = " << res << " constraint violation = " << violation << std::endl;
 
                 if ((res < _eps && violation < _eps_constraints) || fp <= f)
                     break;

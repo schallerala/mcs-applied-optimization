@@ -63,9 +63,9 @@ namespace AOPT {
                 double g2 = g.squaredNorm();
 
                 // print status
-                std::cout << "iter: " << k <<
-                          "   obj = " << f <<
-                          "   ||g||^2 = " << g2 << std::endl;
+//                std::cout << "iter: " << k <<
+//                          "   obj = " << f <<
+//                          "   ||g||^2 = " << g2 << std::endl;
 
                 if (g2 < e2) {
                     std::cout << "Gradient norm converges!" << std::endl;

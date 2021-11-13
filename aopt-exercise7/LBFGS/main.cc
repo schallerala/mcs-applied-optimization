@@ -6,7 +6,8 @@
 
 int main(int _argc, const char* _argv[]) {
     if(_argc != 7) {
-        std::cout << "Usage: input should be 'function index(0: f without length, 1: f with length), number of grid in x, number of grid in y, m, max iteration, filename', e.g. "
+        std::cout << "Usage: input should be 'function index(0: f without length, 1: f with length), "
+                     "number of grid in x, number of grid in y, m, max iteration, filename', e.g. "
                      "./LBFGS 1 20 20 10 10000 /usr/spring" << std::endl;
         return -1;
     }
