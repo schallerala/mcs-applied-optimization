@@ -73,7 +73,7 @@ set(MAX_ITER 1000000)
 
 SET(RES_DIR results_output)
 
-set_property(GLOBAL PROPERTY ALL_TARGETS_LIST)
+set_property(GLOBAL PROPERTY ALL_EX3_TARGETS_LIST)
 
 # Newton method:
 #       - 2 methods:
@@ -143,12 +143,12 @@ function(ADD_NEWTON_METHOD_TARGETS FN_INDEX GRID_SIDE)
     SET(LOG_OUTPUT_FILE ${RES_DIR}/output_${CUSTOM_EXECUTION_TARGET}.log)
 
     add_custom_command(OUTPUT ${LOG_OUTPUT_FILE}
-            COMMAND echo "Arguments: ${ARG1} ${ARG2} ${GRID_SIDE}" > ${LOG_OUTPUT_FILE}
+            COMMAND echo "ARGUMENTS: ${EXECUTABLE} ${ARG1} ${ARG2} ${GRID_SIDE}" | tee -a ${LOG_OUTPUT_FILE}
             DEPENDS ${RES_DIR})
     add_custom_target(${CUSTOM_EXECUTION_TARGET}
             ${EXECUTABLE} ${ARG1} ${ARG2} ${GRID_SIDE} ${GRID_SIDE} ${MAX_ITER} ${RES_DIR}/execution_${EXECUTABLE}_${ARG1}_${ARG2}_${GRID_SIDE}__ 2>&1 | tee -a ${LOG_OUTPUT_FILE}
             DEPENDS ${EXECUTABLE} ${LOG_OUTPUT_FILE})
-    list(APPEND ALL_TARGETS_LIST ${CUSTOM_EXECUTION_TARGET})
+    list(APPEND ALL_EX3_TARGETS_LIST ${CUSTOM_EXECUTION_TARGET})
 
     # Method 1: projected hessian
     SET(ARG1 2)
@@ -157,14 +157,14 @@ function(ADD_NEWTON_METHOD_TARGETS FN_INDEX GRID_SIDE)
     SET(LOG_OUTPUT_FILE ${RES_DIR}/output_${CUSTOM_EXECUTION_TARGET}.log)
 
     add_custom_command(OUTPUT ${LOG_OUTPUT_FILE}
-            COMMAND echo "Arguments: ${ARG1} ${ARG2} ${GRID_SIDE}" > ${LOG_OUTPUT_FILE}
+            COMMAND echo "ARGUMENTS: ${EXECUTABLE} ${ARG1} ${ARG2} ${GRID_SIDE}" | tee -a ${LOG_OUTPUT_FILE}
             DEPENDS ${RES_DIR})
     add_custom_target(${CUSTOM_EXECUTION_TARGET}
             ${EXECUTABLE} ${ARG1} ${ARG2} ${GRID_SIDE} ${GRID_SIDE} ${MAX_ITER} ${RES_DIR}/execution_${EXECUTABLE}_${ARG1}_${ARG2}_${GRID_SIDE}__ 2>&1 | tee -a ${LOG_OUTPUT_FILE}
             DEPENDS ${EXECUTABLE} ${LOG_OUTPUT_FILE})
-    list(APPEND ALL_TARGETS_LIST ${CUSTOM_EXECUTION_TARGET})
+    list(APPEND ALL_EX3_TARGETS_LIST ${CUSTOM_EXECUTION_TARGET})
 
-    SET(ALL_TARGETS_LIST ${ALL_TARGETS_LIST} PARENT_SCOPE)
+    SET(ALL_EX3_TARGETS_LIST ${ALL_EX3_TARGETS_LIST} PARENT_SCOPE)
 endfunction()
 
 function(ADD_GRADIENT_DESCENT_TARGETS FN_INDEX GRID_SIDE)
@@ -178,12 +178,12 @@ function(ADD_GRADIENT_DESCENT_TARGETS FN_INDEX GRID_SIDE)
     SET(LOG_OUTPUT_FILE ${RES_DIR}/output_${CUSTOM_EXECUTION_TARGET}.log)
 
     add_custom_command(OUTPUT ${LOG_OUTPUT_FILE}
-            COMMAND echo "Arguments: ${ARG1} ${ARG2} ${GRID_SIDE}" > ${LOG_OUTPUT_FILE}
+            COMMAND echo "ARGUMENTS: ${EXECUTABLE} ${ARG1} ${ARG2} ${GRID_SIDE}" | tee -a ${LOG_OUTPUT_FILE}
             DEPENDS ${RES_DIR})
     add_custom_target(${CUSTOM_EXECUTION_TARGET}
             ${EXECUTABLE} ${ARG1} ${ARG2} ${GRID_SIDE} ${GRID_SIDE} ${MAX_ITER} ${RES_DIR}/execution_${EXECUTABLE}_${ARG1}_${ARG2}_${GRID_SIDE}__ 2>&1 | tee -a ${LOG_OUTPUT_FILE}
             DEPENDS ${EXECUTABLE} ${LOG_OUTPUT_FILE})
-    list(APPEND ALL_TARGETS_LIST ${CUSTOM_EXECUTION_TARGET})
+    list(APPEND ALL_EX3_TARGETS_LIST ${CUSTOM_EXECUTION_TARGET})
 
     # Constrained spring scenario 2: sides
     SET(ARG2 2)
@@ -191,14 +191,14 @@ function(ADD_GRADIENT_DESCENT_TARGETS FN_INDEX GRID_SIDE)
     SET(LOG_OUTPUT_FILE ${RES_DIR}/output_${CUSTOM_EXECUTION_TARGET}.log)
 
     add_custom_command(OUTPUT ${LOG_OUTPUT_FILE}
-            COMMAND echo "Arguments: ${ARG1} ${ARG2} ${GRID_SIDE}" > ${LOG_OUTPUT_FILE}
+            COMMAND echo "ARGUMENTS: ${EXECUTABLE} ${ARG1} ${ARG2} ${GRID_SIDE}" | tee -a ${LOG_OUTPUT_FILE}
             DEPENDS ${RES_DIR})
     add_custom_target(${CUSTOM_EXECUTION_TARGET}
             ${EXECUTABLE} ${ARG1} ${ARG2} ${GRID_SIDE} ${GRID_SIDE} ${MAX_ITER} ${RES_DIR}/execution_${EXECUTABLE}_${ARG1}_${ARG2}_${GRID_SIDE}__ 2>&1 | tee -a ${LOG_OUTPUT_FILE}
             DEPENDS ${EXECUTABLE} ${LOG_OUTPUT_FILE})
-    list(APPEND ALL_TARGETS_LIST ${CUSTOM_EXECUTION_TARGET})
+    list(APPEND ALL_EX3_TARGETS_LIST ${CUSTOM_EXECUTION_TARGET})
 
-    SET(ALL_TARGETS_LIST ${ALL_TARGETS_LIST} PARENT_SCOPE)
+    SET(ALL_EX3_TARGETS_LIST ${ALL_EX3_TARGETS_LIST} PARENT_SCOPE)
 endfunction()
 
 function(ADD_LBGFS_TARGETS FN_INDEX GRID_SIDE)
@@ -213,15 +213,15 @@ function(ADD_LBGFS_TARGETS FN_INDEX GRID_SIDE)
         SET(LOG_OUTPUT_FILE ${RES_DIR}/output_${CUSTOM_EXECUTION_TARGET}.log)
 
         add_custom_command(OUTPUT ${LOG_OUTPUT_FILE}
-                COMMAND echo "Arguments: ${ARG1} ${ARG2} ${GRID_SIDE}" > ${LOG_OUTPUT_FILE}
+                COMMAND echo "ARGUMENTS: ${EXECUTABLE} ${ARG1} ${ARG2} ${GRID_SIDE}" | tee -a ${LOG_OUTPUT_FILE}
                 DEPENDS ${RES_DIR})
         add_custom_target(${CUSTOM_EXECUTION_TARGET}
                 ${EXECUTABLE} ${ARG1} ${GRID_SIDE} ${GRID_SIDE} ${ARG2} ${MAX_ITER} ${RES_DIR}/execution_${EXECUTABLE}_${ARG1}_${ARG2}_${GRID_SIDE}__ 2>&1 | tee -a ${LOG_OUTPUT_FILE}
                 DEPENDS ${EXECUTABLE} ${LOG_OUTPUT_FILE})
-        list(APPEND ALL_TARGETS_LIST ${CUSTOM_EXECUTION_TARGET})
+        list(APPEND ALL_EX3_TARGETS_LIST ${CUSTOM_EXECUTION_TARGET})
     endforeach()
 
-    SET(ALL_TARGETS_LIST ${ALL_TARGETS_LIST} PARENT_SCOPE)
+    SET(ALL_EX3_TARGETS_LIST ${ALL_EX3_TARGETS_LIST} PARENT_SCOPE)
 endfunction()
 
 function(ADD_GAUSS_NEWTON_TARGETS FN_INDEX GRID_SIDE)
@@ -234,35 +234,35 @@ function(ADD_GAUSS_NEWTON_TARGETS FN_INDEX GRID_SIDE)
     SET(LOG_OUTPUT_FILE ${RES_DIR}/output_${CUSTOM_EXECUTION_TARGET}.log)
 
     add_custom_command(OUTPUT ${LOG_OUTPUT_FILE}
-            COMMAND echo "Arguments: ${ARG1} ${ARG2} ${GRID_SIDE}" > ${LOG_OUTPUT_FILE}
+            COMMAND echo "ARGUMENTS: ${EXECUTABLE} ${ARG1} ${ARG2} ${GRID_SIDE}" | tee -a ${LOG_OUTPUT_FILE}
             DEPENDS ${RES_DIR})
     add_custom_target(${CUSTOM_EXECUTION_TARGET}
             ${EXECUTABLE} ${ARG1} ${GRID_SIDE} ${GRID_SIDE} ${MAX_ITER} ${RES_DIR}/execution_${EXECUTABLE}_${ARG1}_${GRID_SIDE}__ 2>&1 | tee -a ${LOG_OUTPUT_FILE}
             DEPENDS ${EXECUTABLE} ${LOG_OUTPUT_FILE})
-    list(APPEND ALL_TARGETS_LIST ${CUSTOM_EXECUTION_TARGET})
+    list(APPEND ALL_EX3_TARGETS_LIST ${CUSTOM_EXECUTION_TARGET})
 
-    SET(ALL_TARGETS_LIST ${ALL_TARGETS_LIST} PARENT_SCOPE)
+    SET(ALL_EX3_TARGETS_LIST ${ALL_EX3_TARGETS_LIST} PARENT_SCOPE)
 endfunction()
 
-#foreach(GRID_SIDE IN LISTS GRID_SIDES)
-SET(GRID_SIDE 5)
+foreach(GRID_SIDE IN LISTS GRID_SIDES)
     foreach(FN_INDEX IN LISTS FN_INDEXES)
         foreach(EXECUTABLE_FUNCTION IN LISTS EXECUTABLES_FUNCTIONS)
             cmake_language(CALL ${EXECUTABLE_FUNCTION} ${FN_INDEX} ${GRID_SIDE})
         endforeach()
     endforeach()
-#endforeach()
+endforeach()
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/parse_logs.awk
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 add_custom_command(OUTPUT result.tsv
-        COMMAND cat ${RES_DIR}/*.log | awk -f parse_logs.awk > result.tsv
+        COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/result_header.tsv > result.tsv
+        COMMAND cat ${RES_DIR}/*.log | awk -f parse_logs.awk | sort -t$$'\t' -n -k8 -k4 -k1 -k2 -k3 >> result.tsv
         DEPENDS all-ex3
         COMMENT "Parse logs to create result file for import")
 
 add_custom_target(all-ex3
-        DEPENDS ${ALL_TARGETS_LIST} result.tsv)
+        DEPENDS ${ALL_EX3_TARGETS_LIST} result.tsv)
 
-MESSAGE("list: ${ALL_TARGETS_LIST}")
+MESSAGE("list: ${ALL_EX3_TARGETS_LIST}")
 
 

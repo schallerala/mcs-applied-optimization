@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test:index": "node index.js ~/development/unifr/applied-optimization/aopt-exercise6/build/results_output/execution_NewtonMethods_1_1_20___edges.csv ~/development/unifr/applied-optimization/aopt-exercise6/build/results_output/execution_NewtonMethods_1_1_20___nodes.csv out",
-    "start": "node produce_all_output.js ~/development/unifr/applied-optimization/aopt-exercise6/build/results_output/"
+    "start": "node produce_all_output.js ~/development/unifr/applied-optimization/aopt-exercise7/build/results_output/"
   },
   "type": "module",
   "keywords": [],
