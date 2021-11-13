@@ -80,6 +80,10 @@ The Gauss Newton executable is based on the standard Netwon Method without
 any Hessian modification for any LLT factorization. For this reason
 its execution "without length" won't be able to optimize.
 
+Finally, like last week, adapted the CMakeLists.txt to add a target to execute
+the list of methods with different configuration, also parse its output and
+finally produce the graphical interpretation of the optimized spring system.
+
 - See the attached Exercise7_CarrelFontanaSchaller.pdf file starting from page 3.
 
 
