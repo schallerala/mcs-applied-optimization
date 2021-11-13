@@ -62,6 +62,9 @@ namespace AOPT {
                 // H dx = -g
                 solver.compute(H);
                 if (solver.info() == Eigen::NumericalIssue) {
+
+                    std::cout << "ITERATION: " << iter << std::endl;
+
                     std::cerr << "Warning: LLT factorization has numerical issue!" << std::endl;
                     break;
                 }
@@ -93,6 +96,8 @@ namespace AOPT {
             } while (iter < _max_iters);
 
             //------------------------------------------------------//
+
+            std::cout << "ITERATION: " << iter << std::endl;
 
             return x;
         }
@@ -201,6 +206,7 @@ namespace AOPT {
 
             //------------------------------------------------------//
 
+            std::cout << "ITERATION: " << iter << std::endl;
 
             return x;
         }
@@ -302,6 +308,7 @@ namespace AOPT {
             }
             //------------------------------------------------------//
 
+            std::cout << "ITERATION: " << iter << std::endl;
 
             return x;
         }
@@ -420,6 +427,7 @@ namespace AOPT {
             }
             //------------------------------------------------------//
 
+            std::cout << "ITERATION: " << iter << std::endl;
 
             return x;
         }
@@ -559,6 +567,7 @@ namespace AOPT {
             }
             //------------------------------------------------------//
 
+            std::cout << "ITERATION: " << iter << std::endl;
 
             return x;
         }

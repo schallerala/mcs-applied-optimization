@@ -69,6 +69,8 @@ namespace AOPT {
 
             } while (iter < _max_iters);
 
+            std::cout << "ITERATION: " << iter << std::endl;
+
             //------------------------------------------------------//
 
             return x;

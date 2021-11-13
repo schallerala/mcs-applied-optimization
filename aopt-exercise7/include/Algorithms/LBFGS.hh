@@ -68,6 +68,7 @@ namespace AOPT {
 //                          "   ||g||^2 = " << g2 << std::endl;
 
                 if (g2 < e2) {
+                    std::cout << "ITERATION: " << k << std::endl;
                     std::cout << "Gradient norm converges!" << std::endl;
                     return x;
                 }
@@ -82,6 +83,7 @@ namespace AOPT {
 //                double t = LineSearch::wolfe_line_search(_problem, x, g, -r_, 1.);
 
                 if (t < 1e-16) {
+                    std::cout << "ITERATION: " << k << std::endl;
                     std::cout << "The step length is too small!" << std::endl;
                     return x;
                 }
@@ -98,6 +100,7 @@ namespace AOPT {
                 f = _problem->eval_f(x);
 
                 if (k > 0 && fp_ <= f) {
+                    std::cout << "ITERATION: " << k << std::endl;
                     std::cout << "Function value converges!" << std::endl;
                     return x;
                 }
@@ -116,6 +119,9 @@ namespace AOPT {
                 k++;
 
             } while (k < _max_iters);
+
+
+            std::cout << "ITERATION: " << k << std::endl;
 
 
             return x;
