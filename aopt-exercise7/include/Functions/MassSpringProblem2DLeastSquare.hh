@@ -269,45 +269,52 @@ namespace AOPT {
             // H ~= 2 * J^T * J
             // J_{ij} = d r_i / d x_j
 
-            // FIXME! Not that easy just to transpose gradient in jacobian matrix row
-
-            // place all different derivative on the J_i row
-            const auto push_n_triplets = [](auto &triplets, const int i, const int start, const int n, const auto &g) {
-                for (size_t j = start; j < n; ++j) {
-                    triplets.emplace_back(i, j, g[j]);
-                }
-            };
-
             for (size_t i = 0; i < springs_.size(); ++i) {
                 coeff[0] = ks_[i];
                 coeff[1] = ls_[i];
 
+                const auto id0 = 2 * springs_[i].first;
+                const auto id1 = 2 * springs_[i].first + 1;
+                const auto id2 = 2 * springs_[i].second;
+                const auto id3 = 2 * springs_[i].second + 1;
+
                 if (spring_type_ == WITHOUT_LENGTH) {
                     // without length: 2 times len(_x) = 2
-                    xe_[0] = _x[2 * springs_[i].first];
-                    xe_[1] = _x[2 * springs_[i].first + 1];
+                    // 1st point
+                    xe_[0] = _x[id0];
+                    xe_[1] = _x[id1];
 
                     // get first local gradient
                     func_.eval_gradient(xe_, coeff, ge_);
-                    push_n_triplets(triplets, i, 0, func_.n_unknowns(), ge_);
+                    // place gradient on matrix
+                    triplets.emplace_back(i, id0, ge_[0]);
+                    triplets.emplace_back(i, id1, ge_[1]);
 
-                    xe_[0] = _x[2 * springs_[i].second];
-                    xe_[1] = _x[2 * springs_[i].second + 1];
+
+                    // 2nd point
+                    xe_[0] = _x[id2];
+                    xe_[1] = _x[id3];
 
                     // get second local gradient
                     func_.eval_gradient(xe_, coeff, ge_);
-                    push_n_triplets(triplets, i, func_.n_unknowns(), func_.n_unknowns(), ge_);
+                    // place gradient on matrix
+                    triplets.emplace_back(i, id2, ge_[0]);
+                    triplets.emplace_back(i, id3, ge_[1]);
                 }
                 else {
                     // with length: len(_x) = 4
-                    xe_[0] = _x[2 * springs_[i].first];
-                    xe_[1] = _x[2 * springs_[i].first + 1];
-                    xe_[2] = _x[2 * springs_[i].second];
-                    xe_[3] = _x[2 * springs_[i].second + 1];
+                    xe_[0] = _x[id0];
+                    xe_[1] = _x[id1];
+                    xe_[2] = _x[id2];
+                    xe_[3] = _x[id3];
 
                     // get local gradient
                     func_.eval_gradient(xe_, coeff, ge_);
-                    push_n_triplets(triplets, i, 0, func_.n_unknowns(), ge_);
+                    // place gradient on matrix
+                    triplets.emplace_back(i, id0, ge_[0]);
+                    triplets.emplace_back(i, id1, ge_[1]);
+                    triplets.emplace_back(i, id2, ge_[2]);
+                    triplets.emplace_back(i, id3, ge_[3]);
                 }
             }
 
@@ -322,7 +329,7 @@ namespace AOPT {
             // Starting from r_{n+1} until r_m, we place the constrained r_j, which in how case, only contains 1
             // unknown.
             // Therefore, the rows of the Jacobian matrix J_{n+1} until J_{m} will only have a value
-            // in their first index and the rest will be 0, as there is no derivative to be done.
+            // in their derivative index and the rest will be 0, as there is no derivative to be done.
             // --> which also explains the usage of a triplets and a sparse matrix as storage.
 
             // used to store the value of w_n and desired point
@@ -330,30 +337,33 @@ namespace AOPT {
 
             // use cs_ge_ to store the gradient of the attached node index
             for (size_t i = 0; i < attached_node_indices_.size(); ++i) {
+                // as the constraints are place after all gradient
+                const auto i_offset = num_rj + 2 * i;
+                // id of nodes but also the j for placement in the row
+                const auto id0 = 2 * attached_node_indices_[i];
+                const auto id1 = 2 * attached_node_indices_[i] + 1;
+
                 coeff1[0] = weights_[i];
 
                 // eval gradient for starting node point
                 coeff1[1] = desired_points_[2 * i];
-                cs_xe_[0] = _x[2 * attached_node_indices_[i]];
+                cs_xe_[0] = _x[id0];
                 // get local gradient
                 cse_.eval_gradient(cs_xe_, coeff1, cs_ge_);
-                triplets.emplace_back(num_rj + 2 * i, 0, cs_ge_[0]); // see comment on top for 0 index
+                triplets.emplace_back(i_offset, id0, cs_ge_[0]); // see comment on top for 0 index
 
                 // eval gradient for ending node point
                 coeff1[1] = desired_points_[2 * i + 1];
-                cs_xe_[0] = _x[2 * attached_node_indices_[i] + 1];
+                cs_xe_[0] = _x[id1];
                 // get local gradient
                 cse_.eval_gradient(cs_xe_, coeff1, cs_ge_);
-                triplets.emplace_back(num_rj + 2 * i + 1, 0, cs_ge_[0]); // see comment on top for 0 index
+                triplets.emplace_back(i_offset + 1, id1, cs_ge_[0]); // see comment on top for 0 index
             }
 
             //------------------------------------------------------//
 
             //set up sparse matrix
             _J.setFromTriplets(triplets.begin(), triplets.end());
-
-            // TODO remove me
-            std::cout << "J:\n" << _J.toDense() << std::endl;
         }
 
 
