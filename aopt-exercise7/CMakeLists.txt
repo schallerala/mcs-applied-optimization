@@ -65,3 +65,204 @@ add_subdirectory(LBFGS)
 add_subdirectory(GaussNewton)
 
 
+# FN_INDEXES: without or with spring length
+set(FN_INDEXES 0 1)
+set(GRID_SIDES 5 10 20)
+set(EXECUTABLES_FUNCTIONS ADD_NEWTON_METHOD_TARGETS ADD_GRADIENT_DESCENT_TARGETS ADD_LBGFS_TARGETS ADD_GAUSS_NEWTON_TARGETS)
+set(MAX_ITER 1000000)
+
+SET(RES_DIR results_output)
+
+set_property(GLOBAL PROPERTY ALL_TARGETS_LIST)
+
+# Newton method:
+#       - 2 methods:
+#               0: standard newton
+#               1: projected hessian
+#       - 3 function index:
+#               0: f without length
+#               1: f with length
+#               2: f with length with positive local hessian
+#       - grid x
+#       - grid y
+#       - max iteration
+#       - output_prefix
+#   if method == 0 (standard newton) --> solve with 'function index' = 2 (with length with positive local hessian)
+
+# Gradient descent:
+#       - 2 function index:
+#               0: f without length
+#               1: f with length
+#       - constrained spring scenario
+#               1: corners
+#               2: sides
+#       - grid x
+#       - grid y
+#       - max iteration
+#       - output_prefix
+
+# L-BGFS
+#       - 2 function index:
+#               0: without length
+#               1: with length
+#       - grid x
+#       - grid y
+#       - m (history size)
+#       - max iteration
+#       - output_prefix
+
+# Gauss Newton
+#       - 2 function index:
+#               0: without length
+#               1: with length
+#       - grid x
+#       - grid y
+#       - max iteration
+#       - output_prefix
+
+# --> Use:
+#       Newton method: method 1: projected hessian
+#       Gradient descent: constrained spring scenario: 1
+
+add_custom_command(OUTPUT ${RES_DIR}
+        COMMAND mkdir ${RES_DIR}
+        COMMENT "Create result output folder")
+
+function(ADD_NEWTON_METHOD_TARGETS FN_INDEX GRID_SIDE)
+    SET(EXECUTABLE NewtonMethods)
+
+    SET(ARG2 ${FN_INDEX})
+
+    # Method 0: standard Newton
+    SET(ARG1 0)
+    #       if with length (function index = 1): use function index 2 with positive local hessian
+    if (${FN_INDEX} EQUAL 1)
+        SET(ARG2 2)
+    endif()
+    SET(CUSTOM_EXECUTION_TARGET all-${EXECUTABLE}_${ARG1}_${ARG2}_${GRID_SIDE})
+    SET(LOG_OUTPUT_FILE ${RES_DIR}/output_${CUSTOM_EXECUTION_TARGET}.log)
+
+    add_custom_command(OUTPUT ${LOG_OUTPUT_FILE}
+            COMMAND echo "Arguments: ${ARG1} ${ARG2} ${GRID_SIDE}" > ${LOG_OUTPUT_FILE}
+            DEPENDS ${RES_DIR})
+    add_custom_target(${CUSTOM_EXECUTION_TARGET}
+            ${EXECUTABLE} ${ARG1} ${ARG2} ${GRID_SIDE} ${GRID_SIDE} ${MAX_ITER} ${RES_DIR}/execution_${EXECUTABLE}_${ARG1}_${ARG2}_${GRID_SIDE}__ 2>&1 | tee -a ${LOG_OUTPUT_FILE}
+            DEPENDS ${EXECUTABLE} ${LOG_OUTPUT_FILE})
+    list(APPEND ALL_TARGETS_LIST ${CUSTOM_EXECUTION_TARGET})
+
+    # Method 1: projected hessian
+    SET(ARG1 2)
+    SET(ARG2 ${FN_INDEX})
+    SET(CUSTOM_EXECUTION_TARGET all-${EXECUTABLE}_${ARG1}_${ARG2}_${GRID_SIDE})
+    SET(LOG_OUTPUT_FILE ${RES_DIR}/output_${CUSTOM_EXECUTION_TARGET}.log)
+
+    add_custom_command(OUTPUT ${LOG_OUTPUT_FILE}
+            COMMAND echo "Arguments: ${ARG1} ${ARG2} ${GRID_SIDE}" > ${LOG_OUTPUT_FILE}
+            DEPENDS ${RES_DIR})
+    add_custom_target(${CUSTOM_EXECUTION_TARGET}
+            ${EXECUTABLE} ${ARG1} ${ARG2} ${GRID_SIDE} ${GRID_SIDE} ${MAX_ITER} ${RES_DIR}/execution_${EXECUTABLE}_${ARG1}_${ARG2}_${GRID_SIDE}__ 2>&1 | tee -a ${LOG_OUTPUT_FILE}
+            DEPENDS ${EXECUTABLE} ${LOG_OUTPUT_FILE})
+    list(APPEND ALL_TARGETS_LIST ${CUSTOM_EXECUTION_TARGET})
+
+    SET(ALL_TARGETS_LIST ${ALL_TARGETS_LIST} PARENT_SCOPE)
+endfunction()
+
+function(ADD_GRADIENT_DESCENT_TARGETS FN_INDEX GRID_SIDE)
+    SET(EXECUTABLE GradientDescent)
+
+    SET(ARG1 ${FN_INDEX})
+
+    # Constrained spring scenario 1: corners
+    SET(ARG2 1)
+    SET(CUSTOM_EXECUTION_TARGET all-${EXECUTABLE}_${ARG1}_${ARG2}_${GRID_SIDE})
+    SET(LOG_OUTPUT_FILE ${RES_DIR}/output_${CUSTOM_EXECUTION_TARGET}.log)
+
+    add_custom_command(OUTPUT ${LOG_OUTPUT_FILE}
+            COMMAND echo "Arguments: ${ARG1} ${ARG2} ${GRID_SIDE}" > ${LOG_OUTPUT_FILE}
+            DEPENDS ${RES_DIR})
+    add_custom_target(${CUSTOM_EXECUTION_TARGET}
+            ${EXECUTABLE} ${ARG1} ${ARG2} ${GRID_SIDE} ${GRID_SIDE} ${MAX_ITER} ${RES_DIR}/execution_${EXECUTABLE}_${ARG1}_${ARG2}_${GRID_SIDE}__ 2>&1 | tee -a ${LOG_OUTPUT_FILE}
+            DEPENDS ${EXECUTABLE} ${LOG_OUTPUT_FILE})
+    list(APPEND ALL_TARGETS_LIST ${CUSTOM_EXECUTION_TARGET})
+
+    # Constrained spring scenario 2: sides
+    SET(ARG2 2)
+    SET(CUSTOM_EXECUTION_TARGET all-${EXECUTABLE}_${ARG1}_${ARG2}_${GRID_SIDE})
+    SET(LOG_OUTPUT_FILE ${RES_DIR}/output_${CUSTOM_EXECUTION_TARGET}.log)
+
+    add_custom_command(OUTPUT ${LOG_OUTPUT_FILE}
+            COMMAND echo "Arguments: ${ARG1} ${ARG2} ${GRID_SIDE}" > ${LOG_OUTPUT_FILE}
+            DEPENDS ${RES_DIR})
+    add_custom_target(${CUSTOM_EXECUTION_TARGET}
+            ${EXECUTABLE} ${ARG1} ${ARG2} ${GRID_SIDE} ${GRID_SIDE} ${MAX_ITER} ${RES_DIR}/execution_${EXECUTABLE}_${ARG1}_${ARG2}_${GRID_SIDE}__ 2>&1 | tee -a ${LOG_OUTPUT_FILE}
+            DEPENDS ${EXECUTABLE} ${LOG_OUTPUT_FILE})
+    list(APPEND ALL_TARGETS_LIST ${CUSTOM_EXECUTION_TARGET})
+
+    SET(ALL_TARGETS_LIST ${ALL_TARGETS_LIST} PARENT_SCOPE)
+endfunction()
+
+function(ADD_LBGFS_TARGETS FN_INDEX GRID_SIDE)
+    SET(EXECUTABLE LBFGS)
+
+    SET(ARG1 ${FN_INDEX})
+
+    # Try with multiple m (history): between [3; 20]
+    foreach(M RANGE 8 16)
+        SET(ARG2 ${M}) # holds m
+        SET(CUSTOM_EXECUTION_TARGET all-${EXECUTABLE}_${ARG1}_${ARG2}_${GRID_SIDE})
+        SET(LOG_OUTPUT_FILE ${RES_DIR}/output_${CUSTOM_EXECUTION_TARGET}.log)
+
+        add_custom_command(OUTPUT ${LOG_OUTPUT_FILE}
+                COMMAND echo "Arguments: ${ARG1} ${ARG2} ${GRID_SIDE}" > ${LOG_OUTPUT_FILE}
+                DEPENDS ${RES_DIR})
+        add_custom_target(${CUSTOM_EXECUTION_TARGET}
+                ${EXECUTABLE} ${ARG1} ${GRID_SIDE} ${GRID_SIDE} ${ARG2} ${MAX_ITER} ${RES_DIR}/execution_${EXECUTABLE}_${ARG1}_${ARG2}_${GRID_SIDE}__ 2>&1 | tee -a ${LOG_OUTPUT_FILE}
+                DEPENDS ${EXECUTABLE} ${LOG_OUTPUT_FILE})
+        list(APPEND ALL_TARGETS_LIST ${CUSTOM_EXECUTION_TARGET})
+    endforeach()
+
+    SET(ALL_TARGETS_LIST ${ALL_TARGETS_LIST} PARENT_SCOPE)
+endfunction()
+
+function(ADD_GAUSS_NEWTON_TARGETS FN_INDEX GRID_SIDE)
+    SET(EXECUTABLE GaussNewton)
+
+    SET(ARG1 ${FN_INDEX})
+
+    SET(ARG2 -) # holds no argument
+    SET(CUSTOM_EXECUTION_TARGET all-${EXECUTABLE}_${ARG1}_${GRID_SIDE})
+    SET(LOG_OUTPUT_FILE ${RES_DIR}/output_${CUSTOM_EXECUTION_TARGET}.log)
+
+    add_custom_command(OUTPUT ${LOG_OUTPUT_FILE}
+            COMMAND echo "Arguments: ${ARG1} ${ARG2} ${GRID_SIDE}" > ${LOG_OUTPUT_FILE}
+            DEPENDS ${RES_DIR})
+    add_custom_target(${CUSTOM_EXECUTION_TARGET}
+            ${EXECUTABLE} ${ARG1} ${GRID_SIDE} ${GRID_SIDE} ${MAX_ITER} ${RES_DIR}/execution_${EXECUTABLE}_${ARG1}_${GRID_SIDE}__ 2>&1 | tee -a ${LOG_OUTPUT_FILE}
+            DEPENDS ${EXECUTABLE} ${LOG_OUTPUT_FILE})
+    list(APPEND ALL_TARGETS_LIST ${CUSTOM_EXECUTION_TARGET})
+
+    SET(ALL_TARGETS_LIST ${ALL_TARGETS_LIST} PARENT_SCOPE)
+endfunction()
+
+#foreach(GRID_SIDE IN LISTS GRID_SIDES)
+SET(GRID_SIDE 5)
+    foreach(FN_INDEX IN LISTS FN_INDEXES)
+        foreach(EXECUTABLE_FUNCTION IN LISTS EXECUTABLES_FUNCTIONS)
+            cmake_language(CALL ${EXECUTABLE_FUNCTION} ${FN_INDEX} ${GRID_SIDE})
+        endforeach()
+    endforeach()
+#endforeach()
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/parse_logs.awk
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+add_custom_command(OUTPUT result.tsv
+        COMMAND cat ${RES_DIR}/*.log | awk -f parse_logs.awk > result.tsv
+        DEPENDS all-ex3
+        COMMENT "Parse logs to create result file for import")
+
+add_custom_target(all-ex3
+        DEPENDS ${ALL_TARGETS_LIST} result.tsv)
+
+MESSAGE("list: ${ALL_TARGETS_LIST}")
+
+
