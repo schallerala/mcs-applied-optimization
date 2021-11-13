@@ -124,174 +124,225 @@ namespace AOPT {
 
         template<class Problem>
         static double wolfe_line_search(Problem *_problem,
-                                        const Vec &_x,
+                                        const Vec &_0,
                                         const Vec &_g,
-                                        const Vec &_dx,
-                                        double _t0, double _t_max = 100) {
+                                        const Vec &_d0,
+                                        const double _alpha_0,
+                                        const double _alpha_max = 100,
+                                        const double _c_1 = 1e-4,
+                                        const double _c_2 = 0.9) {
             //------------------------------------------------------//
-            //TODO: implement the line search algorithm that satisfies wolfe condition
-            // reference: "Numerical Optimization", "Algorithm 3.5 (Line Search Algorithm)".
+            assert(0 < _c_1 && _c_1 < 1);
+            assert(0 < _c_2 && _c_2 < 1);
+            assert(_c_1 < _c_2);
+            // choose alpha_{max} > 0
+            assert(_alpha_max > 0);
 
-            double t = _t0;
-            // reference: "Numerical Optimization", "Algorithm 3.5 (Line Search Algorithm)".
-            // \alpha  ->  t
-            // \phi    ->   f
-            // \phi'   ->   dg
+            double alpha_i = _alpha_0;
+
+            // choose alpha_1 \in (0, alpha_{max})
+            assert(0 <= alpha_i && alpha_i <= _alpha_max);
 
             // increase rate
             const double inc = 2.;
 
-            // save the function value at the t = 0
-            const double fx_init = _problem->eval_f(_x);
+            // save the function value at the alpha_i = 0
+            const auto phi_0 = _problem->eval_f(_0);
+
             // projection of gradient on the search direction
-            const double dg_init = _g.dot(_dx);
+            const auto dphi_0 = _g.dot(_d0);
+
             // make sure dx points to a descent direction
-            if (dg_init > 0) {
+            if (dphi_0 > 0) {
                 std::cerr << "dx is in the direction that increases the function value." << std::endl;
-                return t;
+                return alpha_i;
             }
 
-            const double dg_test = 1e-4 * dg_init,
-                    dg_wolfe = -0.9 * dg_init;
+            // save constant across iteration related to _c_1 and _c_2 parameters
+            const auto dphi_test = _c_1 * dphi_0;
+            // used as stopping criterion
+            const auto dphi_wolfe = - _c_2 * dphi_0;
 
             // first stage:
-            // begins with a trial estimate t, and keeps increasing it until it finds either
+            // begins with a trial estimate alpha_i, and keeps increasing it until it finds either
             // an acceptable step length or an interval that brackets the desired step lengths
             Vec g(_problem->n_unknowns());
-            int iter = 1;
-            double tp = 0, fxp = fx_init, dgp = dg_init;
-            do {
-                double fx = _problem->eval_f(_x + t * _dx);
-                _problem->eval_gradient(_x + t * _dx, g);
-                const double dg = g.dot(_dx);
 
-                if (fx - fx_init > t * dg_test || (1 < iter && fx >= fxp)) {
-                    t = zoom(_problem, _x, _dx, fx_init, dg_init, fx, fxp, dg, dgp, t, tp);
-                    return t;
+            // alpha_0 = 0
+            double alpha_p = 0;
+            // previous evaluation of phi(alpha_{i - 1})
+            double eval_alpha_p = phi_0;
+            // previous evaluation of phi'(x)
+            double dphi_p = dphi_0;
+
+            // i = 1
+            for (size_t i = 1; i <= 20; ++i) {
+                // Evaluate phi(alpha_i)
+                double eval_alpha_i = _problem->eval_f(_0 + alpha_i * _d0);
+
+                _problem->eval_gradient(_0 + alpha_i * _d0, g);
+                const double dphi = g.dot(_d0);
+
+                // if phi(alpha_i) > phi(0) + _c_1 * alpha_i * phi'(0) or (phi(alpha_i) >= phi(alpha_{i - 1}) and i > 1)
+                if (eval_alpha_i > phi_0 + alpha_i * dphi_test || (i > 1 && eval_alpha_i >= eval_alpha_p)) {
+                    // alpha_* = zoom(alpha_{i - 1}, alpha_i)
+                    alpha_i = zoom(_problem, _0, _d0, phi_0, dphi_0, eval_alpha_p, eval_alpha_i, dphi_p, dphi,
+                                   alpha_p, alpha_i);
+                    // and stop
+                    return alpha_i;
                 }
 
-                if (std::abs(dg) <= dg_wolfe)
-                    return t;
+                // Evaluate dphi = phi'(alpha_i) <--    already done as also used in the zoom in case we stop in the
+                //                                      previous condition
 
-                if (dg >= 0) {
-                    t = zoom(_problem, _x, _dx, fx_init, dg_init, fxp, fx, dgp, dg, tp, t);
-                    return t;
+                // if abs(phi'(alpha_i)) <= - _c_2 * phi'(0)
+                if (std::abs(dphi) <= dphi_wolfe)
+                    // alpha_* = alpha_i
+                    // and stop
+                    return alpha_i;
+
+                // if phi'(alpha_i) >= 0
+                if (dphi >= 0) {
+                    // alpha_* = zoom(alpha_i, alpha_{i-1})
+                    alpha_i = zoom(_problem, _0, _d0, phi_0, dphi_0, eval_alpha_i, eval_alpha_p, dphi, dphi_p,
+                                   alpha_i, alpha_p);
+                    // and stop
+                    return alpha_i;
                 }
 
-                tp = t;
-                fxp = fx;
-                dgp = dg;
+                alpha_p = alpha_i;
+                eval_alpha_p = eval_alpha_i;
+                dphi_p = dphi;
 
-                // increase t by 2 in (t, t_max)
-                if (t * inc > _t_max) {
-                    t += _t_max;
-                    t /= 2.;
+                // Choose alpha_{i+1} \in (alpha_i, alpha_{max})
+
+                // increase alpha_i by 2 in (alpha_i, t_max)
+                if (alpha_i * inc > _alpha_max) {
+                    alpha_i += _alpha_max;
+                    alpha_i /= 2.;
                 } else
-                    t *= inc;
-
-                iter++;
-            } while (iter <= 20);
+                    alpha_i *= inc;
+            }
 
             //------------------------------------------------------//
 
-            return t;
+            return alpha_i;
         }
 
 
     private:
         template<class Problem>
         static double zoom(Problem *_problem,
-                           const Vec &_x,
-                           const Vec &_dx,
-                           double _fx_init,
-                           double _dg_init,
-                           double _fx_hi,
-                           double _fx_lo,
-                           double _dg_hi,
-                           double _dg_lo,
-                           double _thi, double _tlo) {
+                           const Vec &_0,
+                           const Vec &_d0,
+                           const double _phi_0,
+                           double _dphi_0,
+                           double _eval_alpha_lo,
+                           double _eval_alpha_hi,
+                           double _dphi_lo,
+                           double _dphi_hi, // never used, but to avoid changing the signature, keep it
+                           double _alpha_lo,
+                           double _alpha_hi,
+                           const double _c_1 = 1e-4,
+                           const double _c_2 = 0.9) {
             // second stage:
             // successively decreases the size of the interval until
             // an acceptable step length is identified.
-            const double dg_test = 1e-4 * _dg_init,
-                    dg_wolfe = -0.9 * _dg_init;
+            // save constant across iteration related to _c_1 and _c_2 parameters
+            const auto dphi_test = _c_1 * _dphi_0;
+            // used as stopping criterion
+            const auto dphi_wolfe = - _c_2 * _dphi_0;
 
-            int iter(0);
             Vec g(_problem->n_unknowns());
-            double t(1.);
+            double alpha_j(1.);
 
-            double fx_hi, fx_lo, dg_hi, dg_lo;
+            double alpha_hi;
+            double alpha_lo;
+//            double dphi_hi; <-- never used
+            double dphi_lo;
 
-            do {
-                if (iter == 0) {
-                    fx_hi = _fx_hi;
-                    dg_hi = _dg_hi;
-                    fx_lo = _fx_lo;
-                    dg_lo = _dg_lo;
+            for (size_t i = 0; i <= 20; ++i) {
+                if (i == 0) {
+                    alpha_hi = _eval_alpha_hi;
+//                    dphi_hi = _dphi_hi;
+                    alpha_lo = _eval_alpha_lo;
+                    dphi_lo = _dphi_lo;
                 } else {
-                    fx_hi = _problem->eval_f(_x + _thi * _dx);
-                    fx_lo = _problem->eval_f(_x + _tlo * _dx);
-                    _problem->eval_gradient(_x + _tlo * _dx, g);
-                    dg_lo = g.dot(_dx);
+                    alpha_hi = _problem->eval_f(_0 + _alpha_hi * _d0);
+                    alpha_lo = _problem->eval_f(_0 + _alpha_lo * _d0);
+                    _problem->eval_gradient(_0 + _alpha_lo * _d0, g);
+                    dphi_lo = g.dot(_d0);
                 }
 
 
-                // use {fx_lo, fx_hi, dg_lo} to make a quadric interpolation of
+                // use {alpha_lo, alpha_hi, dphi_lo} to make a quadric interpolation of
                 // the function said interpolation is used to estimate the minimum
                 //
-                // polynomial: p (x) = a*(x - _t)² + b
-                // conditions: p (thi) = fx_hi
-                //             p (tlo) = fx_lo
-                //             p'(tlo) = dg_lo
-                t = (fx_hi - fx_lo) * _tlo - (_thi * _thi - _tlo * _tlo) * dg_lo / 2;
-                double div = (fx_hi - fx_lo) - (_thi - _tlo) * dg_lo;
+                // polynomial:    p(x) = a*(x - _t)^2 + b
+                // conditions:  p(thi) = alpha_hi
+                //              p(tlo) = alpha_lo
+                //             p'(tlo) = dphi_lo
+                alpha_j = (alpha_hi - alpha_lo) * _alpha_lo - (_alpha_hi * _alpha_hi - _alpha_lo * _alpha_lo) * dphi_lo / 2;
+                double div = (alpha_hi - alpha_lo) - (_alpha_hi - _alpha_lo) * dphi_lo;
                 if (div == 0)
-                    t = _tlo;
+                    alpha_j = _alpha_lo;
                 else
-                    t /= div;
+                    alpha_j /= div;
 
                 // if interpolation fails, bisection is used
-                if (t <= std::min(_tlo, _thi) || t >= std::max(_tlo, _thi))
-                    t = (_tlo + _thi) / 2;
+                if (alpha_j <= std::min(_alpha_lo, _alpha_hi) || alpha_j >= std::max(_alpha_lo, _alpha_hi))
+                    alpha_j = (_alpha_lo + _alpha_hi) / 2;
 
-                double fx = _problem->eval_f(_x + t * _dx);
-                _problem->eval_gradient(_x + t * _dx, g);
+                // Evaluate phi(alpha_j)
+                double eval_alpha_j = _problem->eval_f(_0 + alpha_j * _d0);
+                _problem->eval_gradient(_0 + alpha_j * _d0, g);
 
-                const double dg = g.dot(_dx);
+                const double dphi = g.dot(_d0);
 
-                if (fx - _fx_init > t * dg_test || fx >= fx_lo) {
-                    if (t == _thi) {
-                        std::cerr << "t equals to thi, possibly due to insufficient numeric precision." << std::endl;
-                        return t;
+                // if phi(alpha_j) > phi(0) + c_1 * alpha_j * phi'(0) or phi(alpha_j) >= phi(alpha_{lo})
+                if (eval_alpha_j > _phi_0 + alpha_j * dphi_test || eval_alpha_j >= alpha_lo) {
+
+                    if (alpha_j == _alpha_hi) {
+                        std::cerr << "alpha_j equals to thi, possibly due to insufficient numeric precision." << std::endl;
+                        return alpha_j;
                     }
 
-                    _thi = t;
-                    fx_hi = fx;
-                    dg_hi = dg;
-                } else {
-                    if (std::abs(dg) <= dg_wolfe)
-                        return t;
-
-                    if (dg * (_thi - _tlo) >= 0) {
-                        _thi = _tlo;
-                        fx_hi = fx_lo;
-                        dg_hi = dg_lo;
-                    }
-
-                    if (t == _tlo) {
-                        std::cerr << "t equals to tlo, possibly due to insufficient numeric precision." << std::endl;
-                        return t;
-                    }
-
-                    _tlo = t;
-                    fx_lo = fx;
-                    dg_lo = dg;
+                    // alpha_{hi} = alpha_j
+                    _alpha_hi = alpha_j;
+                    alpha_hi = eval_alpha_j;
+//                    dphi_hi = dphi;
                 }
+                // else
+                else {
+                    // Evaluate phi'(alpha_j)
+                    // if abs(phi'(alpha_j)) <= - c_2 * phi'(0)
+                    if (std::abs(dphi) <= dphi_wolfe)
+                        // alpha_* = alpha_j
+                        // and stop
+                        return alpha_j;
 
-                iter++;
-            } while (iter <= 20);
+                    // if phi'(alpha_j) * (alpha_{hi} - alpha_{lo}) >= 0
+                    if (dphi * (_alpha_hi - _alpha_lo) >= 0) {
+                        _alpha_hi = _alpha_lo;
+                        // alpha_{hi} = alpha_{lo}
+                        alpha_hi = alpha_lo;
+//                        dphi_hi = dphi_lo;
+                    }
 
-            return t;
+                    if (alpha_j == _alpha_lo) {
+                        std::cerr << "alpha_j equals to tlo, possibly due to insufficient numeric precision." << std::endl;
+                        return alpha_j;
+                    }
+
+
+                    // alpha_{lo} = alpha_j
+                    _alpha_lo = alpha_j;
+                    alpha_lo = eval_alpha_j;
+//                    dphi_lo = dphi;
+                }
+            }
+
+            return alpha_j;
         }
     };
 //=============================================================================
