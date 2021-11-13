@@ -1,0 +1,13 @@
+ARGUMENTS: NewtonMethods 0 0 5
+
+Initial MassSpring system energy is 1.634e+07
+Saving initial spring graph to results_output/execution_NewtonMethods_0_0_5___*.csv
+******** Newton Method ********
+ITERATION: 2
+######## Timing statistics ########
+total time    : 0.000399s
+total time evaluation : 0.00017s  (42.6065 %)
+eval_f time   : 0.00001s  ( #evals: 4 -> avg 0.00000s )
+eval_grad time: 0.00000s  ( #evals: 2 -> avg 0.00000s, factor: 1.33333)
+eval_hess time: 0.00016s  ( #evals: 2 -> avg 0.00008s, factor: 53.33333)
+Saving optimized spring graph to results_output/execution_NewtonMethods_0_0_5___opt_*.csv

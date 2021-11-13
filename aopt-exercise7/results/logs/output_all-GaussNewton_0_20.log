@@ -1,0 +1,15 @@
+ARGUMENTS: GaussNewton 0 - 20
+
+Initial MassSpring system energy is 1.29769e+08
+Saving initial spring graph to results_output/execution_GaussNewton_0_20___*.csv
+******** Newton Method ********
+ITERATION: 1
+Warning: LLT factorization has numerical issue!
+ITERATION: 1
+######## Timing statistics ########
+total time    : 0.003997s
+total time evaluation : 0.000888s  (22.2167 %)
+eval_f time   : 0.00000s  ( #evals: 0 -> avg nans )
+eval_grad time: 0.00040s  ( #evals: 1 -> avg 0.00040s, factor: nan)
+eval_hess time: 0.00049s  ( #evals: 1 -> avg 0.00049s, factor: nan)
+Saving optimized spring graph to results_output/execution_GaussNewton_0_20___opt_*.csv

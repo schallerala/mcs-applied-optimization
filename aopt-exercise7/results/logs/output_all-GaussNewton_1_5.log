@@ -1,0 +1,13 @@
+ARGUMENTS: GaussNewton 1 - 5
+
+Initial MassSpring system energy is 1.8061e+07
+Saving initial spring graph to results_output/execution_GaussNewton_1_5___*.csv
+******** Newton Method ********
+ITERATION: 64
+######## Timing statistics ########
+total time    : 0.00656s
+total time evaluation : 0.002652s  (40.4268 %)
+eval_f time   : 0.00042s  ( #evals: 206 -> avg 0.00000s )
+eval_grad time: 0.00069s  ( #evals: 64 -> avg 0.00001s, factor: 5.31827)
+eval_hess time: 0.00155s  ( #evals: 64 -> avg 0.00002s, factor: 11.93330)
+Saving optimized spring graph to results_output/execution_GaussNewton_1_5___opt_*.csv

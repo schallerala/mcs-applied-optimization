@@ -1,0 +1,15 @@
+ARGUMENTS: NewtonMethods 2 1 20
+
+Initial MassSpring system energy is 1.54049e+08
+Saving initial spring graph to results_output/execution_NewtonMethods_2_1_20___*.csv
+******** Newton Method ********
+ITERATION: 7
+Warning: LLT factorization has numerical issue!
+ITERATION: 7
+######## Timing statistics ########
+total time    : 0.011862s
+total time evaluation : 0.003481s  (29.3458 %)
+eval_f time   : 0.00040s  ( #evals: 18 -> avg 0.00002s )
+eval_grad time: 0.00012s  ( #evals: 7 -> avg 0.00002s, factor: 0.79071)
+eval_hess time: 0.00296s  ( #evals: 7 -> avg 0.00042s, factor: 19.01571)
+Saving optimized spring graph to results_output/execution_NewtonMethods_2_1_20___opt_*.csv

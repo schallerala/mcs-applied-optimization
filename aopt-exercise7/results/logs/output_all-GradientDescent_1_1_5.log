@@ -1,0 +1,13 @@
+ARGUMENTS: GradientDescent 1 1 5
+
+Initial MassSpring system energy is 1.8061e+07
+Saving initial spring graph to results_output/execution_GradientDescent_1_1_5__1_*.csv
+******** Gradient Descent ********
+ITERATION: 6269
+######## Timing statistics ########
+total time    : 0.39135s
+total time evaluation : 0.247737s  (63.3032 %)
+eval_f time   : 0.24112s  ( #evals: 221556 -> avg 0.00000s )
+eval_grad time: 0.00662s  ( #evals: 6269 -> avg 0.00000s, factor: 0.96987)
+eval_hess time: 0.00000s  ( #evals: 0 -> avg nans, factor: nan)
+Saving optimized spring graph to results_output/execution_GradientDescent_1_1_5__1_opt_*.csv

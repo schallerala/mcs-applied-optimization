@@ -1,4 +1,4 @@
-Series S06 aopt: Newton's Method
+Series S07 aopt: L-BFGS and Gauss Newton Method
 
 Schaller Alain, Fontana Jonas, Carrel Vincent
 

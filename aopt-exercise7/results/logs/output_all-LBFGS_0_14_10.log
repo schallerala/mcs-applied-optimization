@@ -1,0 +1,14 @@
+ARGUMENTS: LBFGS 0 14 10
+
+Initial MassSpring system energy is 2.542e+07
+Saving initial spring graph to results_output/execution_LBFGS_0_14_10___*.csv
+******** LBFGS ********
+ITERATION: 2251
+Gradient norm converges!
+######## Timing statistics ########
+total time    : 0.145458s
+total time evaluation : 0.051544s  (35.4357 %)
+eval_f time   : 0.03958s  ( #evals: 8008 -> avg 0.00000s )
+eval_grad time: 0.01197s  ( #evals: 2252 -> avg 0.00001s, factor: 1.07522)
+eval_hess time: 0.00000s  ( #evals: 0 -> avg nans, factor: nan)
+Saving optimized spring graph to results_output/execution_LBFGS_0_14_10___opt_*.csv
