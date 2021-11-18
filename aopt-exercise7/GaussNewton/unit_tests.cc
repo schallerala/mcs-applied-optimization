@@ -194,13 +194,6 @@ TEST(MassSpringProblemWithoutLengthLeastSquares, InitialEnergy){
     //initial energy
     auto energy = mss.initial_system_energy();
 
-    // FIXME, this different can only be due to a mistake on the given value, as the current difference of
-    //      56 which equals = 0.5 * r.squaredNorm() <=> 112 = r.squaredNorm(),
-    //      the vector is only composed on 0 or -4 before the constraints and
-    //      112 = (4^2)*7
-    //      Which would make some what sense that we are correct and the below value is wrong
-
-    // original value: 6401040
     ASSERT_FLOAT_EQ(energy, 6401096);
 }
 
