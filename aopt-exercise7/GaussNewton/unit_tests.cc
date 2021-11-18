@@ -194,7 +194,7 @@ TEST(MassSpringProblemWithoutLengthLeastSquares, InitialEnergy){
     //initial energy
     auto energy = mss.initial_system_energy();
 
-    ASSERT_FLOAT_EQ(energy, 6401096);
+    ASSERT_FLOAT_EQ(energy, 6401040);
 }
 
 

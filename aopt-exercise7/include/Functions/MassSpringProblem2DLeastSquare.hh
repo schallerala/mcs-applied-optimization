@@ -186,10 +186,10 @@ namespace AOPT {
                     // without length: 2 rj(x)
 
                     xe_[0] = _x[2 * springs_[i].first];
-                    xe_[1] = _x[2 * springs_[i].first + 1];
+                    xe_[1] = _x[2 * springs_[i].second];
                     _r[2 * i] = func_.eval_f(xe_, coeff);
 
-                    xe_[0] = _x[2 * springs_[i].second];
+                    xe_[0] = _x[2 * springs_[i].first + 1];
                     xe_[1] = _x[2 * springs_[i].second + 1];
                     _r[2 * i + 1] = func_.eval_f(xe_, coeff);
                 }
@@ -282,23 +282,23 @@ namespace AOPT {
                     // without length: 2 times len(_x) = 2
                     // 1st point
                     xe_[0] = _x[id0];
-                    xe_[1] = _x[id1];
+                    xe_[1] = _x[id2];
 
                     // get first local gradient
                     func_.eval_gradient(xe_, coeff, ge_);
                     // place gradient on matrix
                     triplets.emplace_back(i, id0, ge_[0]);
-                    triplets.emplace_back(i, id1, ge_[1]);
+                    triplets.emplace_back(i, id2, ge_[1]);
 
 
                     // 2nd point
-                    xe_[0] = _x[id2];
+                    xe_[0] = _x[id1];
                     xe_[1] = _x[id3];
 
                     // get second local gradient
                     func_.eval_gradient(xe_, coeff, ge_);
                     // place gradient on matrix
-                    triplets.emplace_back(i, id2, ge_[0]);
+                    triplets.emplace_back(i, id1, ge_[0]);
                     triplets.emplace_back(i, id3, ge_[1]);
                 }
                 else {
