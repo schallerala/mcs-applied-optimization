@@ -64,7 +64,7 @@ namespace AOPT {
             Vec coeff(2);
 
             //------------------------------------------------------//
-            //TODO (done!): assemble function values of all spring elements
+            // assemble function values of all spring elements
             //use vector xe_ to store the local coordinates of two nodes of every spring
             //then pass it to func_.eval_f(...)
             for(size_t i=0; i<springs_.size(); ++i) {
@@ -103,7 +103,7 @@ namespace AOPT {
             Vec coeff(2);
 
             //------------------------------------------------------//
-            //TODO: assemble local gradient vector to the global one
+            // assemble local gradient vector to the global one
             //use ge_ to store the result of the local gradient
             for(size_t i=0; i<springs_.size(); ++i) {
                 xe_[0] = _x[2 * springs_[i].first];
@@ -141,7 +141,7 @@ namespace AOPT {
             Vec coeff(2);
 
             //------------------------------------------------------//
-            //TODO: assemble local hessian matrix to the global one
+            // assemble local hessian matrix to the global one
             //use he_ to store the local hessian matrix
             for(int i=0; i<ks_.size(); ++i) {
                 int id0 = 2 * springs_[i].first;

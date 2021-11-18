@@ -35,7 +35,7 @@ namespace AOPT {
             double t(0);
 
             //------------------------------------------------------//
-            //TODO: implement the backtracking line search algorithm
+            // implement the backtracking line search algorithm
             t = _t0;
 
             // pre-compute objective
@@ -73,7 +73,7 @@ namespace AOPT {
                                         const Vec &_dx,
                                         double _t0, double _t_max = 100) {
             //------------------------------------------------------//
-            //TODO: implement the line search algorithm that satisfies wolfe condition
+            // implement the line search algorithm that satisfies wolfe condition
             // reference: "Numerical Optimization", "Algorithm 3.5 (Line Search Algorithm)".
 
             double t = _t0;

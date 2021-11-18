@@ -75,7 +75,7 @@ namespace AOPT {
 
                 //compute r_
                 //------------------------------------------------------//
-                //TODO: complete the function
+                // complete the function
                 two_loop_recursion(g, sk, yk, k);
                 //------------------------------------------------------//
 
@@ -112,7 +112,7 @@ namespace AOPT {
                 yk = g - gp_;
 
                 //------------------------------------------------------//
-                //TODO: complete the function
+                // complete the function
                 update_storage(g, sk, yk, k);
                 //------------------------------------------------------//
 
@@ -129,7 +129,7 @@ namespace AOPT {
     private:
         void two_loop_recursion(const Vec& _g, const Vec& _sk, const Vec& _yk, const int _k) {
             //------------------------------------------------------//
-            //TODO: implement the two-loop recursion as described in the lecture slides
+            // implement the two-loop recursion as described in the lecture slides
             if(_k == 0) {
                 r_ = _g;
                 return;
@@ -179,7 +179,7 @@ namespace AOPT {
 
         void update_storage(const Vec& _g, const Vec& _sk, const Vec& _yk, const int _k) {
             //------------------------------------------------------//
-            //TODO: update the si and yi stored in the mat_s_ and mat_y_ respectively
+            // update the si and yi stored in the mat_s_ and mat_y_ respectively
             //update rho_i stored in rho_
             double ys = _sk.dot(_yk);
             if(ys < 0) {

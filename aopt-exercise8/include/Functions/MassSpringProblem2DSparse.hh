@@ -63,7 +63,7 @@ namespace AOPT {
             Vec coeff(2);
 
             //------------------------------------------------------//
-            //TODO (done!): assemble function values of all spring elements
+            // assemble function values of all spring elements
             //use vector xe_ to store the local coordinates of two nodes of every spring
             //then pass it to func_.eval_f(...)
 
@@ -83,7 +83,7 @@ namespace AOPT {
             //used to store the value of w_n and desired point
             Vec coeff1(3);
             //------------------------------------------------------//
-            //TODO: assemble function values of all the constrained spring elements
+            // assemble function values of all the constrained spring elements
             //use cs_xe_ to store the coordinate of the attached node index
             for(int i=0; i<attached_node_indices_.size(); ++i) {
                 cs_xe_[0] = _x[2*attached_node_indices_[i]];
@@ -119,7 +119,7 @@ namespace AOPT {
             Vec coeff(2);
 
             //------------------------------------------------------//
-            //TODO (done!): assemble local gradient vector to the global one
+            // assemble local gradient vector to the global one
             //use ge_ to store the result of the local gradient
             for(size_t i=0; i<springs_.size(); ++i) {
                 xe_[0] = _x[2 * springs_[i].first];
@@ -142,7 +142,7 @@ namespace AOPT {
 
             Vec coeff1(3);
             //------------------------------------------------------//
-            //TODO: assemble local gradient vector of all the constrained spring elements to the global one
+            // assemble local gradient vector of all the constrained spring elements to the global one
             //use cs_ge_ to store the gradient of the attached node index
 
             for(int i=0; i<attached_node_indices_.size(); ++i) {
@@ -181,7 +181,7 @@ namespace AOPT {
             //used to store the value of k and l, i.e. coeff[0] = ks_[i], coeff[0] = ls_[i];
             Vec coeff(2);
             //------------------------------------------------------//
-            //TODO (done!): assemble local hessian matrix to the global one
+            // assemble local hessian matrix to the global one
             //use he_ to store the local hessian matrix
 
             for(int i=0; i<ks_.size(); ++i) {
@@ -226,9 +226,9 @@ namespace AOPT {
                 triplets.emplace_back(id3, id2, he_(3,2));
                 triplets.emplace_back(id3, id3, he_(3,3));
             }
-            
+
             //------------------------------------------------------//
-            //TODO: assemble local gradient vector of all the constrained spring elements to the global one
+            // assemble local gradient vector of all the constrained spring elements to the global one
             //use cs_he_ to store the gradient of the attached node index
 
 

@@ -74,9 +74,9 @@ namespace AOPT {
         //------------------------------------------------------//
         //Todo: add constrained spring elements to the problem
         //implement both scenarios here.
-        
+
         const double w(100000);
-        
+
         if(_scenario == 1) {
             msp_.get()->add_constrained_spring_element(get_grid_index(0,         0),         w, 0,         0);
             msp_.get()->add_constrained_spring_element(get_grid_index(n_grid_x_, n_grid_y_), w, 2 * n_grid_x_, 2 * n_grid_y_);
@@ -91,7 +91,7 @@ namespace AOPT {
         //------------------------------------------------------//
     }
 
-   
+
 
 
 
@@ -117,12 +117,12 @@ namespace AOPT {
     }
 
 
-    
+
 
     template<class MassSpringProblem>
     void MassSpringSystemT<MassSpringProblem>::setup_spring_graph() {
         //------------------------------------------------------//
-        //TODO: set up the spring graph of n_grid_x by n_grid_y ()
+        // set up the spring graph of n_grid_x by n_grid_y ()
         //add vertices
         for(int j = 0; j <= n_grid_y_; ++j)
             for (int i = 0; i <= n_grid_x_; ++i)

@@ -21,7 +21,7 @@ public:
 
     inline virtual void eval_hessian(const Vec &_x, const Vec &_coeffs, Mat &_H) override {
         //------------------------------------------------------//
-        //TODO: compute the hessian matrix and project it to a positve definite matrix
+        // compute the hessian matrix and project it to a positve definite matrix
         //Hint: 1. to compute the eigen decomposition, use
         //          Eigen::SelfAdjointEigenSolver<Mat> solver(A);
         //          Mat evecs = solver.eigenvectors();  //this matrix contains the eigenvectors in its columns
@@ -39,7 +39,7 @@ public:
         Eigen::SelfAdjointEigenSolver<Mat> solver(_H);
         const Mat& V = solver.eigenvectors();
         Vec evals = solver.eigenvalues();
-        
+
         // check eigenvalues against epsilon, for those less that eps (zero)
         const int n = n_unknowns();
         for (int i = 0; i < n; ++i) {
@@ -51,7 +51,7 @@ public:
 
         // compute correction matrix M = V * diag(m) * V^T
         _H.noalias() = V * evals.asDiagonal() * V.transpose();
-        
+
 
         //------------------------------------------------------//
     }
