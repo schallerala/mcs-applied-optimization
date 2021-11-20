@@ -113,8 +113,7 @@ TEST(MassSpringSystemWithEqualityConstraints, CheckMinimum){
     
     std::cout<<" final energy = "<<std::setprecision(10)<<final_energy<<std::endl;
 
-    // FIXME, announced 234.10279931131697
-    double expected_energy(10384.177547810072);
+    double expected_energy(234.10279931131697);
     
     
     ASSERT_NEAR(final_energy, expected_energy, 1e-7);
