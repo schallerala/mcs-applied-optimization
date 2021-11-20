@@ -24,7 +24,7 @@ namespace AOPT {
         * \return the energy of the function rj(_x) */
         inline virtual double eval_f(const Vec &_x, const Vec &_coeffs) final {
             //------------------------------------------------------//
-            //Todo: implement the function rj(x) = _coeffs[0] * (x[0] - _coeffs[1])
+            // implement the function rj(x) = _coeffs[0] * (x[0] - _coeffs[1])
             return sqrt(_coeffs[0]) * (_x[0] - _coeffs[1]);
             //------------------------------------------------------//
         }
@@ -37,7 +37,7 @@ namespace AOPT {
          * \param _g gradient output */
         inline virtual void eval_gradient(const Vec &_x, const Vec &_coeffs, Vec &_g) final {
             //------------------------------------------------------//
-            //Todo: implement the gradient and store in _g
+            // implement the gradient and store in _g
             _g[0] = sqrt(_coeffs[0]);
             //------------------------------------------------------//
         }

@@ -184,10 +184,10 @@ namespace AOPT {
                 double f = _problem->eval_f(x);
 
                 // print status
-                std::cout << "iter: " << iter
-                          << "   obj = " << f
-                          << "   ||lambda||^2 = " << lambda2
-                          << "   n_projection_steps = " << cnt << std::endl;
+//                std::cout << "iter: " << iter
+//                          << "   obj = " << f
+//                          << "   ||lambda||^2 = " << lambda2
+//                          << "   n_projection_steps = " << cnt << std::endl;
 
                 if (lambda2 <= e2 || fp <= f) {
                     _converged = true;

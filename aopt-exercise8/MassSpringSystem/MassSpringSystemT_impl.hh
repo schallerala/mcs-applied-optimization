@@ -72,20 +72,19 @@ namespace AOPT {
     template<class MassSpringProblem>
     void MassSpringSystemT<MassSpringProblem>::add_constrained_spring_elements(const int _scenario) {
         //------------------------------------------------------//
-        //Todo: add constrained spring elements to the problem
+        // add constrained spring elements to the problem
         //implement both scenarios here.
 
         const double w(100000);
 
         if(_scenario == 1) {
-            msp_.get()->add_constrained_spring_element(get_grid_index(0,         0),         w, 0,         0);
-            msp_.get()->add_constrained_spring_element(get_grid_index(n_grid_x_, n_grid_y_), w, 2 * n_grid_x_, 2 * n_grid_y_);
-            msp_.get()->add_constrained_spring_element(get_grid_index(n_grid_x_, 0),         w, 2 * n_grid_x_, 0);
-            msp_.get()->add_constrained_spring_element(get_grid_index(0,         n_grid_y_), w, 0,         2 * n_grid_y_);
+            msp_.get()->add_constrained_spring_element(get_grid_index(n_grid_x_, n_grid_y_), w, n_grid_x_, n_grid_y_);
+            msp_.get()->add_constrained_spring_element(get_grid_index(n_grid_x_, 0),         w, n_grid_x_, 0);
+            msp_.get()->add_constrained_spring_element(get_grid_index(0,         n_grid_y_), w, 0,         n_grid_y_);
         } else if (_scenario == 2){
             for (int i = 0; i <= n_grid_x_; ++i) {
                 msp_.get()->add_constrained_spring_element(get_grid_index(i, 0),         w, i, 0);
-                msp_.get()->add_constrained_spring_element(get_grid_index(i, n_grid_y_), w, i, 2 * n_grid_y_);
+                msp_.get()->add_constrained_spring_element(get_grid_index(i, n_grid_y_), w, i, n_grid_y_);
             }
         }
         //------------------------------------------------------//

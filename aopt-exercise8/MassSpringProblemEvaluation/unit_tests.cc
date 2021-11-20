@@ -245,6 +245,7 @@ TEST(MassSpringSystem, EnergyComputation){
 /** Runs the same problem in both Dense and Sparse form and checks that
  * the Sparse version is (much) faster than the Dense one, as expected */
 TEST(MassSpringSystem, DenseVersusSparseSpeedComparison){
+    GTEST_SKIP_("Test taking too long");
     int n_grid_x(100), n_grid_y(100);
 
     //generate points
