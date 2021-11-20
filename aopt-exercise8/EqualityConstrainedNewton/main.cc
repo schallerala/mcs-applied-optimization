@@ -6,7 +6,8 @@
 
 int main(int _argc, const char* _argv[]) {
     if(_argc != 6) {
-        std::cout << "Usage: input should be 'function index(0: f without length, 1: f with length, 2: f with length(positive hessian)), number of grid in x, number of grid in y, max iteration, filename', e.g. "
+        std::cout << "Usage: input should be 'function index(0: f without length, 1: f with length, 2: f with length(positive hessian)), "
+                     "number of grid in x, number of grid in y, max iteration, filename', e.g. "
                      "./EqualityConstrainedNewton 0 20 20 10000 /usr/spring" << std::endl;
         return -1;
     }

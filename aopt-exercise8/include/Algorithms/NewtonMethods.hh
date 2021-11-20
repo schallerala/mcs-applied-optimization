@@ -23,11 +23,12 @@ namespace AOPT {
          * \param _initial_x starting point of the method
          * \param _eps epsilon under which the method stops
          * \param _max_iters maximum iteration of the method*/
-        static Vec solve(FunctionBaseSparse *_problem, const Vec& _initial_x, const double _eps = 1e-4, const int _max_iters = 1000000) {
+        static Vec solve(FunctionBaseSparse *_problem, const Vec &_initial_x, const double _eps = 1e-4,
+                         const int _max_iters = 1000000) {
             std::cout << "******** Newton Method ********" << std::endl;
 
             // squared epsilon for stopping criterion
-            double e2 = 2* _eps * _eps;
+            double e2 = 2 * _eps * _eps;
 
             int n = _problem->n_unknowns();
 
@@ -61,7 +62,7 @@ namespace AOPT {
 
                 // H dx = -g
                 solver.compute(H);
-                if(solver.info() == Eigen::NumericalIssue) {
+                if (solver.info() == Eigen::NumericalIssue) {
                     std::cerr << "Warning: LLT factorization has numerical issue!" << std::endl;
                     break;
                 }
@@ -106,18 +107,20 @@ namespace AOPT {
          * \param _tau_factor the evolution factor of the tau coefficient
          * \param _eps epsilon under which the method stops
          * \param _max_iters maximum iteration of the method*/
-        static Vec solve_with_projected_hessian(FunctionBaseSparse *_problem, const Vec& _initial_x, const double _gamma = 10.0,
-                                                const double _eps = 1e-4, const int _max_iters = 1000000) {
+        static Vec
+        solve_with_projected_hessian(FunctionBaseSparse *_problem, const Vec &_initial_x, const double _gamma = 10.0,
+                                     const double _eps = 1e-4, const int _max_iters = 1000000) {
             bool converged = false;
             return solve_with_projected_hessian(_problem, converged, _initial_x, _gamma, _eps, _max_iters);
         }
 
-        static Vec solve_with_projected_hessian(FunctionBaseSparse *_problem, bool& _converged, const Vec& _initial_x, const double _gamma = 10.0,
+        static Vec solve_with_projected_hessian(FunctionBaseSparse *_problem, bool &_converged, const Vec &_initial_x,
+                                                const double _gamma = 10.0,
                                                 const double _eps = 1e-4, const int _max_iters = 1000000) {
             std::cout << "******** Newton Method with projected hessian ********" << std::endl;
 
             // squared epsilon for stopping criterion
-            double e2 = 2*_eps * _eps;
+            double e2 = 2 * _eps * _eps;
 
             int n = _problem->n_unknowns();
 
@@ -158,12 +161,12 @@ namespace AOPT {
                 int cnt = 0;
                 double delta = 0.;
 
-                std::cout<<" H = "<<H<<std::endl;
+                std::cout << " H = " << H << std::endl;
 
 
                 solver.compute(H);
                 bool is_not_psd = solver.info() == Eigen::NumericalIssue;
-                std::cout<<" psd: "<<!is_not_psd<<std::endl;
+                std::cout << " psd: " << !is_not_psd << std::endl;
 
                 while (is_not_psd && cnt < _max_iters) {
                     if (cnt == 0) {
@@ -209,7 +212,6 @@ namespace AOPT {
         }
 
 
-
         /**
         * @brief solve problem with the linear equality constraints
         * \param _problem pointer to any function/problem inheriting from FunctionBaseSparse.
@@ -220,8 +222,9 @@ namespace AOPT {
         * \param _b the vector of constraints Ax=b
         * \param _eps epsilon under which the method stops
         * \param _max_iters maximum iteration of the method*/
-        static Vec solve_equality_constrained(FunctionBaseSparse *_problem, const Vec& _initial_x, const SMat &_A, const Vec &_b,
-                                              const double _eps = 1e-4, const int _max_iters = 1000) {
+        static Vec
+        solve_equality_constrained(FunctionBaseSparse *_problem, const Vec &_initial_x, const SMat &_A, const Vec &_b,
+                                   const double _eps = 1e-4, const int _max_iters = 1000) {
             std::cerr << "******** Equality Constrained Newton ********" << std::endl;
 
             double eps2 = 2.0 *_eps * _eps;
@@ -286,34 +289,33 @@ namespace AOPT {
     private:
 
 
-        static void setup_KKT_matrix(const SMat &_H, const SMat &_A, SMat& _K) {
-            const int n  = static_cast<int>(_H.cols());
-            const int m  = static_cast<int>(_A.rows());
-            const int nf = n+m;
+        static void setup_KKT_matrix(const SMat &_H, const SMat &_A, SMat &_K) {
+            const int n = static_cast<int>(_H.cols());
+            const int m = static_cast<int>(_A.rows());
+            const int nf = n + m;
 
             // set up KKT matrix
             // create sparse matrix
             std::vector<T> trips;
-            trips.reserve(_H.nonZeros() + 2*_A.nonZeros());
+            trips.reserve(_H.nonZeros() + 2 * _A.nonZeros());
 
             // add elements of H
-            for (int k=0; k<_H.outerSize(); ++k)
-                for (SMat::InnerIterator it(_H,k); it; ++it)
-                    trips.emplace_back(static_cast<int>(it.row()),static_cast<int>(it.col()),it.value());
+            for (int k = 0; k < _H.outerSize(); ++k)
+                for (SMat::InnerIterator it(_H, k); it; ++it)
+                    trips.emplace_back(static_cast<int>(it.row()), static_cast<int>(it.col()), it.value());
 
             // add elements of _A
-            for (int k=0; k<_A.outerSize(); ++k)
-                for (SMat::InnerIterator it(_A,k); it; ++it)
-                {
+            for (int k = 0; k < _A.outerSize(); ++k)
+                for (SMat::InnerIterator it(_A, k); it; ++it) {
                     // insert _A block below
-                    trips.emplace_back(static_cast<int>(it.row())+n,static_cast<int>(it.col()),it.value());
+                    trips.emplace_back(static_cast<int>(it.row()) + n, static_cast<int>(it.col()), it.value());
 
                     // insert _A^T block right
-                    trips.emplace_back(static_cast<int>(it.col()),static_cast<int>(it.row())+n,it.value());
+                    trips.emplace_back(static_cast<int>(it.col()), static_cast<int>(it.row()) + n, it.value());
                 }
 
             // create KKT matrix
-            _K.resize(nf,nf);
+            _K.resize(nf, nf);
             _K.setFromTriplets(trips.begin(), trips.end());
         }
     };
