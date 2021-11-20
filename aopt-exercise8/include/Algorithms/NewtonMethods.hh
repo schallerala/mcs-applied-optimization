@@ -227,13 +227,13 @@ namespace AOPT {
                                    const double _eps = 1e-4, const int _max_iters = 1000) {
             std::cerr << "******** Equality Constrained Newton ********" << std::endl;
 
-            double eps2 = 2.0 *_eps * _eps;
+            const double eps2 = 2.0 * _eps * _eps;
 
             // get number of unknowns
-            int n = _problem->n_unknowns();
+            const int n = _problem->n_unknowns();
 
             // get number of constraints
-            int p = _A.rows();
+            const int p = _A.rows();
 
             // get starting point
             Vec x = _initial_x;
@@ -255,14 +255,67 @@ namespace AOPT {
             // allocate solution storage
             Vec dxl(n + p);
 
-            // count number of iterations
-            int iter(0);
-
             Eigen::SparseLU<SMat> solver;
             //------------------------------------------------------//
-            //TODO: implement the Newton with equality constraints
+            // implement the Newton with equality constraints
             //Hint: the function to set up the KKT matrix is
             //      provided below
+
+            // Following the instruction sheet, have to solve the system:
+            // ┌               ┐ ┌    ┐   ┌        ┐
+            // │ ∇²f(x)    A^T │ │ ∆x │ = │ -∇f(x) │
+            // │   A        0  │ │  v │   │   0    │
+            // └               ┘ └    ┘   └        ┘
+
+            // previous object function evaluation
+            double fp = std::numeric_limits<double>::max();
+
+            for (size_t i = 0; i < _max_iters; ++i) {
+                // 1. Solve system with solver
+                // 1.1. Compose A (lhs) with hessian and constraints A with the help of `#setup_KKT_matrix`
+                // 1.2. Compose b (rhs)
+                // 1.3. Get solution dx: top of solution vector
+                // 2. like normal Newton method
+
+                // 1.
+                // 1.1.
+                _problem->eval_hessian(x, H);
+                setup_KKT_matrix(H, _A, K);
+
+                // 1.2.
+                _problem->eval_gradient(x, g);
+                rhs.setZero();
+                rhs.head(n) = -g;
+
+                // 1.3.
+                solver.compute(K);
+                assert(solver.info() == Eigen::ComputationInfo::Success);
+                dxl = solver.solve(rhs);
+                dx = dxl.head(n);
+
+                // 2. Copied from standard method:
+
+                // Newton decrement
+                double lambda2 = g.transpose() * (-dx);
+
+                double f = _problem->eval_f(x);
+
+                // print status
+                std::cout << "iter: " << i
+                          << "   obj = " << f
+                          << "   ||lambda||^2 = " << lambda2 << std::endl;
+
+                if (lambda2 <= eps2 || fp <= f) {
+                    break;
+                }
+
+                // step size
+                double t = LineSearch::backtracking_line_search(_problem, x, g, dx, 1.);
+
+                // update
+                x += t * dx;
+                fp = f;
+            }
 
             //------------------------------------------------------//
 
