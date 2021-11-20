@@ -330,8 +330,45 @@ namespace AOPT {
             int p = _A.rows();
 
             //------------------------------------------------------//
-            //TODO: project x to the hyperplane Ax = b
+            // project x to the hyperplane Ax = b
 
+            // As on slide 9. Elimination of Constraints:
+            //  How to find suitable F in R^{n x k} and x_o in R^n?
+            //  --> There are 2 suggested methods:
+            //      1. Gaussian elimination
+            //      2. QR decomposition
+
+            // Searching through the Eigen document for "gaussian elimination" or "QR decomposition",
+            // reached the page: https://eigen.tuxfamily.org/dox/group__TutorialLinearAlgebra.html.
+            // There, it recommends the use of `ColPivHouseholderQR`.
+            // Therefore, will focus in an equivalent solution.
+            // However, sparse Matrix don't have the `.colPivHouseholderQr()` method like in the
+            // mentioned example, but looking at the SparseMatrix documentation, there is multiple
+            // references to the `SparseQR` class which is similar to the LLT solvers.
+            // Additionally, not certain of which `OrderingType` to give as class parameter, end
+            // up following the answer: https://stackoverflow.com/a/43380842/3771148 suggesting
+            // using the COLAMDOrdering one (which I guess makes sense to solve to "approximate minimum
+            // degree ordering" as mentioned in the documentation)
+
+            SMat compressedA = _A;
+            compressedA.makeCompressed(); // requirement of SparseQR
+
+            Eigen::SparseQR<SMat, Eigen::COLAMDOrdering<int>> qrSolver(compressedA);
+            assert(qrSolver.info() == Eigen::ComputationInfo::Success);
+
+            // Then, following the instruction sheet, we should solve the system:
+            //      A(x_0 + delta) = b
+            // As using the `solve` method of the QR Solver will return `X` of A*X = B, with A being the
+            // parameter given in the constructor and B the parameter given to the method, we could pass
+            // B as:
+            //      A*x_0 + A*delta = b  <=>  A*delta = b - A*x_0
+            // which will give    delta    as a solution.
+            const auto delta = qrSolver.solve(_b - _A * _x);
+
+            // Remain to compute the new `x` as in
+            //      A(x_0 + delta) = b  <=>  A*x' = b
+            //      => x' = x_0 + delta
+            _x += delta;
 
             //------------------------------------------------------//
 
