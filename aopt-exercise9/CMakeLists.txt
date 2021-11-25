@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.11)
 
 PROJECT(AOPT_EXERCISES)
 
-set(CMAKE_BUILD_TYPE Release)
-
 include(FetchContent)
 
 FetchContent_Declare(
