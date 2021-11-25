@@ -320,10 +320,10 @@ namespace AOPT {
                                                                     const int _max_iters = 1000) {
             std::cerr << "******** Equality Constrained Newton with Infeasible Start Point********" << std::endl;
             // get number of unknowns
-            int n = _problem->n_unknowns();
+            const int n = _problem->n_unknowns();
 
             // get number of constraints
-            int p = _A.rows();
+            const int p = _A.rows();
 
             // get starting point
             Vec x = _initial_x;
@@ -331,7 +331,7 @@ namespace AOPT {
             // allocate gradient storage
             Vec g(n);
             // allocate update storage
-            Vec dx(n), dnu(p), w(p), nu(p);
+            Vec delta_x(n), delta_nu(p), nu(p);
 
             //initialize nu
             nu.setZero();
@@ -345,20 +345,84 @@ namespace AOPT {
             // allocate solution storage
             Vec dxl(n + p);
 
-            //A'*nu
-            Vec Anu(n);
-            //g+Anu
+            //g + A^T *nu
             Vec rdual(n);
-            //Ax-b
+            //A * x - b
             Vec rpri(p);
 
             //norm of the residual
-            double res(0);
+            double norm_res(0);
 
             Eigen::SparseLU<SMat> solver;
             //------------------------------------------------------//
-            //TODO: implement the Newton with equality constraints
+            // implement the Newton with equality constraints
             //count number of iterations
+
+            double fp = std::numeric_limits<double>::max();
+
+            // reference:
+            //      https://slides.cgg.unibe.ch/aopt21/09-EqualityConstrainedOptimization-I-deck.html#/19/0/3
+
+            for (size_t i = 0; i < _max_iters; ++i) {
+                // repeat
+
+                // Setup variables needed across iteration
+                const auto f = _problem->eval_f(x);
+
+                // Before continuing with different variable setup, check that next evaluation
+                // doesn't exceed the previous evaluation (which would mean not improving)
+                if (fp <= f)
+                    break;
+
+                _problem->eval_gradient(x, g);
+                _problem->eval_hessian(x, H);
+
+
+                // 1. Compute Newton step `delta_x`, `delta_nu` by solving
+                //      ┌               ┐ ┌    ┐     ┌             ┐
+                //      │ ∇²f(x)    A^T │ │ ∆x │ = - │ ∇f(x)+A^T*v │
+                //      │   A        0  │ │ ∆v │     │    A*x-b    │
+                //      └               ┘ └    ┘     └             ┘
+                setup_KKT_matrix(H, _A, K);
+
+                rdual = g + _A.transpose() * nu;
+                rpri = _A * x - _b;
+
+                rhs << -rdual, -rpri;
+
+                // Break early, what is described at the end of the loop. See below comment "until".
+                // residual function r(y) reference:
+                //      https://slides.cgg.unibe.ch/aopt21/09-EqualityConstrainedOptimization-I-deck.html#/18/0/10
+                //
+                //  r(y) = 0 with y = (x, nu)^T
+                //         ┌             ┐
+                //  r(y) = │ ∇f(x)+A^T*v │ (= -rhs)
+                //         │    A*x-b    │
+                //         └             ┘
+                norm_res = (-rhs).norm();
+                if (norm_res < _eps && rpri.norm() < _eps_constraints)
+                    break;
+
+                solver.compute(K);
+                dxl = solver.solve(rhs);
+
+                delta_x = dxl.head(n);
+                delta_nu = dxl.tail(p);
+
+                // 2. Backtracking Line Search on `norm(r)` and t = 1
+                const auto t = LineSearch::backtracking_line_search_newton_with_infeasible_start(_problem, _A, _b, x, nu, delta_x, delta_nu, norm_res, 1.);
+
+                // 4. Update
+                //      x = x + t * delta_x
+                //      nu = nu + t * delta_nu
+                x += t * delta_x;
+                nu += t * delta_nu;
+
+                // until
+                //      A*x = b and
+                //      norm(r(x, nu)) <= epsilon
+                // --> break early, see condition before solving system
+            }
 
             //------------------------------------------------------//
 

@@ -73,7 +73,7 @@ namespace AOPT {
         * \param _nu dual starting point of the method
         * \param _dx delta x
         * \param _dnu delta nu
-        * \param _initial_res initial residual
+        * \param _norm_res initial residual
         * \param _t0 inital step of the method
         * \param _alpha and _beta variation constant, as stated by the method's definition
         * \return the final step t computed by the back-tracking line search */
@@ -85,15 +85,54 @@ namespace AOPT {
                                                                             const Vec &_nu,
                                                                             const Vec &_dx,
                                                                             const Vec &_dnu,
-                                                                            const double _initial_res,
+                                                                            const double _norm_res,
                                                                             const double _t0,
                                                                             const double _alpha = 0.2,
                                                                             const double _beta = 0.9) {
             //------------------------------------------------------//
             double t = _t0;
 
-            //TODO: implement the algorithm
+            // implement the algorithm
 
+            // residual function r(y) reference:
+            //      https://slides.cgg.unibe.ch/aopt21/09-EqualityConstrainedOptimization-I-deck.html#/18/0/10
+            //
+            //  r(y) = 0 with y = (x, nu)^T
+            //         ┌             ┐
+            //  r(y) = │ ∇f(x)+A^T*v │
+            //         │    A*x-b    │
+            //         └             ┘
+
+            const auto norm_res = [_problem, _A, _b](const Vec& x, const Vec& nu, Vec& g) {
+                // re-using same variable names as newton method
+                _problem->eval_gradient(x, g);
+                const auto sq_rdual = (g + _A.transpose() * nu).squaredNorm();
+
+                const auto sq_rpri = (_A * x - _b).squaredNorm();
+
+                // norm computation decomposed from:
+                //      √(i_1^2 + i_2^2 + ... i_n^2)
+                // to
+                //      √((first part squared) + (last part squared))
+                return std::sqrt(sq_rdual + sq_rpri);
+            };
+
+            // Allocate a vector g to pass to the lambda function to avoid too many (de-)allocations inside
+            // the lambda
+            Vec g(_problem->n_unknowns());
+
+            // Reference:
+            //      https://slides.cgg.unibe.ch/aopt21/09-EqualityConstrainedOptimization-I-deck.html#/19/0/3
+            // inner loop following step 2. "Backtracking Line search"
+
+            // while
+            //      norm(r(x + t * delta_x, nu+t*delta_nu) > (1-alpha*t)*norm(r(x, nu))
+            // do
+            //      t = beta * t
+
+            while (norm_res(_x + t * _dx, _nu + t * _dnu, g) > (1 - _alpha * t) * _norm_res || t < 1e-7) {
+                t *= _beta;
+            }
 
             //------------------------------------------------------//
 
