@@ -348,7 +348,7 @@ namespace AOPT {
             //g + A^T *nu
             Vec rdual(n);
             //A * x - b
-            Vec rpri(p);
+            Vec rhs_Axb(p);
 
             //norm of the residual
             double norm_res(0);
@@ -386,9 +386,9 @@ namespace AOPT {
                 setup_KKT_matrix(H, _A, K);
 
                 rdual = g + _A.transpose() * nu;
-                rpri = _A * x - _b;
+                rhs_Axb = _A * x - _b;
 
-                rhs << -rdual, -rpri;
+                rhs << -rdual, -rhs_Axb;
 
                 // Break early, what is described at the end of the loop. See below comment "until".
                 // residual function r(y) reference:
@@ -400,7 +400,7 @@ namespace AOPT {
                 //         │    A*x-b    │
                 //         └             ┘
                 norm_res = (-rhs).norm();
-                if (norm_res < _eps && rpri.norm() < _eps_constraints)
+                if (norm_res < _eps && rhs_Axb.norm() < _eps_constraints)
                     break;
 
                 solver.compute(K);
@@ -438,14 +438,14 @@ namespace AOPT {
                                           const int _max_iters = 1000) {
             std::cerr << "******** Equality Constrained Newton with hybrid method********" << std::endl;
             // epsilon for newton decrement
-            double eps2 = 2.0 * _eps * _eps;
+            const double eps2 = 2.0 * _eps * _eps;
 
 
             // get number of unknowns
-            int n = _problem->n_unknowns();
+            const int n = _problem->n_unknowns();
 
             // get number of constraints
-            int p = _A.rows();
+            const int p = _A.rows();
 
             // get starting point
             Vec x = _initial_x;
@@ -453,7 +453,7 @@ namespace AOPT {
             // allocate gradient storage
             Vec g(n);
             // allocate update storage
-            Vec dx(n), dnu(p), w(p), nu(p);
+            Vec delta_x(n), delta_nu(p), w(p), nu(p);
 
             //initialize nu
             nu.setZero();
@@ -467,20 +467,104 @@ namespace AOPT {
             // allocate solution storage
             Vec dxl(n + p);
 
-            //A'*nu
-            Vec Anu(n);
-            //g+Anu
+            //g + A^T *nu
             Vec rdual(n);
             //Ax-b
-            Vec rpri(p);
+            Vec rhs_Axb(p);
 
-            //norm of the residual
-            double res(0);
+            // residual function r(y) reference:
+            //      https://slides.cgg.unibe.ch/aopt21/09-EqualityConstrainedOptimization-I-deck.html#/18/0/10
+            //
+            //  r(y) = 0 with y = (x, nu)^T
+            //         ┌             ┐
+            //  r(y) = │ ∇f(x)+A^T*v │ (= -rhs)
+            //         │    A*x-b    │
+            //         └             ┘
+            // norm of the residual
+            double norm_res(0);
 
             Eigen::SparseLU<SMat> solver;
             //------------------------------------------------------//
-            //TODO: implement the Newton with equality constraints
-            //count number of iterations
+            // implement the Newton with equality constraints
+
+            double fp = std::numeric_limits<double>::max();
+
+            // reference:
+            //      https://slides.cgg.unibe.ch/aopt21/09-EqualityConstrainedOptimization-I-deck.html#/20/0/11
+
+            // > combine strengths of **feasible** and **infeasible** method
+            // > first **infeasible iterations** until feasible (norm(A*x - b) <= epsilon_c),
+            //   then **feasible iterations**
+
+            for (size_t i = 0; i < _max_iters; ++i) {
+                rhs_Axb = _A * x - _b;
+                const auto norm_rhs_Axb = rhs_Axb.norm();
+
+                // first **infeasible iterations** until feasible
+                if (norm_rhs_Axb > _eps_constraints) {
+                    // reproduce code from `solve_equality_constrained_with_infeasible_start`
+
+                    // ------- <duplicated code here>
+
+                    // Setup variables needed across iteration
+                    const auto f = _problem->eval_f(x);
+
+                    // Before continuing with different variable setup, check that next evaluation
+                    // doesn't exceed the previous evaluation (which would mean not improving)
+                    if (fp <= f)
+                        break;
+
+                    _problem->eval_gradient(x, g);
+                    _problem->eval_hessian(x, H);
+
+
+                    // 1. Compute Newton step `delta_x`, `delta_nu` by solving
+                    //      ┌               ┐ ┌    ┐     ┌             ┐
+                    //      │ ∇²f(x)    A^T │ │ ∆x │ = - │ ∇f(x)+A^T*v │
+                    //      │   A        0  │ │ ∆v │     │    A*x-b    │
+                    //      └               ┘ └    ┘     └             ┘
+                    setup_KKT_matrix(H, _A, K);
+
+                    rdual = g + _A.transpose() * nu;
+
+                    rhs << -rdual, -rhs_Axb;
+
+                    // Break early, what is described at the end of the loop. See below comment "until".
+                    // residual function r(y) reference:
+                    //      https://slides.cgg.unibe.ch/aopt21/09-EqualityConstrainedOptimization-I-deck.html#/18/0/10
+                    //
+                    //  r(y) = 0 with y = (x, nu)^T
+                    //         ┌             ┐
+                    //  r(y) = │ ∇f(x)+A^T*v │ (= -rhs)
+                    //         │    A*x-b    │
+                    //         └             ┘
+                    norm_res = (-rhs).norm();
+                    if (norm_res < _eps && norm_rhs_Axb < _eps_constraints)
+                        break;
+
+                    solver.compute(K);
+                    dxl = solver.solve(rhs);
+
+                    delta_x = dxl.head(n);
+                    delta_nu = dxl.tail(p);
+
+                    // 2. Backtracking Line Search on `norm(r)` and t = 1
+                    const auto t = LineSearch::backtracking_line_search_newton_with_infeasible_start(_problem, _A, _b, x, nu, delta_x, delta_nu, norm_res, 1.);
+
+                    // 4. Update
+                    //      x = x + t * delta_x
+                    //      nu = nu + t * delta_nu
+                    x += t * delta_x;
+                    nu += t * delta_nu;
+
+                    // ------- </duplicated code here>
+                }
+                // then **feasible iterations**
+                else {
+                    // take advantage of existing code
+                    return solve_equality_constrained(_problem, x, _A, _b, _eps, _max_iters - i);
+                }
+            }
 
             //------------------------------------------------------//
 
