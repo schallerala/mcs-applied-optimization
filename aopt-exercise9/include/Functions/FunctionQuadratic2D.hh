@@ -27,7 +27,7 @@ namespace AOPT {
          *           It should be a 2D vector*/
         inline virtual double eval_f(const Vec &_x) {
             //------------------------------------------------------//
-            //Todo: implement the function f(x,y) = 0.5(x^2 + gamma *y^2)
+            // implement the function f(x,y) = 0.5(x^2 + gamma *y^2)
             return 0.5 * (_x[0] * _x[0] + gamma_ * _x[1] * _x[1]);
             //------------------------------------------------------//
         }
@@ -37,7 +37,7 @@ namespace AOPT {
          * \param _g gradient output */
         inline virtual void eval_gradient(const Vec &_x, Vec &_g) {
             //------------------------------------------------------//
-            //Todo: implement the gradient g = {x, gamma *y}
+            // implement the gradient g = {x, gamma *y}
             _g[0] = _x[0];
             _g[1] = gamma_ * _x[1];
             //------------------------------------------------------//
@@ -50,9 +50,10 @@ namespace AOPT {
          * \param _H Hessian output */
         inline virtual void eval_hessian(const Vec &_x, Mat &_H) {
             //------------------------------------------------------//
-            //Todo: implement the Hessian H = (1, 0
+            // implement the Hessian H = (1, 0
             //                                 0, gamma)
-
+            _H <<   1, 0,
+                    0, gamma_;
             //------------------------------------------------------//
         }
 

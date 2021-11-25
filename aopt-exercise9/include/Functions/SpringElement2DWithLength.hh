@@ -28,7 +28,7 @@ namespace AOPT {
          *                i.e. _coeffs[0] = k, _coeffs[1] = l */
         inline virtual double eval_f(const Vec &_x, const Vec &_coeffs) override {
             //------------------------------------------------------//
-            //Todo: implement the function f(x) = 1/2 * k * (((x[0] - x[2])^2 + (x[1] - x[3])^2) - l^2)^2
+            // implement the function f(x) = 1/2 * k * (((x[0] - x[2])^2 + (x[1] - x[3])^2) - l^2)^2
             double dx = _x[0] - _x[2];
             double dy = _x[1] - _x[3];
 
@@ -45,7 +45,7 @@ namespace AOPT {
          * \param _g the output gradient, which should also be of dimension 4 */
         inline virtual void eval_gradient(const Vec &_x, const Vec &_coeffs, Vec &_g) override {
             //------------------------------------------------------//
-            //Todo: implement the gradient and store in _g
+            // implement the gradient and store in _g
             double part = _coeffs[0]*(std::pow((_x[0]-_x[2]),2) + std::pow((_x[1]-_x[3]),2) - _coeffs[1]*_coeffs[1]);
             part *= 2;
             _g[0] = part * (_x[0] - _x[2]);
@@ -63,7 +63,7 @@ namespace AOPT {
          * \param _H the output Hessian, which should be a 4x4 Matrix */
         inline virtual void eval_hessian(const Vec &_x, const Vec &_coeffs, Mat &_H) override {
             //------------------------------------------------------//
-            //Todo: implement the hessian matrix and store in _H
+            // implement the hessian matrix and store in _H
 //            _H << _coeffs[0]*std::pow((2*_x[0] - 2*_x[2]), 2) + 2*_coeffs[0]*(std::pow((_x[0] - _x[2]), 2) + std::pow((_x[1] - _x[3]), 2) - _coeffs[1]*_coeffs[1]), _coeffs[0]*(2*_x[0] - 2*_x[2])*(2*_x[1] - 2*_x[3]), - _coeffs[0]*std::pow((2*_x[0] - 2*_x[2]), 2) - 2*_coeffs[0]*(std::pow((_x[0] - _x[2]), 2) + std::pow((_x[1] - _x[3]), 2) - _coeffs[1]*_coeffs[1]), -_coeffs[0]*(2*_x[0] - 2*_x[2])*(2*_x[1] - 2*_x[3]),
 //                  _coeffs[0]*(2*_x[0] - 2*_x[2])*(2*_x[1] - 2*_x[3]),   _coeffs[0]*std::pow((2*_x[1] - 2*_x[3]), 2) + 2*_coeffs[0]*(std::pow((_x[0] - _x[2]), 2) + std::pow((_x[1] - _x[3]), 2) - _coeffs[1]*_coeffs[1]), -_coeffs[0]*(2*_x[0] - 2*_x[2])*(2*_x[1] - 2*_x[3]), - _coeffs[0]*std::pow((2*_x[1] - 2*_x[3]), 2) - 2*_coeffs[0]*(std::pow((_x[0] - _x[2]), 2) + std::pow((_x[1] - _x[3]), 2) - _coeffs[1]*_coeffs[1]),
 //                  - _coeffs[0]*std::pow((2*_x[0] - 2*_x[2]), 2) - 2*_coeffs[0]*(std::pow((_x[0] - _x[2]), 2) + std::pow((_x[1] - _x[3]), 2) - _coeffs[1]*_coeffs[1]), -_coeffs[0]*(2*_x[0] - 2*_x[2])*(2*_x[1] - 2*_x[3]),   _coeffs[0]*std::pow((2*_x[0] - 2*_x[2]), 2) + 2*_coeffs[0]*(std::pow((_x[0] - _x[2]), 2) + std::pow((_x[1] - _x[3]), 2) - _coeffs[1]*_coeffs[1]), _coeffs[0]*(2*_x[0] - 2*_x[2])*(2*_x[1] - 2*_x[3]),

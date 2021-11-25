@@ -75,7 +75,7 @@ namespace AOPT {
             double energy(0);
 
             //------------------------------------------------------//
-            /**TODO: assemble function values of all the elements
+            /** assemble function values of all the elements
              * f(x) = 1/2*sum(rj^2(x))
              * Hint: implement eval_r to set r, containing all rj, and then use it to compute the energy */
 
@@ -105,7 +105,7 @@ namespace AOPT {
 
 
             //------------------------------------------------------//
-            /** TODO: approximate the gradient
+            /**  approximate the gradient
              *  Hint: implement eval_r(_x, r) to compute r,
              *        then eval_jacobian(_x, J) to compute J,
              * and then compute the gradient with J^T*r */
@@ -178,7 +178,7 @@ namespace AOPT {
 
 
             //------------------------------------------------------//
-            /**TODO: assemble function values of all the elements
+            /** assemble function values of all the elements
              *
              * Hint: if spring_type_ == WITHOUT_LENGTH, it is SpringElement2DLeastSquare
              *       and every spring element has two rj(x), where x is a 2D vector
@@ -257,7 +257,7 @@ namespace AOPT {
             std::vector<T> triplets;
             triplets.reserve(4*springs_.size() + 2*attached_node_indices_.size());
             //------------------------------------------------------//
-            /**TODO: put local gradient vector to the Jacobian matrix
+            /** put local gradient vector to the Jacobian matrix
              * Hint: Here you also have to differentiate between
              *      spring_type_ == WITHOUT_LENGTH --> SpringElement2DLeastSquare
              *      spring_type_ == WITH_LENGTH --> SpringElement2DWithLengthLeastSquare

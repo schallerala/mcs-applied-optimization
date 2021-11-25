@@ -23,7 +23,7 @@ namespace AOPT {
          * \param _t0 inital step of the method
          * \param _alpha and _tau variation constant, as stated by the method's definition
          * \return the final step t computed by the back-tracking line search */
-        template <class Problem>
+        template<class Problem>
         static double backtracking_line_search(Problem *_problem,
                                                const Vec &_x,
                                                const Vec &_g,
@@ -35,7 +35,7 @@ namespace AOPT {
             double t(0);
 
             //------------------------------------------------------//
-            //TODO: implement the backtracking line search algorithm
+            // implement the backtracking line search algorithm
             t = _t0;
 
             // pre-compute objective
@@ -46,13 +46,13 @@ namespace AOPT {
 
             // make sure dx points to a descent direction
             if (gtdx > 0) {
-                std::cerr << "dx is in the direction that increases the function value. gTdx = "<<gtdx << std::endl;
+                std::cerr << "dx is in the direction that increases the function value. gTdx = " << gtdx << std::endl;
                 return t;
             }
 
             // backtracking (stable in case of NAN)
             int i = 0;
-            while (!(_problem->eval_f(_x + t * _dx) <= fx + _alpha * t * gtdx) && i<1000) {
+            while (!(_problem->eval_f(_x + t * _dx) <= fx + _alpha * t * gtdx) && i < 1000) {
                 t *= _tau;
                 i++;
             }
@@ -61,7 +61,6 @@ namespace AOPT {
 
             return t;
         }
-
 
 
         /** Back-tracking line search for infeasible start Newton's method
@@ -78,10 +77,10 @@ namespace AOPT {
         * \param _t0 inital step of the method
         * \param _alpha and _beta variation constant, as stated by the method's definition
         * \return the final step t computed by the back-tracking line search */
-        template <class Problem>
+        template<class Problem>
         static double backtracking_line_search_newton_with_infeasible_start(Problem *_problem,
-                                                                            const SMat& _A,
-                                                                            const Vec& _b,
+                                                                            const SMat &_A,
+                                                                            const Vec &_b,
                                                                             const Vec &_x,
                                                                             const Vec &_nu,
                                                                             const Vec &_dx,
@@ -94,7 +93,7 @@ namespace AOPT {
             double t = _t0;
 
             //TODO: implement the algorithm
-            
+
 
             //------------------------------------------------------//
 
@@ -102,15 +101,14 @@ namespace AOPT {
         }
 
 
-
-        template <class Problem>
+        template<class Problem>
         static double wolfe_line_search(Problem *_problem,
                                         const Vec &_x,
                                         const Vec &_g,
                                         const Vec &_dx,
                                         double _t0, double _t_max = 100) {
             //------------------------------------------------------//
-            //TODO: implement the line search algorithm that satisfies wolfe condition
+            // implement the line search algorithm that satisfies wolfe condition
             // reference: "Numerical Optimization", "Algorithm 3.5 (Line Search Algorithm)".
 
             double t = _t0;
@@ -164,7 +162,7 @@ namespace AOPT {
                 dgp = dg;
 
                 // increase t by 2 in (t, t_max)
-                if(t*inc > _t_max) {
+                if (t * inc > _t_max) {
                     t += _t_max;
                     t /= 2.;
                 } else
@@ -180,7 +178,7 @@ namespace AOPT {
 
 
     private:
-        template <class Problem>
+        template<class Problem>
         static double zoom(Problem *_problem,
                            const Vec &_x,
                            const Vec &_dx,
@@ -226,7 +224,7 @@ namespace AOPT {
                 //             p'(tlo) = dg_lo
                 t = (fx_hi - fx_lo) * _tlo - (_thi * _thi - _tlo * _tlo) * dg_lo / 2;
                 double div = (fx_hi - fx_lo) - (_thi - _tlo) * dg_lo;
-                if(div == 0)
+                if (div == 0)
                     t = _tlo;
                 else
                     t /= div;
