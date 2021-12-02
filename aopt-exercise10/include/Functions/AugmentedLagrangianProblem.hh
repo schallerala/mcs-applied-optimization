@@ -21,11 +21,11 @@ namespace AOPT {
         using T = FunctionBaseSparse::T;
 
         // default constructor
-        AugmentedLagrangianProblem(FunctionBaseSparse* _obj, const std::vector<FunctionBaseSparse*>& _constraints,
-                const std::vector<FunctionBaseSparse*>& _squared_constraints, const Vec& _nu, double _mu)
-        : FunctionBaseSparse(), obj_(_obj), constraints_(_constraints),
-          squared_constraints_(_squared_constraints), nu_(_nu), mu_over_2_(_mu/2.)
-        {
+        AugmentedLagrangianProblem(FunctionBaseSparse *_obj, const std::vector<FunctionBaseSparse *> &_constraints,
+                                   const std::vector<FunctionBaseSparse *> &_squared_constraints, const Vec &_nu,
+                                   double _mu)
+                : FunctionBaseSparse(), obj_(_obj), constraints_(_constraints),
+                  squared_constraints_(_squared_constraints), nu_(_nu), mu_over_2_(_mu / 2.) {
             n_ = obj_->n_unknowns();
             g_ = Vec(n_);
             h_ = SMat(n_, n_);
@@ -42,8 +42,8 @@ namespace AOPT {
 
             //------------------------------------------------------//
             //TODO: accumulate function values (objective function + constraint functions (including squared ones))
-            
-            
+
+
             //------------------------------------------------------//
 
             return energy;
@@ -55,47 +55,47 @@ namespace AOPT {
 
             //------------------------------------------------------//
             //TODO: accumulate gradients (objective function + constraint functions (including squared ones))
-            
-            
+
+
             //------------------------------------------------------//
         }
 
 
         //Hessian in sparse matrix
-        virtual void eval_hessian(const Vec &_x, SMat& _h) override {
+        virtual void eval_hessian(const Vec &_x, SMat &_h) override {
             _h.resize(n_unknowns(), n_unknowns());
             _h.setZero();
 
             //------------------------------------------------------//
             //TODO: accumulate hessian matrices (objective function + constraint functions (including squared ones))
-            
-            
+
+
             //------------------------------------------------------//
         }
 
         //compute constraint function values and store in a vector
-        void eval_constraints(const Vec &_x, Vec& _vec_h) {
-            for(auto i=0u; i<constraints_.size(); ++i)
+        void eval_constraints(const Vec &_x, Vec &_vec_h) {
+            for (auto i = 0u; i < constraints_.size(); ++i)
                 _vec_h[i] = constraints_[i]->eval_f(_x);
         }
 
         //update nu
-        void set_nu(const Vec& _nu) {
+        void set_nu(const Vec &_nu) {
             nu_ = _nu;
         };
 
         //update mu_over_2_
         void set_mu(const double _mu) {
-            mu_over_2_ = _mu/2.;
+            mu_over_2_ = _mu / 2.;
         }
 
 
     private:
         int n_;
 
-        FunctionBaseSparse* obj_;
-        std::vector<FunctionBaseSparse*> constraints_;
-        std::vector<FunctionBaseSparse*> squared_constraints_;
+        FunctionBaseSparse *obj_;
+        std::vector<FunctionBaseSparse *> constraints_;
+        std::vector<FunctionBaseSparse *> squared_constraints_;
 
         Vec nu_;
         double mu_over_2_;

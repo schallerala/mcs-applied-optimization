@@ -11,10 +11,13 @@ namespace AOPT {
     public:
         using Vec = FunctionBaseSparse::Vec;
         using SMat = FunctionBaseSparse::SMat;
+
         // f(x,y) = ((x[2*idx]- center_x)^2 + (x[2*idx+1] - center_y)^2 - radius^2)^2
         // constructor
-        CircleConstraintSquared2D(const int _n, const int _idx, const double _center_x, const double _center_y, const double _radius)
-                : FunctionBaseSparse(), n_(_n), idx_(_idx), center_x_(_center_x), center_y_(_center_y), radius_(_radius) {}
+        CircleConstraintSquared2D(const int _n, const int _idx, const double _center_x, const double _center_y,
+                                  const double _radius)
+                : FunctionBaseSparse(), n_(_n), idx_(_idx), center_x_(_center_x), center_y_(_center_y),
+                  radius_(_radius) {}
 
         // number of unknowns
         inline virtual int n_unknowns() override { return n_; }
@@ -24,8 +27,8 @@ namespace AOPT {
         inline virtual double eval_f(const Vec &_x) override {
             //------------------------------------------------------//
             //Todo: implement the constraint function value
-            
-            
+
+
             //------------------------------------------------------//
         }
 
@@ -35,8 +38,8 @@ namespace AOPT {
             _g.setZero();
             //------------------------------------------------------//
             //Todo: implement the gradient and store in _g
-            
-            
+
+
             //------------------------------------------------------//
         }
 
@@ -46,8 +49,8 @@ namespace AOPT {
             _h.setZero();
             //------------------------------------------------------//
             //Todo: implement the hessian matrix and store in _h
-            
-            
+
+
             //------------------------------------------------------//
         }
 

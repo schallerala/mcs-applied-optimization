@@ -17,17 +17,19 @@ namespace AOPT {
         // LA typedefs
         typedef FunctionBaseSparse::Vec Vec;
 
-        static Vec solve(FunctionBaseSparse *_obj, const Vec& _initial_x, const std::vector<FunctionBaseSparse*>& _constraints, const std::vector<FunctionBaseSparse*>& _squared_constraints,
-                const double _eta = 1e-4, const double _tau = 1e-4, const int _max_iters = 20) {
+        static Vec
+        solve(FunctionBaseSparse *_obj, const Vec &_initial_x, const std::vector<FunctionBaseSparse *> &_constraints,
+              const std::vector<FunctionBaseSparse *> &_squared_constraints,
+              const double _eta = 1e-4, const double _tau = 1e-4, const int _max_iters = 20) {
             std::cout << "******** Augmented Lagrangian ********" << std::endl;
 
             double mu = 10,
-            tau = 1./mu,
-            eta = std::pow(mu, -0.1),
-            hnorm = 0.,
+                    tau = 1. / mu,
+                    eta = std::pow(mu, -0.1),
+                    hnorm = 0.,
             //previous hnorm
             hnormp = std::numeric_limits<double>::max(),
-            tau2 = _tau*_tau;
+                    tau2 = _tau * _tau;
 
             //vector of nu and vector of constraint value
             Vec nu(_constraints.size()), h(_constraints.size());
@@ -53,9 +55,9 @@ namespace AOPT {
             //          gets larger, one can say it diverges for simplicity.
             //       2. Use set_mu(...) and set_nu(...) functions in AugmentedLagrangianProblem
             //          class to apply the change of nu and mu
-            
-            
-            
+
+
+
             //------------------------------------------------------//
 
             opt_st->print_statistics();
