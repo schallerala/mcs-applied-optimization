@@ -29,14 +29,14 @@ namespace AOPT {
             double mu = 10,
                     tau = 1. / mu,
                     eta = std::pow(mu, -0.1),
-                    hnorm = 0.,
-                    hnormp = std::numeric_limits<double>::max(); // previous hnorm;
+                    h_sqr_norm = 0.,
+                    h_sqr_norm_previous = std::numeric_limits<double>::max();
 
             const auto tau2 = _tau * _tau;
 
             //vector of nu and vector of constraint value
             Vec nu(_constraints.size()), h(_constraints.size());
-            nu.setZero();
+            nu.setZero(); // said in the video that it is fine to start with vector 0
             h.setZero();
 
             //initialize the augmented lagrangian problem for the unconstrained solver
@@ -66,48 +66,66 @@ namespace AOPT {
             //      https://slides.cgg.unibe.ch/aopt21/10-EqualityConstrainedOptimization-II-deck.html#/17/0/7
 
             for (size_t i = 0; i < _max_iters; ++i) {
+                // (update the constants to the underlying problem: hint 2)
+                problem.set_nu(nu);
+                problem.set_mu(mu);
+
                 // Minimize sub-problem with fixed ν^k and μ_k
                 //      Find approximate solution x_{k+1} of L_A(x, ν^k, μ_k) starting at
                 //      x_k and stopping when norm(∇_x L_A(x_{k+1}, ν_k, μ_k)) <= τ_k
                 //      (x_{k+1} = x_k if diverging)
+
+                // TODO iterate over what?
+
+
                 bool newton_converged;
                 // x_{k+1} with projected newton method (as hint 1)
-                // TODO REVIEW: really solve without constraints?
-                x = NewtonMethods::solve_with_projected_hessian(&problem, newton_converged, x);
+                x = NewtonMethods::solve_with_projected_hessian(&problem, newton_converged, x); // optimize like for
+                                                                                                   // none-constraints
+                                                                                                   // problem
+                                                                                                   // like said during
+                                                                                                   // lecture 10 at
+                                                                                                   // video recording
+                                                                                                   // timestamp:
+                                                                                                   // 1h03m40s
+
+                // Remains of hint 1:
                 // if
                 //      A. maximum iteration is reached
                 //      B. or if the norm of the constraints get larger:
                 // then
                 //      one can say it diverges for simplicity
 
-                // A.
+                // A. (hint 1)
                 if ( ! newton_converged)
                     break;
 
                 // constraint violation:
                 //  h_i(x_k) ~= (ν_i^* - ν_i^k) / μ_k
-                // TODO: how to find v_i^*?
-                //      really redo KKT like in newton resolution?
-                const auto h_i = 0.;
-                
-//                problem.set_nu(nu); // ν
-//                problem.set_mu(mu / 2); // μ
+                problem.eval_constraints(x, h);
+                h_sqr_norm = h.squaredNorm();
+
+                // B. (hint 1)
+                if (h_sqr_norm > h_sqr_norm_previous)
+                    break;
+
+                // update previous squared norm of constraints violations
+                h_sqr_norm_previous = h_sqr_norm;
 
                 // Augmented Lagrangian Function:
                 //  L_A(x, ν, μ) = f(x) + sum_{i=1}^p ν_i * h_i(x) + μ/2 sum_{i=1}^p h_i^2(x)
 
                 problem.eval_gradient(x, g);
-                const auto g_lagrangian_sq_norm = g.squaredNorm();
-
+                const auto g_lagrangian_sqr_norm = g.squaredNorm();
 
                 // if norm(h(x_{k+1})) <= η_k
                 // then
-                if (hnorm <= eta) {
+                if (h_sqr_norm <= eta) {
                     // test for convergence
 
                     // if norm(h(x_{k+1})) <= η^* and norm(∇_x L_A(x_{k+1}, ν_k, μ_k)) <= τ^*
                     // then
-                    if (hnorm <= _eta && g_lagrangian_sq_norm <= tau2) {
+                    if (h_sqr_norm <= _eta && g_lagrangian_sqr_norm <= tau2) {
                         // stop with approximate solution x_k
                         break;
                     }

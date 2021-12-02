@@ -25,6 +25,7 @@ namespace AOPT {
                                    const std::vector<FunctionBaseSparse *> &_squared_constraints, const Vec &_nu,
                                    double _mu)
                 : FunctionBaseSparse(), obj_(_obj), constraints_(_constraints),
+                // TODO REVIEW: what to do with squared constraints?!!?!?!
                   squared_constraints_(_squared_constraints), nu_(_nu), mu_over_2_(_mu / 2.) {
             n_ = obj_->n_unknowns();
             g_ = Vec(n_);
@@ -38,11 +39,26 @@ namespace AOPT {
         }
 
         virtual double eval_f(const Vec &_x) override {
-            double energy(0);
+            double energy;
 
             //------------------------------------------------------//
-            //TODO: accumulate function values (objective function + constraint functions (including squared ones))
+            // accumulate function values (objective function + constraint functions (including squared ones))
 
+            // Reference:
+            //  Formulas: Slide 18 of Lecture week 10
+            //      https://slides.cgg.unibe.ch/aopt21/10-EqualityConstrainedOptimization-II-deck.html#/17/0/7
+
+            // Augmented Lagrangian Function:
+            //  L_A(x, ν, μ) = f(x) + sum_{i=1}^p ν_i * h_i(x) + μ/2 sum_{i=1}^p h_i^2(x)
+
+            energy = obj_->eval_f(_x);
+
+            for (size_t i = 0; i < constraints_.size(); ++i) {
+                const auto constraint = constraints_[i];
+                const auto constraint_evaluation = constraint->eval_f(_x);
+
+                energy += nu_[i] * constraint_evaluation + mu_over_2_ * std::pow(constraint_evaluation, 2);
+            }
 
             //------------------------------------------------------//
 
