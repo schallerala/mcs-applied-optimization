@@ -26,8 +26,11 @@ namespace AOPT {
         // _x stores the coordinates of all nodes
         inline virtual double eval_f(const Vec &_x) override {
             //------------------------------------------------------//
-            //Todo: implement the constraint function value
+            // implement the constraint function value
 
+            // f(x,y) = ((x[2*idx]- center_x)^2 + (x[2*idx+1] - center_y)^2 - radius^2)^2
+
+            return std::pow(std::pow(_x[2 * idx_] - center_x_, 2) + std::pow(_x[2 * idx_ + 1] - center_y_, 2) - std::pow(radius_, 2), 2);
 
             //------------------------------------------------------//
         }
@@ -37,8 +40,16 @@ namespace AOPT {
         inline virtual void eval_gradient(const Vec &_x, Vec &_g) override {
             _g.setZero();
             //------------------------------------------------------//
-            //Todo: implement the gradient and store in _g
+            // implement the gradient and store in _g
 
+            const auto x = _x[2 * idx_];
+            const auto y = _x[2 * idx_ + 1];
+
+            // d / dx = (-4*cx + 4*x)*(-r**2 + (-cx + x)**2 + (-cy + y)**2)
+            _g[2 * idx_]     = (-4*center_x_ + 4*x)*(-std::pow(radius_, 2) + std::pow(-center_x_ + x, 2) + std::pow(-center_y_ + y, 2));
+
+            // d / dy = (-4*cy + 4*y)*(-r**2 + (-cx + x)**2 + (-cy + y)**2)
+            _g[2 * idx_ + 1] = (-4*center_y_ + 4*y)*(-std::pow(radius_, 2) + std::pow(-center_x_ + x, 2) + std::pow(-center_y_ + y, 2));
 
             //------------------------------------------------------//
         }
@@ -48,8 +59,20 @@ namespace AOPT {
         inline virtual void eval_hessian(const Vec &_x, SMat &_h) override {
             _h.setZero();
             //------------------------------------------------------//
-            //Todo: implement the hessian matrix and store in _h
+            // implement the hessian matrix and store in _h
 
+            const auto x = _x[2 * idx_];
+            const auto y = _x[2 * idx_ + 1];
+
+            // d / dx dx = -4*r**2 + (-4*cx + 4*x)*(-2*cx + 2*x) + 4*(-cx + x)**2 + 4*(-cy + y)**2
+            _h.insert(2 * idx_    , 2 * idx_)     = -4*std::pow(radius_, 2) + (-4*center_x_ + 4*x)*(-2*center_x_ + 2*x) + 4*std::pow(-center_x_ + x, 2) + 4*std::pow(-center_y_ + y, 2);
+            // d / dx dy = (-4*cx + 4*x)*(-2*cy + 2*y)
+            _h.insert(2 * idx_    , 2 * idx_ + 1) = (-4*center_x_ + 4*x)*(-2*center_y_ + 2*y);
+
+            // d / dy dx = (-2*cx + 2*x)*(-4*cy + 4*y)
+            _h.insert(2 * idx_ + 1, 2 * idx_)     = (-2*center_x_ + 2*x)*(-4*center_y_ + 4*y);
+            // d / dy dy = -4*r**2 + 4*(-cx + x)**2 + (-4*cy + 4*y)*(-2*cy + 2*y) + 4*(-cy + y)**2
+            _h.insert(2 * idx_ + 1, 2 * idx_ + 1) = -4*std::pow(radius_, 2) + 4*std::pow(-center_x_ + x, 2) + (-4*center_y_ + 4*y)*(-2*center_y_ + 2*y) + 4*std::pow(-center_y_ + y, 2);
 
             //------------------------------------------------------//
         }
