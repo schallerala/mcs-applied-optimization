@@ -158,12 +158,12 @@ namespace AOPT {
                 int cnt = 0;
                 double delta = 0.;
                 
-                std::cout<<" H = "<<H<<std::endl;
+//                std::cout<<" H = "<<H<<std::endl;
 
 
                 solver.compute(H);
                 bool is_not_psd = solver.info() == Eigen::NumericalIssue;
-                std::cout<<" psd: "<<!is_not_psd<<std::endl;
+//                std::cout<<" psd: "<<!is_not_psd<<std::endl;
 
                 while (is_not_psd && cnt < _max_iters) {
                     if (cnt == 0) {
@@ -184,10 +184,7 @@ namespace AOPT {
                 double f = _problem->eval_f(x);
 
                 // print status
-                std::cout << "iter: " << iter
-                          << "   obj = " << f
-                          << "   ||lambda||^2 = " << lambda2
-                          << "   n_projection_steps = " << cnt << std::endl;
+//                std::cout << "x n_projection_steps = " << cnt << std::endl;
 
                 if (lambda2 <= e2 || fp <= f) {
                     _converged = true;

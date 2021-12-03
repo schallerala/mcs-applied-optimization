@@ -43,6 +43,8 @@ namespace AOPT {
             AugmentedLagrangianProblem problem(_obj, _constraints, _squared_constraints, nu, mu);
             auto opt_st = std::make_unique<AOPT::OptimizationStatistic>(&problem);
 
+            auto stats_problem = opt_st.get();
+
             //get starting point
             Vec x = _initial_x;
             //store previous point
@@ -75,19 +77,22 @@ namespace AOPT {
                 //      x_k and stopping when norm(∇_x L_A(x_{k+1}, ν_k, μ_k)) <= τ_k
                 //      (x_{k+1} = x_k if diverging)
 
-                // TODO iterate over what?
 
+                // ? Should iterate?
+                //      With the text above "find approximate solution [...] and stopping when [...]"
 
                 bool newton_converged;
                 // x_{k+1} with projected newton method (as hint 1)
-                x = NewtonMethods::solve_with_projected_hessian(&problem, newton_converged, x); // optimize like for
-                                                                                                   // none-constraints
-                                                                                                   // problem
-                                                                                                   // like said during
-                                                                                                   // lecture 10 at
-                                                                                                   // video recording
-                                                                                                   // timestamp:
-                                                                                                   // 1h03m40s
+                x = NewtonMethods::solve_with_projected_hessian(stats_problem, newton_converged, x); // optimize like
+                                                                                                        // for none-
+                                                                                                        // constraints
+                                                                                                        // problem like
+                                                                                                        // said during
+                                                                                                        // lecture 10 at
+                                                                                                        // video record-
+                                                                                                        // ing.
+                                                                                                        // timestamp:
+                                                                                                        // 1h03m40s
 
                 // Remains of hint 1:
                 // if
@@ -115,7 +120,7 @@ namespace AOPT {
                 // Augmented Lagrangian Function:
                 //  L_A(x, ν, μ) = f(x) + sum_{i=1}^p ν_i * h_i(x) + μ/2 sum_{i=1}^p h_i^2(x)
 
-                problem.eval_gradient(x, g);
+                stats_problem->eval_gradient(x, g);
                 const auto g_lagrangian_sqr_norm = g.squaredNorm();
 
                 // if norm(h(x_{k+1})) <= η_k
@@ -145,7 +150,6 @@ namespace AOPT {
                     tau = 1 / mu; // τ_{k+1} = 1 / μ_{k+1}
                 }
             }
-
 
             //------------------------------------------------------//
 
