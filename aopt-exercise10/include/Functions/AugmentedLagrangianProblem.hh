@@ -25,7 +25,6 @@ namespace AOPT {
                                    const std::vector<FunctionBaseSparse *> &_squared_constraints, const Vec &_nu,
                                    double _mu)
                 : FunctionBaseSparse(), obj_(_obj), constraints_(_constraints),
-                // TODO REVIEW: what to do with squared constraints?!!?!?!
                   squared_constraints_(_squared_constraints), nu_(_nu), mu_over_2_(_mu / 2.) {
             n_ = obj_->n_unknowns();
             g_ = Vec(n_);
@@ -70,8 +69,31 @@ namespace AOPT {
             _g.setZero();
 
             //------------------------------------------------------//
-            //TODO: accumulate gradients (objective function + constraint functions (including squared ones))
+            // accumulate gradients (objective function + constraint functions (including squared ones))
 
+            // 1. compute the first part of the lagrangian gradient sum: the object function gradient evaluation
+            obj_->eval_gradient(_x, _g);
+
+            // 2. compute the second part of the lagrangian gradient sum:
+            //          the constraint function gradient multiplied by ν_i
+            for (size_t i = 0; i < constraints_.size(); ++i) {
+                const auto constraint = constraints_[i];
+                const auto nu_i = nu_[i];
+
+                g_.setZero();
+                constraint->eval_gradient(_x, g_);
+
+                _g += nu_i * g_;
+            }
+
+            // 3. compute the third part of the lagrangian gradient sum:
+            //          the constraint function gradient squared multiplied by μ/2
+            for (const auto square_constraint : squared_constraints_) {
+                g_.setZero();
+                square_constraint->eval_gradient(_x, g_);
+
+                _g += mu_over_2_ * g_;
+            }
 
             //------------------------------------------------------//
         }
@@ -83,8 +105,31 @@ namespace AOPT {
             _h.setZero();
 
             //------------------------------------------------------//
-            //TODO: accumulate hessian matrices (objective function + constraint functions (including squared ones))
+            // accumulate hessian matrices (objective function + constraint functions (including squared ones))
 
+            // 1. compute the first part of the lagrangian hessian sum: the object function hessian evaluation
+            obj_->eval_hessian(_x, _h);
+
+            // 2. compute the second part of the lagrangian hessian sum:
+            //          the constraint function hessian multiplied by ν_i
+            for (size_t i = 0; i < constraints_.size(); ++i) {
+                const auto constraint = constraints_[i];
+                const auto nu_i = nu_[i];
+
+                h_.setZero();
+                constraint->eval_hessian(_x, h_);
+
+                _h += nu_i * h_;
+            }
+
+            // 3. compute the third part of the lagrangian hessian sum:
+            //          the constraint function hessian squared multiplied by μ/2
+            for (const auto square_constraint : squared_constraints_) {
+                h_.setZero();
+                square_constraint->eval_hessian(_x, h_);
+
+                _h += mu_over_2_ * h_;
+            }
 
             //------------------------------------------------------//
         }
