@@ -5,24 +5,22 @@ Carrel Vincent, Fontana Jonas, Schaller Alain
 
 Active set method for convex quadratic problem
 ===
-- See document Exercise9_FontanaSchallerCarrel.pdf.
+- Not done
 
 
 
 
 "Phase I" method for initial feasible point
 ===
-- See document Exercise9_FontanaSchallerCarrel.pdf.
+- Not done
 
 
 
 
-
-TODO! Done bonus?!
 
 "Big M" method for initial feasible point
 ===
-- See document Exercise9_FontanaSchallerCarrel.pdf.
+- Not done
 
 
 
