@@ -15,8 +15,9 @@ namespace AOPT {
         // LA typedefs
         using Vec = FunctionBaseSparse::Vec;
 
-        static Vec solve(FunctionBaseSparse *_obj, const Vec& _initial_x, const std::vector<FunctionBaseSparse*>& _constraints,
-                const double _eps = 1e-4, const double _mu = 10.0, const int _max_iters = 1000) {
+        static Vec
+        solve(FunctionBaseSparse *_obj, const Vec &_initial_x, const std::vector<FunctionBaseSparse *> &_constraints,
+              const double _eps = 1e-4, const double _mu = 10.0, const int _max_iters = 1000) {
             std::cerr << "******** Interior Point ********" << std::endl;
 
             // construct log-barrier problem
@@ -38,8 +39,8 @@ namespace AOPT {
             //------------------------------------------------------//
             //TODO: implement the interior point method
             //Hint: Use projected newton method to solve for an approximated x.
-            
-            
+
+
             //------------------------------------------------------//
 
             opt_st->print_statistics();

@@ -47,7 +47,7 @@ namespace AOPT {
             Vec g(problem.n_unknowns());
 
             //------------------------------------------------------//
-            //TODO: implement the augmented lagrangian method.
+            // implement the augmented lagrangian method.
             //Hints: 1. Use projected newton method to solve for an approximated x.
             //          If the maximum iteration is reached and if the norm of the constraints
             //          gets larger, one can say it diverges for simplicity.

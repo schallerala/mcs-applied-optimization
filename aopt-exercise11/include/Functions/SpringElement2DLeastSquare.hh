@@ -33,7 +33,7 @@ namespace AOPT {
         *                i.e. _coeffs[0] = k */
         inline virtual double eval_f(const Vec &_x, const Vec &_coeffs) override {
             //------------------------------------------------------//
-            //Todo: implement the function rj(x) = sqrt(_coeffs[0]) * (x[0] - x[1])
+            // implement the function rj(x) = sqrt(_coeffs[0]) * (x[0] - x[1])
             return sqrt(_coeffs[0]) * (_x[0] - _x[1]);
             //------------------------------------------------------//
         }
@@ -46,7 +46,7 @@ namespace AOPT {
          * \param _g the output gradient, which should also be of dimension 2 */
         inline virtual void eval_gradient(const Vec &_x, const Vec &_coeffs, Vec &_g) override {
             //------------------------------------------------------//
-            //Todo: implement the gradient and store in _g
+            // implement the gradient and store in _g
             _g[0] = 1;
             _g[1] = -1;
             _g *= sqrt(_coeffs[0]);

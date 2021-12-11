@@ -41,7 +41,7 @@ namespace AOPT {
             double energy(0);
 
             //------------------------------------------------------//
-            //TODO: accumulate function values (objective function + constraint functions)
+            // accumulate function values (objective function + constraint functions)
             energy += obj_->eval_f(_x);
 
             for(auto i=0u; i<constraints_.size(); ++i) {
@@ -58,7 +58,7 @@ namespace AOPT {
             _g.setZero();
 
             //------------------------------------------------------//
-            //TODO: accumulate gradients (objective function + constraint functions)
+            // accumulate gradients (objective function + constraint functions)
             obj_->eval_gradient(_x, g_);
             _g += g_;
 
@@ -79,7 +79,7 @@ namespace AOPT {
             _h.setZero();
 
             //------------------------------------------------------//
-            //TODO: accumulate hessian matrices (objective function + constraint functions)
+            // accumulate hessian matrices (objective function + constraint functions)
             obj_->eval_hessian(_x, h_);
             _h += h_;
 

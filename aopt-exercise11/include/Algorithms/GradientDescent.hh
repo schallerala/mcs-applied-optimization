@@ -42,7 +42,7 @@ namespace AOPT {
             int iter(0);
 
             //------------------------------------------------------//
-            //TODO: implement the gradient descent
+            // implement the gradient descent
             double fp = std::numeric_limits<double>::max();
 
             do {

@@ -13,7 +13,7 @@ namespace AOPT {
     public:
         // default constructor
         InteriorPointProblem(FunctionBaseSparse *_obj, const std::vector<FunctionBaseSparse *> &_constraints)
-        : FunctionBaseSparse(), obj_(_obj), constraints_(_constraints), t_(1.0) {
+                : FunctionBaseSparse(), obj_(_obj), constraints_(_constraints), t_(1.0) {
             v_ = Vec(obj_->n_unknowns());
             M_ = SMat(obj_->n_unknowns(), obj_->n_unknowns());
             N_ = SMat(obj_->n_unknowns(), obj_->n_unknowns());
@@ -32,7 +32,7 @@ namespace AOPT {
         virtual double eval_f(const Vec &_x) override {
             //------------------------------------------------------//
             //TODO: add function value (objective function + barrier function)
-            
+
             //------------------------------------------------------//
         }
 
@@ -40,8 +40,8 @@ namespace AOPT {
         virtual void eval_gradient(const Vec &_x, Vec &_g) override {
             //------------------------------------------------------//
             //TODO: add gradients (objective function + barrier function)
-        
-            
+
+
             //------------------------------------------------------//
         }
 
@@ -49,7 +49,7 @@ namespace AOPT {
         virtual void eval_hessian(const Vec &_x, SMat &_H) override {
             //------------------------------------------------------//
             //TODO: add hessian matrices (objective function + barrier function)
-            
+
 
             //------------------------------------------------------//
         }
@@ -80,11 +80,11 @@ namespace AOPT {
 
             //N = v*v.transpose()
             N_.setZero();
-            for(auto i=0u; i<v_.size(); ++i)
-                if(v_[i] != 0) {
-                    for(auto j=0u; j<v_.size(); ++j) {
-                        if(v_[j] != 0) {
-                            triplets_.emplace_back(i,j,v_[i]*v_[j]);
+            for (auto i = 0u; i < v_.size(); ++i)
+                if (v_[i] != 0) {
+                    for (auto j = 0u; j < v_.size(); ++j) {
+                        if (v_[j] != 0) {
+                            triplets_.emplace_back(i, j, v_[i] * v_[j]);
                         }
                     }
                 }

@@ -48,7 +48,7 @@ namespace AOPT {
             Eigen::SimplicialLLT<SMat> solver;
   
             //------------------------------------------------------//
-            //TODO: implement Newton method
+            // implement Newton method
             //fp is the function value of the previous iteration
             double fp = std::numeric_limits<double>::max();
 
@@ -143,7 +143,7 @@ namespace AOPT {
             Eigen::SimplicialLLT<SMat> solver;
 
             //------------------------------------------------------//
-            //TODO: implement Newton with projected hessian method
+            // implement Newton with projected hessian method
             //Hint: if the factorization fails, then add delta * I to the hessian.
             //      repeat until factorization succeeds (make sure to update delta!)
             double fp = std::numeric_limits<double>::max();
@@ -257,7 +257,7 @@ namespace AOPT {
 
             Eigen::SparseLU<SMat> solver;
             //------------------------------------------------------//
-            //TODO: implement the Newton with equality constraints
+            // implement the Newton with equality constraints
             //Hint: the function to set up the KKT matrix is
             //      provided below
             double fp = std::numeric_limits<double>::max();
@@ -350,7 +350,7 @@ namespace AOPT {
 
             Eigen::SparseLU<SMat> solver;
             //------------------------------------------------------//
-            //TODO: implement the Newton with equality constraints
+            // implement the Newton with equality constraints
             //count number of iterations
             int iter(0);
             double f, fp = std::numeric_limits<double>::max();
@@ -470,7 +470,7 @@ namespace AOPT {
 
             Eigen::SparseLU<SMat> solver;
             //------------------------------------------------------//
-            //TODO: implement the Newton with equality constraints
+            // implement the Newton with equality constraints
             //count number of iterations
             int iter(0);
             double f, fp = std::numeric_limits<double>::max();
@@ -566,7 +566,7 @@ namespace AOPT {
             int p = _A.rows();
 
             //------------------------------------------------------//
-            //TODO: project x to the hyperplane Ax = b
+            // project x to the hyperplane Ax = b
             Eigen::SparseQR<SMat, Eigen::COLAMDOrdering<int>> sqr;
 
             SMat A = _A;

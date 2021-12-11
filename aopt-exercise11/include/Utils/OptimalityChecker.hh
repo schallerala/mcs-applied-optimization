@@ -42,7 +42,6 @@ namespace AOPT {
                               const std::vector<FunctionBase *>& _equality_constraints,
                               const Vec& _query_point, const Vec& _lambda, const Vec& _nu) {
             //------------------------------------------------------//
-            //Todo:
             //1. check only condition 4 in case there are no constraints
             //2. check inequality constraints (cond. 1.)
             //3. check equality constraints (cond. 1.)

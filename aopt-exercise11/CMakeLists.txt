@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.11)
 
 PROJECT(AOPT_EXERCISES)
 
-set(CMAKE_BUILD_TYPE Release)
-
 include(FetchContent)
 
 FetchContent_Declare(
@@ -54,10 +52,10 @@ target_include_directories(AOPT
         ${EIGEN3_INCLUDE_DIR}
 )
 
-add_subdirectory(EigenTutorial)
-add_subdirectory(GridSearch)
-add_subdirectory(CsvExporter)
-add_subdirectory(ConvexityTests)
+#add_subdirectory(EigenTutorial)
+#add_subdirectory(GridSearch)
+#add_subdirectory(CsvExporter)
+#add_subdirectory(ConvexityTests)
 add_subdirectory(MassSpringSystem)
 add_subdirectory(MassSpringProblemEvaluation)
 add_subdirectory(OptimalityChecker)

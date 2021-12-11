@@ -11,7 +11,7 @@ int main(int _argc, const char* _argv[]) {
     b.setZero();
 
     //-------------------------------------------------------------------------------//
-    //Todo: set up the optimization problem by populating the various
+    // set up the optimization problem by populating the various
     //matrices and vectors coefficients
     //1. set objective function
     A << 2, 0,
@@ -39,7 +39,7 @@ int main(int _argc, const char* _argv[]) {
     AOPT::FunctionQuadraticND qnd3(A, b, 4);
     eq_cons.push_back(&qnd3);
 
-    //Todo: set the lambda and v and query point
+    // set the lambda and v and query point
     //4. set lambdas and vs
     AOPT::FunctionQuadraticND::Vec lambda(2), nu(1);
     lambda[0] = 4;

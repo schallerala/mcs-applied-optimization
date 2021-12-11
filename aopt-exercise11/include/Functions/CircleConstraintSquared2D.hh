@@ -23,7 +23,7 @@ namespace AOPT {
         // _x stores the coordinates of all nodes
         inline virtual double eval_f(const Vec &_x) override {
             //------------------------------------------------------//
-            //Todo: implement the constraint function value
+            // implement the constraint function value
             double f = std::pow(_x[2*idx_] - center_x_, 2) + std::pow(_x[2*idx_+1] - center_y_, 2) - std::pow(radius_, 2);
             return f*f;
             //------------------------------------------------------//
@@ -34,7 +34,7 @@ namespace AOPT {
         inline virtual void eval_gradient(const Vec &_x, Vec &_g) override {
             _g.setZero();
             //------------------------------------------------------//
-            //Todo: implement the gradient and store in _g
+            // implement the gradient and store in _g
             double f = std::pow(_x[2*idx_] - center_x_, 2) + std::pow(_x[2*idx_+1] - center_y_, 2) - std::pow(radius_, 2);
             _g[2*idx_] = 4.0 * (_x[2*idx_] - center_x_)*f;
             _g[2*idx_+1] = 4.0 * (_x[2*idx_+1] - center_y_)*f;
@@ -46,7 +46,7 @@ namespace AOPT {
         inline virtual void eval_hessian(const Vec &_x, SMat &_h) override {
             _h.setZero();
             //------------------------------------------------------//
-            //Todo: implement the hessian matrix and store in _h
+            // implement the hessian matrix and store in _h
             double difx = std::pow(_x[2*idx_] - center_x_, 2);
             double dify = std::pow(_x[2*idx_+1] - center_y_, 2);
 

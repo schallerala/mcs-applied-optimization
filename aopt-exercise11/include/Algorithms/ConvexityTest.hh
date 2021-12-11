@@ -37,7 +37,7 @@ namespace AOPT {
             const int max_sampling_points(1000000);
 
             //------------------------------------------------------//
-            //Todo: Add your code here
+            // Add your code here
             int count = 0;
             double delta = 1.0 / n_evals;
             while (count < max_sampling_points) {
