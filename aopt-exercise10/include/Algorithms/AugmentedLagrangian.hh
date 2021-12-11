@@ -102,8 +102,10 @@ namespace AOPT {
                 //      one can say it diverges for simplicity
 
                 // A. (hint 1)
-                if ( ! newton_converged)
+                if ( ! newton_converged) {
+                    x = x_p;
                     break;
+                }
 
                 // constraint violation:
                 //  h_i(x_k) ~= (ν_i^* - ν_i^k) / μ_k
@@ -111,11 +113,16 @@ namespace AOPT {
                 h_sqr_norm = h.squaredNorm();
 
                 // B. (hint 1)
-                if (h_sqr_norm > h_sqr_norm_previous)
+                if (h_sqr_norm > h_sqr_norm_previous) {
+                    x = x_p;
                     break;
+                }
 
-                // update previous squared norm of constraints violations
+                // update previous squared norm of constraints violations and approx. x
+                // before we forget; as those 2 aren't used anymore in the rest
+                // of the lagrangian iteration
                 h_sqr_norm_previous = h_sqr_norm;
+                x_p = x;
 
                 // Augmented Lagrangian Function:
                 //  L_A(x, ν, μ) = f(x) + sum_{i=1}^p ν_i * h_i(x) + μ/2 sum_{i=1}^p h_i^2(x)
