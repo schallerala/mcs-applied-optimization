@@ -1,6 +1,14 @@
 #define MASSSPRINGSYSTEM_C
 
+
 #include "MassSpringSystemT.hh"
+
+/* selection of point index, based on top left index */
+#define TL get_grid_index(xi, yi)
+#define BL get_grid_index(xi, yi + 1)
+#define BR get_grid_index(xi + 1, yi + 1)
+#define TR get_grid_index(xi + 1, yi)
+
 
 namespace AOPT {
 
@@ -166,7 +174,7 @@ namespace AOPT {
     template<class MassSpringProblem>
     void MassSpringSystemT<MassSpringProblem>::add_area_constraints() {
         //------------------------------------------------------//
-        //TODO: implement the constraints to make sure each triangle has positive area
+        // implement the constraints to make sure each triangle has positive area
         //convention: node0 - node1 - node2 (ordered counter-clockwise)
         //triangle: 2 o
         //            |  \
@@ -180,8 +188,20 @@ namespace AOPT {
         //                /  |
         //              /    |
         //          2 o----- o 0
+        
 
-
+        for (size_t yi = 0; yi < n_grid_y_; ++yi) {
+            for (size_t xi = 0; xi < n_grid_x_; ++xi) {
+                // tl - bl - br
+                area_constraints_.push_back(AreaConstraint2D(n_unknowns_, TL, BL, BR));
+                // bl - br - tr
+                area_constraints_.push_back(AreaConstraint2D(n_unknowns_,     BL, BR, TR));
+                // br - tr - tl
+                area_constraints_.push_back(AreaConstraint2D(n_unknowns_,         BR, TR, TL));
+                // tr - tl - bl
+                area_constraints_.push_back(AreaConstraint2D(n_unknowns_,             TR, TL, BL));
+            }
+        }
 
         //------------------------------------------------------//
 
