@@ -158,12 +158,12 @@ namespace AOPT {
                 int cnt = 0;
                 double delta = 0.;
                 
-                std::cout<<" H = "<<H<<std::endl;
+//                std::cout<<" H = "<<H<<std::endl;
 
 
                 solver.compute(H);
                 bool is_not_psd = solver.info() == Eigen::NumericalIssue;
-                std::cout<<" psd: "<<!is_not_psd<<std::endl;
+//                std::cout<<" psd: "<<!is_not_psd<<std::endl;
 
                 while (is_not_psd && cnt < _max_iters) {
                     if (cnt == 0) {
