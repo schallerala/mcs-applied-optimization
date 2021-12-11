@@ -35,7 +35,10 @@ namespace AOPT {
             //------------------------------------------------------//
             // implement the constraint function value
 
-            return -0.5 * ((x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0));
+            double f = 0.5 * ((x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0));
+
+            // TODO: how to apply epsilon in gradient and hessian?
+            return std::min(-f, -eps_);
             //------------------------------------------------------//
         }
 
