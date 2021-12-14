@@ -34,16 +34,15 @@ namespace AOPT {
             // add function value (objective function + barrier function)
 
             // minimize f(x) - 1 / t \sum_{i=1}^m log(-g_i(x))
+            //        = (\sum_{i=1}^m log(-g_i(x))) * (- 1 / t) + f(x)
 
-            const auto eval_f = obj_->eval_f(_x);
-
-            double constraints_eval_f = 0;
+            double eval_f = 0;
 
             for (const auto constraint: constraints_) {
-                constraints_eval_f += log_of_minus_function(constraint, _x);
+                eval_f += log_of_minus_function(constraint, _x);
             }
 
-            return eval_f - 1 / t_ * constraints_eval_f;
+            return - 1 / t_ * eval_f + obj_->eval_f(_x);
 
             //------------------------------------------------------//
         }
@@ -54,22 +53,22 @@ namespace AOPT {
             // add gradients (objective function + barrier function)
 
             // d/dx central path = d/dx f(x) - 1/t * \sum_{i=1}^m d/dx (log(-g_i(x)))
+            //                   = (\sum_{i=1}^m d/dx (log(-g_i(x)))) * (- 1/t) + d/dx f(x)
 
             _g.setZero();
-            // 1. gradient of objective function
-            obj_->eval_gradient(_x, _g);
 
-            // to overcome the necessity to multiple all gradient summed iteratively by -1 / t,
-            // divide in advance the current result and multiply the final result.
-            _g /= -1 / t_;
-
-            // 2. get all constraints' gradient and sum it
+            // 1. get all constraints' gradient and sum it
             for (const auto constraint: constraints_) {
                 add_grad_of_log_of_function(constraint, _x, _g);
             }
 
-            // 3. multiply the sum of constraints
+            // 2. multiply the sum of constraints
             _g *= -1 / t_;
+
+            // 3. add the objective function gradient
+            v_.setZero();
+            obj_->eval_gradient(_x, v_);
+            _g += v_;
 
             //------------------------------------------------------//
         }
@@ -82,23 +81,23 @@ namespace AOPT {
             // almost same as for gradient
 
             // d/d²x central path = d/d²x f(x) - 1/t * \sum_{i=1}^m d/d²x (log(-g_i(x)))
-            // =>           d/d²x = -1/t * ( (d/d²x f(x))/(-1/t) + \sum_{i=1}^m d/d²x (log(-g_i(x))) )
+            //                    = (\sum_{i=1}^m d/d²x (log(-g_i(x)))) * (- 1/t) + d/d²x f(x)
 
             _H.setZero();
-            // 1. hessian of objective function
-            obj_->eval_hessian(_x, _H);
 
-            // to overcome the necessity to multiple all hessian summed iteratively by -1 / t,
-            // divide in advance the current result and multiply the final result.
-            _H /= -1 / t_;
-
-            // 2. get all constraints' hessian and sum it
+            // 1. get all constraints' hessian and sum it
             for (const auto constraint: constraints_) {
                 add_hess_of_log_of_function(constraint, _x, _H);
             }
 
-            // 3. multiply the sum of constraints
+            // 2. multiply the sum of constraints
             _H *= -1 / t_;
+
+            // 3. add the objective function hessian
+            M_ = _H;
+            _H.setZero();
+            obj_->eval_hessian(_x, _H);
+            _H += M_;
 
             //------------------------------------------------------//
         }
