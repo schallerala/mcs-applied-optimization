@@ -19,7 +19,7 @@ namespace AOPT {
     class AreaConstraint2D : public FunctionBaseSparse {
     public:
         // Area constraint: 1/2*det(v_01 | V02) >= eps
-        // f = -1/2*((x1 - x0)(y2 - y0) - (x2 - x0)(y1 - y0)) + eps <= 0
+        // f = 1/2*((x1 - x0)(y2 - y0) - (x2 - x0)(y1 - y0)) + eps <= 0
         // constructor
         AreaConstraint2D(const int _n, const int _idx0, const int _idx1, const int _idx2,
                          const double _eps = 1e-10)
@@ -34,7 +34,7 @@ namespace AOPT {
             //------------------------------------------------------//
             // implement the constraint function value
 
-            return -0.5 * ((x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0)) + eps_;
+            return 0.5 * ((x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0)) + eps_;
             //------------------------------------------------------//
         }
 
@@ -44,18 +44,23 @@ namespace AOPT {
             //------------------------------------------------------//
             // implement the gradient and store in _g
 
-            // d/dx0 = -0.5*y1 + 0.5*y2
-            _g[2 * idx0_] = 0.5 * (y2 - y1);
-            // d/dy0 = 0.5*x1 - 0.5*x2
-            _g[2 * idx0_ + 1] = 0.5 * (x1 - x2);
-            // d/dx1 = 0.5*y0 - 0.5*y2
-            _g[2 * idx1_] = 0.5 * (y0 - y2);
-            // d/dy1 = -0.5*x0 + 0.5*x2
-            _g[2 * idx1_ + 1] = 0.5 * (x2 - x0);
-            // d/dx2 = -0.5*y0 + 0.5*y1
-            _g[2 * idx2_] = 0.5 * (y1 - y0);
-            // d/dy2 = 0.5*x0 - 0.5*x1
-            _g[2 * idx2_ + 1] = 0.5 * (x0 - x1);
+            // d/dx0 = 0.5*y1 - 0.5*y2
+            _g[2 * idx0_] = 0.5 * (y1 - y2);
+
+            // d/dy0 = -0.5*x1 + 0.5*x2
+            _g[2 * idx0_ + 1] = 0.5 * (x2 - x1);
+
+            // d/dx1 = -0.5*y0 + 0.5*y2
+            _g[2 * idx1_] = 0.5 * (y2 - y0);
+
+            // d/dy1 = 0.5*x0 - 0.5*x2
+            _g[2 * idx1_ + 1] = 0.5 * (x0 - x2);
+
+            // d/dx2 = 0.5*y0 - 0.5*y1
+            _g[2 * idx2_] = 0.5 * (y0 - y1);
+
+            // d/dy2 = -0.5*x0 + 0.5*x1
+            _g[2 * idx2_ + 1] = 0.5 * (x1 - x0);
 
             //------------------------------------------------------//
         }
@@ -71,73 +76,73 @@ namespace AOPT {
 //            _h.insert(2 * idx0_, 2 * idx0_ + 1) = 0;
             // d/dx0 dx1 = 0
 //            _h.insert(2 * idx0_, 2 * idx1_) = 0;
-            // d/dx0 dy1 = -0.5
-            _h.insert(2 * idx0_, 2 * idx1_ + 1) = -0.5;
+            // d/dx0 dy1 = 0.5
+            _h.insert(2 * idx0_, 2 * idx1_ + 1) = 0.5;
             // d/dx0 dx2 = 0
 //            _h.insert(2 * idx0_, 2 * idx2_) = 0;
-            // d/dx0 dy2 = 0.5
-            _h.insert(2 * idx0_, 2 * idx2_ + 1) = 0.5;
+            // d/dx0 dy2 = -0.5
+            _h.insert(2 * idx0_, 2 * idx2_ + 1) = -0.5;
 
             // d/dy0 dx0 = 0
 //            _h.insert(2 * idx0_ + 1, 2 * idx0_) = 0;
             // d/dy0 dy0 = 0
 //            _h.insert(2 * idx0_ + 1, 2 * idx0_ + 1) = 0;
-            // d/dy0 dx1 = 0.5
-            _h.insert(2 * idx0_ + 1, 2 * idx1_) = 0.5;
+            // d/dy0 dx1 = -0.5
+            _h.insert(2 * idx0_ + 1, 2 * idx1_) = -0.5;
             // d/dy0 dy1 = 0
 //            _h.insert(2 * idx0_ + 1, 2 * idx1_ + 1) = 0;
-            // d/dy0 dx2 = -0.5
-            _h.insert(2 * idx0_ + 1, 2 * idx2_) = -0.5;
+            // d/dy0 dx2 = 0.5
+            _h.insert(2 * idx0_ + 1, 2 * idx2_) = 0.5;
             // d/dy0 dy2 = 0
 //            _h.insert(2 * idx0_ + 1, 2 * idx2_ + 1) = 0;
 
 
             // d/dx1 dx0 = 0
 //            _h.insert(2 * idx1_, 2 * idx0_) = 0;
-            // d/dx1 dy0 = 0.5
-            _h.insert(2 * idx1_, 2 * idx0_ + 1) = 0.5;
+            // d/dx1 dy0 = -0.5
+            _h.insert(2 * idx1_, 2 * idx0_ + 1) = -0.5;
             // d/dx1 dx1 = 0
 //            _h.insert(2 * idx1_, 2 * idx1_) = 0;
             // d/dx1 dy1 = 0
 //            _h.insert(2 * idx1_, 2 * idx1_ + 1) = 0;
             // d/dx1 dx2 = 0
 //            _h.insert(2 * idx1_, 2 * idx2_) = 0;
-            // d/dx1 dy2 = -0.5
-            _h.insert(2 * idx1_, 2 * idx2_ + 1) = -0.5;
+            // d/dx1 dy2 = 0.5
+            _h.insert(2 * idx1_, 2 * idx2_ + 1) = 0.5;
 
-            // d/dy1 dx0 = -0.5
-            _h.insert(2 * idx1_ + 1, 2 * idx0_) = -0.5;
+            // d/dy1 dx0 = 0.5
+            _h.insert(2 * idx1_ + 1, 2 * idx0_) = 0.5;
             // d/dy1 dy0 = 0
 //            _h.insert(2 * idx1_ + 1, 2 * idx0_ + 1) = 0;
             // d/dy1 dx1 = 0
 //            _h.insert(2 * idx1_ + 1, 2 * idx1_) = 0;
             // d/dy1 dy1 = 0
 //            _h.insert(2 * idx1_ + 1, 2 * idx1_ + 1) = 0;
-            // d/dy1 dx2 = 0.5
-            _h.insert(2 * idx1_ + 1, 2 * idx2_) = 0.5;
+            // d/dy1 dx2 = -0.5
+            _h.insert(2 * idx1_ + 1, 2 * idx2_) = -0.5;
             // d/dy1 dy2 = 0
 //            _h.insert(2 * idx1_ + 1, 2 * idx2_ + 1) = 0;
 
 
             // d/dx2 dx0 = 0
 //            _h.insert(2 * idx2_, 2 * idx0_) = 0;
-            // d/dx2 dy0 = -0.5
-            _h.insert(2 * idx2_, 2 * idx0_ + 1) = -0.5;
+            // d/dx2 dy0 = 0.5
+            _h.insert(2 * idx2_, 2 * idx0_ + 1) = 0.5;
             // d/dx2 dx1 = 0
 //            _h.insert(2 * idx2_, 2 * idx1_) = 0;
-            // d/dx2 dy1 = 0.5
-            _h.insert(2 * idx2_, 2 * idx1_ + 1) = 0.5;
+            // d/dx2 dy1 = -0.5
+            _h.insert(2 * idx2_, 2 * idx1_ + 1) = -0.5;
             // d/dx2 dx2 = 0
 //            _h.insert(2 * idx2_, 2 * idx2_) = 0;
             // d/dx2 dy2 = 0
 //            _h.insert(2 * idx2_, 2 * idx2_ + 1) = 0;
 
-            // d/dy2 dx0 = 0.5
-            _h.insert(2 * idx2_ + 1, 2 * idx0_) = 0.5;
+            // d/dy2 dx0 = -0.5
+            _h.insert(2 * idx2_ + 1, 2 * idx0_) = -0.5;
             // d/dy2 dy0 = 0
 //            _h.insert(2 * idx2_ + 1, 2 * idx0_ + 1) = 0;
-            // d/dy2 dx1 = -0.5
-            _h.insert(2 * idx2_ + 1, 2 * idx1_) = -0.5;
+            // d/dy2 dx1 = 0.5
+            _h.insert(2 * idx2_ + 1, 2 * idx1_) = 0.5;
             // d/dy2 dy1 = 0
 //            _h.insert(2 * idx2_ + 1, 2 * idx1_ + 1) = 0;
             // d/dy2 dx2 = 0

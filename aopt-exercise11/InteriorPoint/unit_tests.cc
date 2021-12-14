@@ -39,7 +39,7 @@ public:
 
     // constructor
     FunctionQuadratic2DSparse(int n)
-            : FunctionBaseSparse(), n_(n){}
+            : FunctionBaseSparse(), n_(n) {}
 
     // number of unknowns
     inline virtual int n_unknowns() { return n_; }
@@ -54,8 +54,8 @@ public:
 
     inline virtual void eval_hessian(const Vec &_x, SMat &_H) {
         _H.reserve(n_ * n_);
-        for(int i(0); i<n_; i++){
-            _H.insert(i,i) = 1;
+        for (int i(0); i < n_; i++) {
+            _H.insert(i, i) = 1;
         }
     }
 
@@ -65,8 +65,7 @@ private:
 };
 
 
-
-TEST(AreaConstraint2D, CheckFunctions){
+TEST(AreaConstraint2D, CheckFunctions) {
 
     typedef AreaConstraint2D::Vec Vec;
     const int n(6);
@@ -77,49 +76,51 @@ TEST(AreaConstraint2D, CheckFunctions){
     Vec x(n);
     x << 0, 0, 1, 0, 0, 1;
 
-    ASSERT_FLOAT_EQ(area_constraint.eval_f(x), -0.5);
+    ASSERT_FLOAT_EQ(area_constraint.eval_f(x), 0.5);
 
     AreaConstraint2D::Vec g(n);
     area_constraint.eval_gradient(x, g);
-    std::cout<<" g: "<<g.transpose()<<std::endl;
+    std::cout << " g: " << g.transpose() << std::endl;
 
     AreaConstraint2D::Vec expected_g(n);
-    expected_g << 0.5,  0.5, -0.5,  0,  0, -0.5;
+    expected_g << -0.5, -0.5, 0.5, 0, 0, 0.5;
     ASSERT_FLOAT_EQ((g - expected_g).squaredNorm(), 0.0);
 
-    AreaConstraint2D::SMat H(n,n);
+    AreaConstraint2D::SMat H(n, n);
     area_constraint.eval_hessian(x, H);
     //std::cout<<" H: "<<std::endl<<H<<std::endl;
 
-    AreaConstraint2D::Mat expected_H(n,n);
+    AreaConstraint2D::Mat expected_H(n, n);
     expected_H <<
-                  0, 0, 0, -0.5, 0, 0.5,
-            0, 0, 0.5, 0, -0.5, 0,
-            0, 0.5, 0, 0, 0, -0.5,
-            -0.5, 0, 0, 0, 0.5, 0,
-            0, -0.5, 0, 0.5, 0, 0,
-            0.5, 0, -0.5, 0, 0, 0;
+               0, 0, 0, 0.5, 0, -0.5,
+               0, 0, -0.5, 0, 0.5, 0,
+               0, -0.5, 0, 0, 0, 0.5,
+               0.5, 0, 0, 0, -0.5, 0,
+               0, 0.5, 0, -0.5, 0, 0,
+               -0.5, 0, 0.5, 0, 0, 0;
 
     ASSERT_EQ((H - expected_H.sparseView()).norm(), 0.);
 
 }
 
 
-
-
-TEST(InteriorPointProblem, CheckFunctions){
+TEST(InteriorPointProblem, CheckFunctions) {
 
     typedef InteriorPointProblem::Vec Vec;
 
     const int n(8);
 
-    std::vector<FunctionBaseSparse*> constraints;
+    std::vector<FunctionBaseSparse *> constraints;
 
 
-    constraints.push_back(new AreaConstraint2D(n, 0, 1, 3));
-    constraints.push_back(new AreaConstraint2D(n, 2, 3, 1));
-    constraints.push_back(new AreaConstraint2D(n, 3, 0, 2));
-    constraints.push_back(new AreaConstraint2D(n, 0, 1, 2));
+//    constraints.push_back(new AreaConstraint2D(n, 0, 1, 3));
+    constraints.push_back(new AreaConstraint2D(n, 3, 1, 0));
+//    constraints.push_back(new AreaConstraint2D(n, 2, 3, 1));
+    constraints.push_back(new AreaConstraint2D(n, 1, 3, 2));
+//    constraints.push_back(new AreaConstraint2D(n, 3, 0, 2));
+    constraints.push_back(new AreaConstraint2D(n, 2, 0, 3));
+//    constraints.push_back(new AreaConstraint2D(n, 0, 1, 2));
+    constraints.push_back(new AreaConstraint2D(n, 2, 1, 0));
 
 
     Vec x(n);
@@ -133,45 +134,42 @@ TEST(InteriorPointProblem, CheckFunctions){
     interior_point_problem.t() = 0.1;
 
 
-
     EXPECT_FLOAT_EQ(interior_point_problem.eval_f(x), 31.725887);
 
     AreaConstraint2D::Vec g(n);
     interior_point_problem.eval_gradient(x, g);
-    std::cout<<" g: "<<g.transpose()<<std::endl;
+    std::cout << " g: " << g.transpose() << std::endl;
 
     AreaConstraint2D::Vec expected_g(n);
-    expected_g << 20,  20, -19,  20, -19, -19,  20, -19;
+    expected_g << 20, 20, -19, 20, -19, -19, 20, -19;
 
     EXPECT_NEAR((g - expected_g).squaredNorm(), 0.0, 1e-9);
 
-    AreaConstraint2D::SMat H(n,n);
+    AreaConstraint2D::SMat H(n, n);
     interior_point_problem.eval_hessian(x, H);
     //std::cout<<" H: "<<std::endl<<H<<std::endl;
 
-    AreaConstraint2D::Mat expected_H(n,n);
-    expected_H <<  21,  10, -20, -10,   0, -10,   0,  10,
-                   10,  21,  10,   0, -10,   0, -10, -20,
-                  -20,  10,  21, -10,   0, -10,   0,  10,
-                  -10,   0, -10,  21,  10, -20,  10,   0,
-                    0, -10,   0,  10,  21,  10, -20, -10,
-                  -10,   0, -10, -20,  10,  21,  10,   0,
-                    0, -10,   0,  10, -20,  10,  21, -10,
-                   10, -20,  10,   0, -10,   0, -10,  21;
+    AreaConstraint2D::Mat expected_H(n, n);
+    expected_H << 21, 10, -20, -10, 0, -10, 0, 10,
+            10, 21, 10, 0, -10, 0, -10, -20,
+            -20, 10, 21, -10, 0, -10, 0, 10,
+            -10, 0, -10, 21, 10, -20, 10, 0,
+            0, -10, 0, 10, 21, 10, -20, -10,
+            -10, 0, -10, -20, 10, 21, 10, 0,
+            0, -10, 0, 10, -20, 10, 21, -10,
+            10, -20, 10, 0, -10, 0, -10, 21;
 
 
     EXPECT_NEAR((H - expected_H.sparseView()).norm(), 0., 1e-7);
 
 
-    for(int i(0); i<(int)constraints.size(); i++){
+    for (int i(0); i < (int) constraints.size(); i++) {
         delete constraints[i];
     }
 }
 
 
-
-
-TEST(InteriorPointMethod, CheckMinimum){
+TEST(InteriorPointMethod, CheckMinimum) {
 
     const int dim(3);
     typedef MassSpringProblem2DSparse::Vec Vec;
@@ -199,7 +197,8 @@ TEST(InteriorPointMethod, CheckMinimum){
 
     const int max_iter(1000);
     //solve
-    AOPT::InteriorPoint::Vec x = AOPT::InteriorPoint::solve(mss.get_problem().get(), start_pts, mss.get_constraints(), 1e-4, 10, max_iter);
+    AOPT::InteriorPoint::Vec x = AOPT::InteriorPoint::solve(mss.get_problem().get(), start_pts, mss.get_constraints(),
+                                                            1e-4, 10, max_iter);
 
     //std::cout<<"x = "<<x.transpose()<<std::endl;
 
@@ -208,12 +207,12 @@ TEST(InteriorPointMethod, CheckMinimum){
     double final_energy = mss.get_problem().get()->eval_f(x);
 
 
-    ASSERT_NEAR(final_energy, expected_final_energy, 1e-6);
+    ASSERT_NEAR(final_energy, expected_final_energy, 1e-4);
 
 }
 
 
-int main(int _argc, char** _argv){
+int main(int _argc, char **_argv) {
 
     testing::InitGoogleTest(&_argc, _argv);
     return RUN_ALL_TESTS();
