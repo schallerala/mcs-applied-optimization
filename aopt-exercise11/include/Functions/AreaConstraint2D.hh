@@ -21,8 +21,7 @@ namespace AOPT {
         // Area constraint: 1/2*det(v_01 | V02) >= eps
         // f = -1/2*((x1 - x0)(y2 - y0) - (x2 - x0)(y1 - y0)) + eps <= 0
         // constructor
-        AreaConstraint2D(const int _n, const int _idx0, const double _idx1, const double _idx2,
-                         // TODO REVIEW: don't get what should be done with the epsilon
+        AreaConstraint2D(const int _n, const int _idx0, const int _idx1, const int _idx2,
                          const double _eps = 1e-10)
                 : FunctionBaseSparse(), n_(_n), idx0_(_idx0), idx1_(_idx1), idx2_(_idx2), eps_(_eps) {}
 
@@ -35,10 +34,7 @@ namespace AOPT {
             //------------------------------------------------------//
             // implement the constraint function value
 
-            double f = 0.5 * ((x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0));
-
-            // TODO: how to apply epsilon in gradient and hessian?
-            return std::min(-f, -eps_);
+            return -0.5 * ((x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0)) + eps_;
             //------------------------------------------------------//
         }
 

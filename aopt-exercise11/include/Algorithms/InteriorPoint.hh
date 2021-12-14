@@ -58,7 +58,7 @@ namespace AOPT {
                 }
 
                 // And update t := 10*t
-                t *= 10;
+                t *= _mu;
 
                 x_previous = x;
 
