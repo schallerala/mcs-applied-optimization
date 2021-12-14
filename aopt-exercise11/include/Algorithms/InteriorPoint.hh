@@ -43,7 +43,6 @@ namespace AOPT {
             // t := 1
             double t = 1.0;
 
-            // FIXME: but newton has issue to progress
             for (size_t i = 0; i < _max_iters; ++i) {
                 problem.setT(t);
 
@@ -58,25 +57,10 @@ namespace AOPT {
                 }
 
                 // And update t := 10*t
-                t *= _mu;
+                t *= _mu; // the given mu is actually by default 10
 
                 x_previous = x;
 
-                // Reference:
-                //      https://slides.cgg.unibe.ch/aopt21/12-InequalityConstrainedOptimization-II-deck.html#/21/0/8
-                // Stop when f(x*(t)) - p* <= m/t
-                //      with x*: optimal point
-                //           f(x*(t)): interior point problem evaluation of optimal point
-                //           p*: optimal value
-
-//                const auto interior_evaluation = opt_st->eval_f(x);
-//                const auto obj_evaluation = _obj->eval_f(x);
-//                const auto rhs = m / t;
-//                if (interior_evaluation - obj_evaluation <= rhs) {
-//                    break;
-//                }
-
-                // Slide like first ref, but not sure
                 // Stop when m/t < ε
                 if (m / t < _eps)
                     break;
