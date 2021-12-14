@@ -56,14 +56,14 @@ namespace AOPT {
                     break;
                 }
 
+                // Stop when m/t < ε
+                if (m / t < _eps)
+                    break;
+
                 // And update t := 10*t
                 t *= _mu; // the given mu is actually by default 10
 
                 x_previous = x;
-
-                // Stop when m/t < ε
-                if (m / t < _eps)
-                    break;
             }
 
             //------------------------------------------------------//

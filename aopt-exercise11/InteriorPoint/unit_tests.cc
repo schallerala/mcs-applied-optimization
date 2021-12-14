@@ -207,7 +207,7 @@ TEST(InteriorPointMethod, CheckMinimum) {
     double final_energy = mss.get_problem().get()->eval_f(x);
 
 
-    ASSERT_NEAR(final_energy, expected_final_energy, 1e-4);
+    ASSERT_NEAR(final_energy, expected_final_energy, 1e-6);
 
 }
 
